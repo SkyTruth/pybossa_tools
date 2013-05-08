@@ -19,11 +19,6 @@
 import json
 from optparse import OptionParser
 import pbclient
-from get_images import get_flickr_photos
-
-
-def contents(filename):
-    return file(filename).read()
 
 def handle_arguments():
     # Arguments for the application
@@ -43,7 +38,7 @@ def handle_arguments():
                       help="Create the application",
                       metavar="CREATE-APP")
     # Update template for tasks and long_description for app
-    parser.add_option("-t", "--update-template", action="store_true",
+    parser.add_option("-u", "--update-template", action="store_true",
                       dest="update_template",
                       help="Update Tasks template",
                       metavar="UPDATE-TEMPLATE")
@@ -55,10 +50,10 @@ def handle_arguments():
                       help="Update Tasks n_answers",
                       metavar="UPDATE-TASKS")
 
-    parser.add_option("-x", "--extra-task", action="store_true",
-                      dest="add_more_tasks",
-                      help="Add more tasks",
-                      metavar="ADD-MORE-TASKS")
+    parser.add_option("-t", "--create-task",
+                      dest="create_task",
+                      help="Create a task",
+                      metavar="CREATE-MORE-TASK")
 
     # Modify the number of TaskRuns per Task
     # (default 30)
@@ -79,7 +74,7 @@ def handle_arguments():
     (options, args) = parser.parse_args()
 
     if not options.create_app and not options.update_template\
-            and not options.add_more_tasks and not options.update_tasks:
+            and not options.create_task and not options.update_tasks:
         parser.error("Please check --help or -h for the available options")
 
     if not options.api_key:
@@ -101,6 +96,11 @@ def get_configuration():
 
     return (app_config, options)
 
+def contents(filename):
+    return file(filename).read()
+
+
+
 def run(app_config, options):
     def find_app_by_short_name():
         return pbclient.find_app(short_name=app_config['short_name'])[0]
@@ -115,22 +115,12 @@ def run(app_config, options):
         pbclient.update_app(app)
         return app
 
-    def create_photo_task(app, photo, question):
+    def create_task(app):
         # Data for the tasks
-        task_info = dict(question=question,
-                         n_answers=options.n_answers,
-                         link=photo['link'],
-                         url_m=photo['url_m'],
-                         url_b=photo['url_b'])
+        task_info = json.loads(options.create_task)
+        task_info["question"] = app_config['question']
+        task_info["n_answers"] = options.n_answers
         pbclient.create_task(app.id, task_info)
-
-    def add_photo_tasks(app):
-        # First of all we get the URL photos
-        # Then, we have to create a set of tasks for the application
-        # For this, we get first the photo URLs from Flickr
-        photos = get_flickr_photos()
-        question = app_config['question']
-        [create_photo_task(app, p, question) for p in photos]
 
     pbclient.set('api_key', options.api_key)
     pbclient.set('endpoint', options.api_url)
@@ -139,16 +129,17 @@ def run(app_config, options):
         print('Running against PyBosssa instance at: %s' % options.api_url)
         print('Using API-KEY: %s' % options.api_key)
 
-    if options.create_app or options.add_more_tasks:
-        if options.create_app:
-            pbclient.create_app(app_config['name'],
-                                app_config['short_name'],
-                                app_config['description'])
+    if options.create_app:
+        pbclient.create_app(app_config['name'],
+                            app_config['short_name'],
+                            app_config['description'])
 
-            app = setup_app()
-        else:
-            app = find_app_by_short_name()
-        add_photo_tasks(app)
+        app = setup_app()
+    else:
+        app = find_app_by_short_name()
+
+    if options.create_task:
+        create_task(app)
 
     if options.update_template:
         print "Updating app template"
@@ -183,5 +174,4 @@ def run(app_config, options):
         print "%s Tasks have been updated!" % n_tasks[0]
 
 if __name__ == "__main__":
-    app_config, options = get_configuration()
-    run(app_config, options)
+    run(*get_configuration())

@@ -1,7 +1,7 @@
 {
-    "name": "Flickr Person Finder",
-    "short_name": "flickrperson",
+    "name": "Drill pad identification",
+    "short_name": "drillpad",
     "thumbnail": "http://imageshack.us/a/img37/156/flickrpersonthumbnail.png",
-    "description": "Image pattern recognition",
-    "question": "Do you see a human in this photo?"
+    "description": "Drill pad identification",
+    "question": "Please click on any drillpad(s) you see in this map"
 }

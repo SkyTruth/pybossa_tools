@@ -1,6 +1,5 @@
 <div class="row">
-    <!-- Success and Error Messages for the user --> 
-    <div class="span6 offset2" style="height:50px">
+    <div class="span6 offset2">
         <div id="success" class="alert alert-success" style="display:none;">
             <a class="close">×</a>
             <strong>Well done!</strong> Your answer has been saved
@@ -24,134 +23,238 @@
             <a class="close">×</a>
             <strong>Error!</strong> Something went wrong, please contact the site administrators
         </div>
-    </div> <!-- End Success and Error Messages for the user -->
-</div> <!-- End of Row -->
+    </div>
+</div>
 
-<!--
-    Task DOM for loading the Flickr Images
-    It uses the class="skeleton" to identify the elements that belong to the
-    task.
--->
-<div class="row skeleton"> <!-- Start Skeleton Row-->
-    <div class="span6 "><!-- Start of Question and Submission DIV (column) -->
-        <h1 id="question">Question</h1> <!-- The question will be loaded here -->
-        <div id="answer"> <!-- Start DIV for the submission buttons -->
-            <!-- If the user clicks this button, the saved answer will be value="yes"-->
-            <button class="btn btn-success btn-answer" value='Yes'><i class="icon icon-white icon-thumbs-up"></i> Yes</button>
-            <!-- If the user clicks this button, the saved answer will be value="no"-->
-            <button class="btn btn-danger btn-answer" value='No'><i class="icon icon-white icon-thumbs-down"></i> No</button>
-            <!-- If the user clicks this button, the saved answer will be value="NotKnown"-->
-            <button class="btn btn-answer" value='NotKnown'><i class="icon icon-white icon-question-sign"></i> I don't know</button>
-        </div><!-- End of DIV for the submission buttons -->
-        <!-- Feedback items for the user -->
-        <p>You are working now on task: <span id="task-id" class="label label-warning">#</span></p>
-        <p>You have completed: <span id="done" class="label label-info"></span> tasks from
-        <!-- Progress bar for the user -->
-        <span id="total" class="label label-inverse"></span></p>
-        <div class="progress progress-striped">
-            <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
-        </div>
-        <!-- 
-            This application uses Disqus to allow users to provide some feedback.
-            The next section includes a button that when a user clicks on it will
-            load the comments, if any, for the given task
-        -->
-        <div id="disqus_show_btn" style="margin-top:5px;">
-            <button class="btn btn-primary btn-large btn-disqus" onclick="loadDisqus()"><i class="icon-comments"></i> Show comments</button>
-            <button class="btn btn-large btn-disqus" onclick="loadDisqus()" style="display:none"><i class="icon-comments"></i> Hide comments</button>
-        </div><!-- End of Disqus Button section -->
-        <!-- Disqus thread for the given task -->
-        <div id="disqus_thread" style="margin-top:5px;display:none"></div>
-    </div><!-- End of Question and Submission DIV (column) -->
-    <div class="span6"><!-- Start of Photo DIV (column) -->
-        <a id="photo-link" href="#">
-            <img id="photo" src="http://img339.imageshack.us/img339/9017/loadingo.png" style="max-width=100%">
-        </a>
-    </div><!-- End of Photo DIV (columnt) -->
-</div><!-- End of Skeleton Row -->
+<div class="row skeleton">
+   <div id="map"></div>
+
+   <div class="taskmanager">
+     Task <span id="task-id" class="label">#</span>
+     <div class="progress progress-striped">
+       <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+     </div>
+     <span id="done" class="label"></span> of <span id="total" class="label"></span>
+     <button class="btn btn-success btn-answer"><i class="icon icon-white icon-forward"></i> Done</button>
+     <span id="disqus_show_btn">
+       <button class="btn btn-disqus" onclick="loadDisqus()"><i class="icon-comments"></i> Show comments</button>
+       <button class="btn btn-disqus" onclick="loadDisqus()" style="display:none"><i class="icon-comments"></i> Hide comments</button>
+     </span>
+   </div>
+
+   <div id="disqus_thread" style="display:none"></div>
+</div>
+
+
+<style>
+  .alert-messages {
+    position: absolute;
+    z-index: 2;
+    left: 80px;
+    right: 80px;
+    top: 140px;
+  }
+  #disqus_thread {
+    position: fixed;
+    top: 120px;
+    z-index: 3;
+    background: white;
+    left: 40px;
+    right: 40px;
+    bottom: 100px;
+    padding: 5pt;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+  }
+  footer, html {
+    background: white;
+  }
+  footer {
+    display: none;
+  }
+  .taskmanager {
+    z-index: 2;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background: white;
+    font-weight: bold;
+    padding: 5pt;
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    border-top-left-radius: 5px;
+  }
+  .progress {
+    width: 50px;
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+  #map {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    top: 81px;
+  }
+  .container {
+    width: 100%;
+  }
+  .container h1 {
+    display: none;
+  }
+  .container .row {
+    margin-left: 0pt;
+    margin-right: 0pt;
+  }
+</style>
+
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    function loadDisqus() {
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  function loadDisqus() {
     $("#disqus_thread").toggle();
     $(".btn-disqus").toggle();
-    var disqus_shortname = 'pybossa'; // required: replace example with your forum shortname
-    //var disqus_identifier = taskId;
-    var disqus_developer = 1;
+  }
 
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-    }
-
+  $(document).ready(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://drillpad.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  });
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
+
+<script src="http://openlayers.org/dev/OpenLayers.js"></script>
+<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+
+
 <script>
-function loadUserProgress() {
-    pybossa.userProgress('flickrperson').done(function(data){
+  $(document).ready(function () {
+    function loadUserProgress() {
+      pybossa.userProgress('drillpad').done(function(data){
         var pct = Math.round((data.done*100)/data.total);
         $("#progress").css("width", pct.toString() +"%");
         $("#progress").attr("title", pct.toString() + "% completed!");
         $("#progress").tooltip({'placement': 'left'}); 
         $("#total").text(data.total);
         $("#done").text(data.done);
-    });
-}
-
-pybossa.taskLoaded(function(task, deferred) {
-    if ( !$.isEmptyObject(task) ) {
-        // load image from flickr
-        var img = $('<img />');
-        img.load(function() {
-            // continue as soon as the image is loaded
-            deferred.resolve(task);
-        });
-        img.attr('src', task.info.url_b).css('height', 460);
-        img.addClass('img-polaroid');
-        task.info.image = img;
+      });
     }
-    else {
+
+    pybossa.taskLoaded(function(task, deferred) {
+      if ( !$.isEmptyObject(task) ) {
+        /*
+          var img = $('<img />');
+          img.load(function() {
+              deferred.resolve(task);
+          });
+          img.attr('src', task.info.url_b).css('height', 460);
+          img.addClass('img-polaroid');
+          task.info.image = img;
+        */
         deferred.resolve(task);
-    }
-});
+      } else {
+        deferred.resolve(task);
+      }
+    });
 
-pybossa.presentTask(function(task, deferred) {
-    if ( !$.isEmptyObject(task) ) {
+    pybossa.presentTask(function(task, deferred) {
+      if ( !$.isEmptyObject(task) ) {
         loadUserProgress();
-        $('#photo-link').html('').append(task.info.image);
-        $("#photo-link").attr("href", task.info.link);
-        $("#question").html(task.info.question);
+
         $('#task-id').html(task.id);
-        $('.btn-answer').off('click').on('click', function(evt) {
-            var answer = $(evt.target).attr("value");
-            if (typeof answer != 'undefined') {
-                //console.log(answer);
-                pybossa.saveTask(task.id, answer).done(function() {
-                    deferred.resolve();
-                });
-                $("#loading").fadeIn(500);
-                if ($("#disqus_thread").is(":visible")) {
-                    $('#disqus_thread').toggle();
-                    $('.btn-disqus').toggle();
-                }
+
+        if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
+        var imagery = new OpenLayers.Layer.WMS(
+          "Imagery",
+          task.info.url,
+          task.info.options);
+        imagery.id = 'imagery';
+        map.addLayer(imagery);
+        map.setLayerIndex(imagery, 0);
+        map.setBaseLayer(imagery);
+
+        var bbox = OpenLayers.Bounds.fromString(task.info.bbox).transform(
+          new OpenLayers.Projection("EPSG:4326"),
+          map.getProjection());
+
+        map.getLayer('drillpads').clearMarkers();
+
+        map.getLayer('guide').removeAllFeatures();
+        map.getLayer('guide').addFeatures([
+          new OpenLayers.Feature.Vector(
+            bbox.toGeometry(),
+            null,
+            {
+              strokeColor: "#ff0000",
+              strokeWidth: 3,
+              fillOpacity: 0.1,
+              fillColor: "#ff0000"
             }
-            else {
-                $("#error").show();
-            }
+          )
+        ]);
+
+        map.zoomToExtent(bbox);
+
+        $('.btn-answer').on('click', function(evt) {
+
+          var answer = {
+            "positions": map.getLayer('drillpads').markers.map(function (marker) {
+              return marker.lonlat;
+            })
+          };
+
+          pybossa.saveTask(task.id, answer).done(function() {
+            deferred.resolve();
+          });
+
+          $("#loading").fadeIn(500);
+          if ($("#disqus_thread").is(":visible")) {
+            $('#disqus_thread').toggle();
+            $('.btn-disqus').toggle();
+          }
         });
         $("#loading").hide();
-    }
-    else {
+      } else {
         $(".skeleton").hide();
         $("#loading").hide();
         $("#finish").fadeIn(500);
-    }
-});
+      }
+    });
 
-pybossa.run('flickrperson');
+
+    var map;
+
+    var wgs84 = new OpenLayers.Projection("EPSG:4326");
+    var sphericalmercator = new OpenLayers.Projection("EPSG:900913");
+
+    map = new OpenLayers.Map({
+        div: "map",
+        allOverlays: true
+    });
+
+    var markers = new OpenLayers.Layer.Markers("Drill pads");
+    markers.id = "drillpads";
+    var guide = new OpenLayers.Layer.Vector("Guide");
+    guide.id = "guide";
+
+    map.addLayers([markers, guide]);
+
+    map.zoomToMaxExtent();
+
+    map.events.register("click", map, function(e) {
+      var size = new OpenLayers.Size(33,33);
+      var offset = new OpenLayers.Pixel(-(size.w/2), -(size.h/2));
+      map.getLayer('drillpads').addMarker(new OpenLayers.Marker(
+        map.getLonLatFromPixel(e.xy),
+        new OpenLayers.Icon('http://alerts.skytruth.org/markers/red-x.png', size, offset)
+      ));
+    });
+
+    pybossa.run('drillpad');
+  });
 </script>
