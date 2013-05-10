@@ -62,12 +62,28 @@
   body {
     padding: 0;
   }
+  footer, html {
+    background: white;
+  }
+  footer {
+    display: none;
+  }
   .alert-messages {
     position: absolute;
     z-index: 2;
     left: 80px;
     right: 80px;
     top: 140px;
+  }
+  .container {
+    width: 100%;
+  }
+  .container h1 {
+    display: none;
+  }
+  .container .row {
+    margin-left: 0pt;
+    margin-right: 0pt;
   }
   #disqus_thread {
     position: fixed;
@@ -81,12 +97,6 @@
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
-  }
-  footer, html {
-    background: white;
-  }
-  footer {
-    display: none;
   }
   .taskmanager {
     z-index: 2;
@@ -111,16 +121,6 @@
     position: fixed;
     bottom: 0;
     top: 81px;
-  }
-  .container {
-    width: 100%;
-  }
-  .container h1 {
-    display: none;
-  }
-  .container .row {
-    margin-left: 0pt;
-    margin-right: 0pt;
   }
 </style>
 
@@ -149,81 +149,99 @@
 
 <script>
   $(document).ready(function () {
-    function loadUserProgress() {
-      pybossa.userProgress('drillpad').done(function(data){
-        var pct = Math.round((data.done*100)/data.total);
-        $("#progress").css("width", pct.toString() +"%");
-        $("#progress").attr("title", pct.toString() + "% completed!");
-        $("#progress").tooltip({'placement': 'left'}); 
-        $("#total").text(data.total);
-        $("#done").text(data.done);
+    var map;
+
+    function loadMap() {
+      map = new OpenLayers.Map({
+          div: "map",
+          allOverlays: true
+      });
+
+      var markers = new OpenLayers.Layer.Markers("Drill pads");
+      markers.id = "drillpads";
+      var guide = new OpenLayers.Layer.Vector("Guide");
+      guide.id = "guide";
+
+      map.addLayers([markers, guide]);
+
+      map.zoomToMaxExtent();
+
+      map.events.register("click", map, function(e) {
+        var size = new OpenLayers.Size(33,33);
+        var offset = new OpenLayers.Pixel(-(size.w/2), -(size.h/2));
+        map.getLayer('drillpads').addMarker(new OpenLayers.Marker(
+          map.getLonLatFromPixel(e.xy),
+          new OpenLayers.Icon('http://alerts.skytruth.org/markers/red-x.png', size, offset)
+        ));
       });
     }
 
+    function setProgress(data) {
+      var pct = Math.round((data.done*100)/data.total);
+      $("#progress").css("width", pct.toString() +"%");
+      $("#progress").attr("title", pct.toString() + "% completed!");
+      $("#progress").tooltip({'placement': 'left'}); 
+      $("#total").text(data.total);
+      $("#done").text(data.done);
+    }
+
+    function updateMap(info) {
+      if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
+      var imagery = new OpenLayers.Layer.WMS(
+        "Imagery",
+        info.url,
+        info.options);
+      imagery.id = 'imagery';
+      map.addLayer(imagery);
+      map.setLayerIndex(imagery, 0);
+      map.setBaseLayer(imagery);
+
+      var bbox = OpenLayers.Bounds.fromString(info.bbox).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        map.getProjection());
+
+      map.getLayer('drillpads').clearMarkers();
+
+      map.getLayer('guide').removeAllFeatures();
+      map.getLayer('guide').addFeatures([
+        new OpenLayers.Feature.Vector(
+          bbox.toGeometry(),
+          null,
+          {
+            strokeColor: "#ff0000",
+            strokeWidth: 3,
+            fillOpacity: 0.1,
+            fillColor: "#ff0000"
+          }
+        )
+      ]);
+
+      map.zoomToExtent(bbox);
+    }
+
+    function getMapPositions() {
+      return map.getLayer('drillpads').markers.map(function (marker) {
+        return marker.lonlat;
+      });
+    }
+
+    function loadUserProgress() {
+      pybossa.userProgress('drillpad').done(setProgress);
+    }
+
     pybossa.taskLoaded(function(task, deferred) {
-      if ( !$.isEmptyObject(task) ) {
-        /*
-          var img = $('<img />');
-          img.load(function() {
-              deferred.resolve(task);
-          });
-          img.attr('src', task.info.url_b).css('height', 460);
-          img.addClass('img-polaroid');
-          task.info.image = img;
-        */
-        deferred.resolve(task);
-      } else {
-        deferred.resolve(task);
-      }
+      deferred.resolve(task);
     });
 
     pybossa.presentTask(function(task, deferred) {
       if ( !$.isEmptyObject(task) ) {
-        loadUserProgress();
-
         $('#task-id').html(task.id);
-
-        if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
-        var imagery = new OpenLayers.Layer.WMS(
-          "Imagery",
-          task.info.url,
-          task.info.options);
-        imagery.id = 'imagery';
-        map.addLayer(imagery);
-        map.setLayerIndex(imagery, 0);
-        map.setBaseLayer(imagery);
-
-        var bbox = OpenLayers.Bounds.fromString(task.info.bbox).transform(
-          new OpenLayers.Projection("EPSG:4326"),
-          map.getProjection());
-
-        map.getLayer('drillpads').clearMarkers();
-
-        map.getLayer('guide').removeAllFeatures();
-        map.getLayer('guide').addFeatures([
-          new OpenLayers.Feature.Vector(
-            bbox.toGeometry(),
-            null,
-            {
-              strokeColor: "#ff0000",
-              strokeWidth: 3,
-              fillOpacity: 0.1,
-              fillColor: "#ff0000"
-            }
-          )
-        ]);
-
-        map.zoomToExtent(bbox);
+        loadUserProgress();
+        updateMap(task.info);
 
         $('.btn-answer').on('click', function(evt) {
 
-          var answer = {
-            "positions": map.getLayer('drillpads').markers.map(function (marker) {
-              return marker.lonlat;
-            })
-          };
-
-          pybossa.saveTask(task.id, answer).done(function() {
+          pybossa.saveTask(task.id, {"positions": getMapPositions()}).done(function() {
             deferred.resolve();
           });
 
@@ -241,35 +259,7 @@
       }
     });
 
-
-    var map;
-
-    var wgs84 = new OpenLayers.Projection("EPSG:4326");
-    var sphericalmercator = new OpenLayers.Projection("EPSG:900913");
-
-    map = new OpenLayers.Map({
-        div: "map",
-        allOverlays: true
-    });
-
-    var markers = new OpenLayers.Layer.Markers("Drill pads");
-    markers.id = "drillpads";
-    var guide = new OpenLayers.Layer.Vector("Guide");
-    guide.id = "guide";
-
-    map.addLayers([markers, guide]);
-
-    map.zoomToMaxExtent();
-
-    map.events.register("click", map, function(e) {
-      var size = new OpenLayers.Size(33,33);
-      var offset = new OpenLayers.Pixel(-(size.w/2), -(size.h/2));
-      map.getLayer('drillpads').addMarker(new OpenLayers.Marker(
-        map.getLonLatFromPixel(e.xy),
-        new OpenLayers.Icon('http://alerts.skytruth.org/markers/red-x.png', size, offset)
-      ));
-    });
-
+    loadMap();
     pybossa.run('drillpad');
   });
 </script>
