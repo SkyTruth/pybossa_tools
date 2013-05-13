@@ -148,13 +148,15 @@
 
 
 <script>
-  $(document).ready(function () {
     var map;
+  $(document).ready(function () {
 
     function loadMap() {
       map = new OpenLayers.Map({
           div: "map",
-          allOverlays: true
+          allOverlays: true,
+          fractionalZoom: true,
+          controls: []
       });
 
       var markers = new OpenLayers.Layer.Markers("Drill pads");
@@ -162,17 +164,29 @@
       var guide = new OpenLayers.Layer.Vector("Guide");
       guide.id = "guide";
 
-      map.addLayers([markers, guide]);
+      map.addLayers([guide, markers]);
+
+      map.addControls([
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.Attribution(),
+        new OpenLayers.Control.PanZoomBar()
+      ]);
 
       map.zoomToMaxExtent();
 
       map.events.register("click", map, function(e) {
         var size = new OpenLayers.Size(33,33);
         var offset = new OpenLayers.Pixel(-(size.w/2), -(size.h/2));
-        map.getLayer('drillpads').addMarker(new OpenLayers.Marker(
+        var marker = new OpenLayers.Marker(
           map.getLonLatFromPixel(e.xy),
           new OpenLayers.Icon('http://alerts.skytruth.org/markers/red-x.png', size, offset)
-        ));
+        );
+        map.getLayer('drillpads').addMarker(marker);
+
+        marker.events.register('click', {marker: marker}, function(evt) {
+          map.getLayer('drillpads').removeMarker(this.marker);
+          this.marker.destroy();
+        });
       });
     }
 
@@ -195,7 +209,6 @@
       map.addLayer(imagery);
       map.setLayerIndex(imagery, 0);
       map.setBaseLayer(imagery);
-
       var bbox = OpenLayers.Bounds.fromString(info.bbox).transform(
         new OpenLayers.Projection("EPSG:4326"),
         map.getProjection());
