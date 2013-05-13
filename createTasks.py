@@ -19,6 +19,14 @@
 import json
 from optparse import OptionParser
 import pbclient
+import os.path
+
+import django.template.loader
+import django.conf
+
+django.conf.settings.configure(TEMPLATE_DIRS=(os.path.dirname(__file__),))
+
+
 
 def handle_arguments():
     # Arguments for the application
@@ -97,9 +105,7 @@ def get_configuration():
     return (app_config, options)
 
 def contents(filename):
-    return file(filename).read()
-
-
+    return django.template.loader.render_to_string(filename, {})
 
 def run(app_config, options):
     def find_app_by_short_name():
