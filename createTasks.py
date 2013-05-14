@@ -74,9 +74,15 @@ class CreateTasks(object):
 
        parser.add_option("-a", "--application",
                          dest="app_root",
-                         help="Application (directory) name",
+                         help="Application (directory) name / path to application",
                          metavar="APP-DIR",
                          default="drillpad")
+
+       parser.add_option("-r", "--rename",
+                         dest="app_name",
+                         help="Use a different name from the one given with -a as short_name when uploading the app",
+                         metavar="APP-NAME",
+                         default=None)
 
        parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
        (options, args) = parser.parse_args()
@@ -102,6 +108,12 @@ class CreateTasks(object):
        except IOError as e:
            print "application config file is missing! Please create a new one"
            exit(1)
+
+       self.app_config["short_name"] = os.path.split(os.path.realpath(self.options.app_root))[1]
+
+       if self.options.app_name:
+           self.app_config["name"] = self.options.app_name
+           self.app_config["short_name"] = self.options.app_name
 
     def contents(self, filename):
        return django.template.loader.render_to_string(os.path.join(self.options.app_root, filename), {})
@@ -136,10 +148,11 @@ class CreateTasks(object):
             print('Using API-KEY: %s' % self.options.api_key)
 
         if self.options.create_app:
-            pbclient.create_app(app_config['name'],
-                                app_config['short_name'],
-                                app_config['description'])
-
+            res = pbclient.create_app(self.app_config['name'],
+                                      self.app_config['short_name'],
+                                      self.app_config['description'])
+            if res != 200:
+                raise Exception(res)
             self.setup_app()
         else:
             self.find_app_by_short_name()
