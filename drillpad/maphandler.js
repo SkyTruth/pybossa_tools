@@ -5,7 +5,9 @@ function loadMap() {
       div: "map",
       allOverlays: true,
       fractionalZoom: true,
-      controls: []
+      controls: [],
+      minScale: 442943842,
+      maxScale: 135
   });
 
   var markers = new OpenLayers.Layer.Markers("Drill pads");
