@@ -27,22 +27,7 @@
 </div>
 
 <div class="row skeleton">
-   <div id="map"></div>
-
-   <div class="taskmanager">
-     Task <span id="task-id" class="label">#</span>
-     <div class="progress progress-striped">
-       <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
-     </div>
-     <span id="done" class="label"></span> of <span id="total" class="label"></span>
-     <button class="btn btn-success btn-answer"><i class="icon icon-white icon-forward"></i> Done</button>
-     <span id="disqus_show_btn">
-       <button class="btn btn-disqus" onclick="loadDisqus()"><i class="icon-comments"></i> Show comments</button>
-       <button class="btn btn-disqus" onclick="loadDisqus()" style="display:none"><i class="icon-comments"></i> Hide comments</button>
-     </span>
-   </div>
-
-   <div id="disqus_thread" style="display:none"></div>
+  {% include "drillpadcat/row.html" %}
 </div>
 
 
@@ -149,10 +134,10 @@
 
 <script>
   $(document).ready(function () {
-    {% include "drillpad/maphandler.js" %}
+    {% include "drillpadcat/maphandler.js" %}
 
     function loadUserProgress() {
-      pybossa.userProgress('drillpad').done(setProgress);
+      pybossa.userProgress('drillpadcat').done(setProgress);
     }
 
     pybossa.taskLoaded(function(task, deferred) {
@@ -166,8 +151,7 @@
         updateMap(task.info);
 
         $('.btn-answer').on('click', function(evt) {
-
-          pybossa.saveTask(task.id, {"positions": getMapPositions()}).done(function() {
+          pybossa.saveTask(task.id, {"type": evt.target.value}).done(function() {
             deferred.resolve();
           });
 
@@ -187,6 +171,6 @@
 
     loadMap();
 globalmap = map;
-    pybossa.run('drillpad');
+    pybossa.run('drillpadcat');
   });
 </script>

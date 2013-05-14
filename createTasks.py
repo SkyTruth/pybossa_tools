@@ -148,17 +148,15 @@ class CreateTasks(object):
             print('Using API-KEY: %s' % self.options.api_key)
 
         if self.options.create_app:
-            res = pbclient.create_app(self.app_config['name'],
-                                      self.app_config['short_name'],
-                                      self.app_config['description'])
-            if res != 200:
-                raise Exception(res)
+            pbclient.create_app(self.app_config['name'],
+                                self.app_config['short_name'],
+                                self.app_config['description'])
             self.setup_app()
         else:
             self.find_app_by_short_name()
 
         if self.options.create_task:
-            self.create_task(app)
+            self.create_task()
 
         if self.options.update_template:
             print "Updating app template"
