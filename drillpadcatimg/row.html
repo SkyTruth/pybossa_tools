@@ -1,0 +1,21 @@
+<div id="mapcontainer">
+<div id="map"></div>
+</div>
+
+<div class="taskmanager">
+  Task <span id="task-id" class="label">#</span>
+  <div class="progress progress-striped">
+    <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+  </div>
+  <span id="done" class="label"></span> of <span id="total" class="label"></span>
+  <button class="btn btn-success btn-answer" value="empty">Empty</button>
+  <button class="btn btn-inverse btn-answer" value="equipment">Equipment</button>
+  <button class="btn btn-danger btn-answer" value="none">No pad visible</button>
+  <input class="input-answer" type="text" placeholder="None of the above">
+  <span id="disqus_show_btn">
+    <button class="btn btn-disqus" onclick="loadDisqus()"><i class="icon-comments"></i> Show comments</button>
+    <button class="btn btn-disqus" onclick="loadDisqus()" style="display:none"><i class="icon-comments"></i> Hide comments</button>
+  </span>
+</div>
+
+<div id="disqus_thread" style="display:none"></div>
