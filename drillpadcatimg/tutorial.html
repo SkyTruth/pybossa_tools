@@ -3,7 +3,7 @@
     <div id="0" class="step" style="display:none">
       <h2>Drill pad identification</h2>
       <p><strong>Hi!</strong> This is an application to help classify drill pads into different categories for <a href="http://skytruth.org">SkyTruth</a>.</p>
-      <p>The application is really simple. It loads a satelite image and asks you to select what type of drill pad you see in the image.</p>
+      <p>The application is really simple. It loads aerial photography and asks you to categorize what you see in the image.</p>
     </div>
 
     <div id="1" class="step" style="display:none">
@@ -60,23 +60,17 @@
     </div>
 
     <div id="2" class="step" style="display:none">
-      <h2>How to select drill pad type</h2>
-      <p>Click on the buttons in the bottom right of the image corresponding to what you see in the image.</p>
-      <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/drillpadcatimg/select-example.png" class="img-polaroid">
-    </div>
-
-    <div id="3" class="step" style="display:none">
-      <h2>Test run</h2>
-      <p>Pleasy try to mark any drill pads you see below.</p>
+      <h2>Practice run</h2>
+      <p>Plase select the category that corresponds to the drillpad in the center of the image.</p>
 
       {% include "drillpadcatimg/row.html" %}
 
       <span id="maperrors"></span>
     </div>
 
-    <div id="4" class="step" style="display:none">
+    <div id="3" class="step" style="display:none">
       <h2>On your mark, get set, go!</h2>
-      Thank you, you are now ready to begin helping out!
+      Great! You are now ready to begin helping out!
     </div>
 
     <div class="navigation">
@@ -91,48 +85,6 @@
   .navigation {
    margin-top: 10px;
   }
-  .taskmanager {
-    margin-top: -43px;
-    position: relative;
-    width: 627pt;
-    left: 100%;
-    margin-left: -629pt;
-    z-index: 2;
-    background: white;
-    font-weight: bold;
-    padding: 5pt;
-    -webkit-border-top-left-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    border-top-left-radius: 5px;
-  }
-  .taskmanager input {
-    margin-bottom: 0;
-  }
-  .progress {
-    width: 50px;
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
-  }
-  #mapcontainer {
-    position: relative;
-    width: 100%;
-    height: 400px;
-  }
-  #mapcontainer #map {
-    position: relative;
-    height: 100%;
-    overflow: auto;
-  }
-  #mapcontainer #map img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    margin: auto;
-    right: 0;
-  }
-
   #maperrors {
     color: #ff0000;
     font-weight: bold;
@@ -140,6 +92,33 @@
   #start {
     display: none;
   }
+
+  .item {
+    margin-top: 4pt;
+    margin-bottom: 4pt;
+  }
+  .progress {
+    width: 50px;
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+  #center {
+    display: table;
+    width: 100%
+  }
+  #centerinner {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+  }
+  #mapborder {
+    border: 2px solid #999999;
+    display: inline-block;
+    padding: 5pt;
+    margin: 20pt;
+  }
+
 </style>
 
 
@@ -150,19 +129,15 @@
   {% include "drillpadcatimg/maphandler.js" %}
 
   testruns = [
-    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer73.png", "answer":"none"},
-    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer41.png", "answer":"empty"},
-    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer48.png", "answer":"empty"},
-    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer126.png", "answer":"none"},
-    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer30.png", "answer":"equipment"},
-    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer54.png", "answer":"empty"},
-    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer47.png", "answer":"equipment"}
+    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer73.png", "answer":"none", "latitude": 47.11, "longitude": 13.00, "date": "2013"},
+    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer41.png", "answer":"empty", "latitude": 47.12, "longitude": 14.00, "date": "2013"},
+    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer30.png", "answer":"equipment", "latitude": 47.13, "longitude": 15.00, "date": "2013"},
   ];
 
   initializedSteps = {};
   function initializeStep(step) {
     if (initializedSteps[step] == undefined) {
-      if (step == 3) {
+      if (step == 2) {
         initializedSteps[step] = {task:0};
 
         loadMap();
@@ -176,8 +151,8 @@
 
   function validateStep() {
     var errs = [];
-    if (step == 3) {
-      if (initializedSteps[3].task < testruns.length) {
+    if (step == 2) {
+      if (initializedSteps[2].task < testruns.length) {
         errs.push("This should not happen. Where did you click?");
       }
     }
@@ -200,8 +175,8 @@
     }
 
     $("#prevBtn").toggle(step != 0);
-    $("#nextBtn").toggle(step != 3 && step != 4);
-    $("#startContrib").toggle(step == 4);
+    $("#nextBtn").toggle(step != 2 && step != 3);
+    $("#startContrib").toggle(step == 3);
     $("#" + step).show();
     initializeStep(step);
   }
@@ -212,16 +187,16 @@
     $("#modal").modal('show');
 
     $(".btn-answer").click(function (e) {
-      if (testruns[initializedSteps[3].task].answer == e.target.value) {
-        initializedSteps[3].task++;
-        if (initializedSteps[3].task < testruns.length) {
-          setProgress({total: testruns.length, done:initializedSteps[3].task});
-          updateMap(testruns[initializedSteps[3].task]);
+      if (testruns[initializedSteps[2].task].answer == e.target.value) {
+        initializedSteps[2].task++;
+        if (initializedSteps[2].task < testruns.length) {
+          setProgress({total: testruns.length, done:initializedSteps[2].task});
+          updateMap(testruns[initializedSteps[2].task]);
         } else {
           showStep('next');
-          initializedSteps[3].task = 0;
-          setProgress({total: testruns.length, done:initializedSteps[3].task});
-          updateMap(testruns[initializedSteps[3].task]);
+          initializedSteps[2].task = 0;
+          setProgress({total: testruns.length, done:initializedSteps[2].task});
+          updateMap(testruns[initializedSteps[2].task]);
         } 
       } else {
         alert("Sorry, that's not what's show in this picture :( Please try again!");

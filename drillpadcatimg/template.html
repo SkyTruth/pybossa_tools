@@ -65,33 +65,9 @@
     margin-left: 0pt;
     margin-right: 0pt;
   }
-  #disqus_thread {
-    position: fixed;
-    top: 120px;
-    z-index: 3;
-    background: white;
-    left: 40px;
-    right: 40px;
-    bottom: 100px;
-    padding: 5pt;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-  }
-  .taskmanager {
-    z-index: 2;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    background: white;
-    font-weight: bold;
-    padding: 5pt;
-    -webkit-border-top-left-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    border-top-left-radius: 5px;
-  }
-  .taskmanager input {
-    margin-bottom: 0;
+  .item {
+    margin-top: 4pt;
+    margin-bottom: 4pt;
   }
   .progress {
     width: 50px;
@@ -99,49 +75,36 @@
     margin-bottom: 0;
     vertical-align: middle;
   }
-  #mapcontainer {
-    width: 100%;
+  #content {
+    overflow: auto;
     position: fixed;
+    left: 0;
+    right: 0;
     bottom: 0;
     top: 81px;
   }
-  #mapcontainer #map {
-    position: relative;
+  #center {
+    display: table;
     height: 100%;
-    overflow: auto;
+    width: 100%
   }
-  #mapcontainer #map img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    margin: auto;
-    right: 0;
+  #centerinner {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+  }
+  #mapborder {
+    border: 2px solid #999999;
+    display: inline-block;
+    padding: 5pt;
+    margin: 20pt;
   }
   @media (max-width: 979px) {
-    #mapcontainer {
+    #content {
       top: 50px !important;
     }
   }
 </style>
-
-
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  function loadDisqus() {
-    $("#disqus_thread").toggle();
-    $(".btn-disqus").toggle();
-  }
-
-  $(document).ready(function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = 'http://drillpad.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  });
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 <script src="http://openlayers.org/dev/OpenLayers.js"></script>

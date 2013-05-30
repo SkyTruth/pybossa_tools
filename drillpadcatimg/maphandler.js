@@ -16,4 +16,7 @@ function updateMap(info) {
   var img = $("<img>");
   img.attr("src", info.url);
   $("#map").html(img);
+  $(".latitude").html(info.latitude);
+  $(".longitude").html(info.longitude);
+  $(".date").html(info.date);
 }
