@@ -27,6 +27,7 @@ with open("full_results.csv", "w") as f:
     c.writerow(['answer', 'filename', 'user', 'created', 'finished'])
 
     for task in tasks.values():
+        if 'results' not in task: continue
         for result in task['results']:
             c.writerow([result['info']['type'],
                         task['info']['url'],
@@ -39,6 +40,7 @@ with open("results.csv", "w") as f:
     c.writerow(['answer', 'answer2', 'certainty', 'certainty2', 'filename', 'min_created', 'max_created'])
 
     for task in tasks.values():
+        if 'results' not in task: continue
         n_answers = 0.0
         answers = {}
         min_created = None
