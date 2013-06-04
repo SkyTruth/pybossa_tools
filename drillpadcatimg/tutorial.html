@@ -7,59 +7,57 @@
     </div>
 
     <div id="1" class="step" style="display:none">
-      <h2>What the different drill pad types look like</h2>
-      <div class="row">
-        <div class="span4">
-          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/empty+well+pads/2010tioga_spudbuffer16.png" class="img-polaroid">
-          <button class="btn btn-success">Empty</button>
-        </div>
-        <div class="span4">
-          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/empty+well+pads/2010tioga_spudbuffer21.png" class="img-polaroid">
-          <button class="btn btn-success">Empty</button>
-        </div>
-        <div class="span4">
-          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/empty+well+pads/2010tioga_spudbuffer44.png" class="img-polaroid">
-          <button class="btn btn-success">Empty</button>
-        </div>
-      </div>
-
-      <br />
-
-      <div class="row">
-        <div class="span4">
-          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/no+pad+visible/2010tioga_spudbuffer136.png" class="img-polaroid">
-          <button class="btn btn-danger ">No pad visible</button>
-        </div>
-        <div class="span4">
-          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/no+pad+visible/2010tioga_spudbuffer139.png" class="img-polaroid">
-          <button class="btn btn-danger ">No pad visible</button>
-        </div>
-        <div class="span4">
-          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/no+pad+visible/2010tioga_spudbuffer142.png" class="img-polaroid">
-          <button class="btn btn-danger ">No pad visible</button>
-        </div>
-      </div>
-
-      <br />
+      <p>This is a site where drilling equipment is present, indicating that drilling was taking place at the time the photograph was taken.</p>
+      <p>For an image like this, please indicate that there is <button class="btn btn-inverse">Pad with equipment</button> present.</p>
 
       <div class="row">
         <div class="span4">
           <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer11.png" class="img-polaroid">
-          <button class="btn btn-inverse">Equipment</button>
         </div>
         <div class="span4">
           <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer34.png" class="img-polaroid">
-          <button class="btn btn-inverse">Equipment</button>
         </div>
         <div class="span4">
           <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer40.png" class="img-polaroid">
-          <button class="btn btn-inverse">Equipment</button>
         </div>
       </div>
-
     </div>
 
     <div id="2" class="step" style="display:none">
+      <p>This is a site where a well pad has been prepared for drilling, but there was no drilling equipment on site at the time the photograph was taken.</p>
+      <p>For an image like this, please indicate that there is a <button class="btn btn-success">Bare pad</button>.</p>
+
+      <div class="row">
+        <div class="span4">
+          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/empty+well+pads/2010tioga_spudbuffer16.png" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/empty+well+pads/2010tioga_spudbuffer21.png" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/empty+well+pads/2010tioga_spudbuffer44.png" class="img-polaroid">
+        </div>
+      </div>
+    </div>
+
+    <div id="3" class="step" style="display:none">
+      <p>This is a site where a drilling permit has been issued but no preperation for drilling has taken place at the time the photograph was taken.</p>
+      <p>For an image like this, please indicate that there is <button class="btn btn-danger ">No pad visible</button>.</p>
+
+      <div class="row">
+        <div class="span4">
+          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/no+pad+visible/2010tioga_spudbuffer136.png" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/no+pad+visible/2010tioga_spudbuffer139.png" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/well+pad+examples/no+pad+visible/2010tioga_spudbuffer142.png" class="img-polaroid">
+        </div>
+      </div>
+    </div>
+
+    <div id="4" class="step" style="display:none">
       <h2>Practice run</h2>
       <p>Plase select the category that corresponds to the drillpad in the center of the image.</p>
 
@@ -68,7 +66,7 @@
       <span id="maperrors"></span>
     </div>
 
-    <div id="3" class="step" style="display:none">
+    <div id="5" class="step" style="display:none">
       <h2>On your mark, get set, go!</h2>
       Great! You are now ready to begin helping out!
     </div>
@@ -128,8 +126,11 @@
 <script>
   {% include "drillpadcatimg/maphandler.js" %}
 
+  testrunstep = 4;
+  laststep = 5;
+
   testruns = [
-    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer73.png", "answer":"none", "latitude": 47.11, "longitude": 13.00, "date": "2013"},
+    {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer73.png", "answer":"nopad", "latitude": 47.11, "longitude": 13.00, "date": "2013"},
     {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer41.png", "answer":"empty", "latitude": 47.12, "longitude": 14.00, "date": "2013"},
     {"url":"https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer30.png", "answer":"equipment", "latitude": 47.13, "longitude": 15.00, "date": "2013"},
   ];
@@ -137,7 +138,7 @@
   initializedSteps = {};
   function initializeStep(step) {
     if (initializedSteps[step] == undefined) {
-      if (step == 2) {
+      if (step == testrunstep) {
         initializedSteps[step] = {task:0};
 
         loadMap();
@@ -151,8 +152,8 @@
 
   function validateStep() {
     var errs = [];
-    if (step == 2) {
-      if (initializedSteps[2].task < testruns.length) {
+    if (step == testrunstep) {
+      if (initializedSteps[testrunstep].task < testruns.length) {
         errs.push("This should not happen. Where did you click?");
       }
     }
@@ -175,8 +176,8 @@
     }
 
     $("#prevBtn").toggle(step != 0);
-    $("#nextBtn").toggle(step != 2 && step != 3);
-    $("#startContrib").toggle(step == 3);
+    $("#nextBtn").toggle(step != testrunstep && step != laststep);
+    $("#startContrib").toggle(step == laststep);
     $("#" + step).show();
     initializeStep(step);
   }
@@ -187,16 +188,16 @@
     $("#modal").modal('show');
 
     $(".btn-answer").click(function (e) {
-      if (testruns[initializedSteps[2].task].answer == e.target.value) {
-        initializedSteps[2].task++;
-        if (initializedSteps[2].task < testruns.length) {
-          setProgress({total: testruns.length, done:initializedSteps[2].task});
-          updateMap(testruns[initializedSteps[2].task]);
+      if (testruns[initializedSteps[testrunstep].task].answer == e.target.value) {
+        initializedSteps[testrunstep].task++;
+        if (initializedSteps[testrunstep].task < testruns.length) {
+          setProgress({total: testruns.length, done:initializedSteps[testrunstep].task});
+          updateMap(testruns[initializedSteps[testrunstep].task]);
         } else {
           showStep('next');
-          initializedSteps[2].task = 0;
-          setProgress({total: testruns.length, done:initializedSteps[2].task});
-          updateMap(testruns[initializedSteps[2].task]);
+          initializedSteps[testrunstep].task = 0;
+          setProgress({total: testruns.length, done:initializedSteps[testrunstep].task});
+          updateMap(testruns[initializedSteps[testrunstep].task]);
         } 
       } else {
         alert("Sorry, that's not what's show in this picture :( Please try again!");
