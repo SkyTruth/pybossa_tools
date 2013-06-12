@@ -98,8 +98,11 @@ class CreateTasks(object):
        self.options = options
 
 
-    def get_configuration(self):
-       self.handle_arguments()
+    def get_configuration(self, options = None):
+       if options:
+           self.options = options
+       else:
+           self.handle_arguments()
 
        # Load app details
        try:
@@ -137,8 +140,8 @@ class CreateTasks(object):
         task_info["n_answers"] = self.options.n_answers
         pbclient.create_task(self.app.id, task_info)
 
-    def __init__(self):
-        self.get_configuration()
+    def __init__(self, options = None):
+        self.get_configuration(options)
 
         pbclient.set('api_key', self.options.api_key)
         pbclient.set('endpoint', self.options.api_url)
