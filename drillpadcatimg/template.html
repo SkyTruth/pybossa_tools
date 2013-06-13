@@ -116,7 +116,7 @@
     {% include "drillpadcatimg/maphandler.js" %}
 
     function loadUserProgress() {
-      pybossa.userProgress('drillpadcatimg').done(setProgress);
+      pybossa.userProgress('{{short_name}}').done(setProgress);
     }
 
     pybossa.taskLoaded(function(task, deferred) {
@@ -165,6 +165,6 @@
 
     loadMap();
 globalmap = map;
-    pybossa.run('drillpadcatimg');
+    pybossa.run('{{short_name}}');
   });
 </script>

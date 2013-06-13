@@ -119,7 +119,7 @@ class CreateTasks(object):
            self.app_config["short_name"] = self.options.app_name
 
     def contents(self, filename):
-       return django.template.loader.render_to_string(os.path.join(self.options.app_root, filename), {})
+       return django.template.loader.render_to_string(os.path.join(self.options.app_root, filename), self.app_config)
 
     def find_app_by_short_name(self):
         self.app = pbclient.find_app(short_name=self.app_config['short_name'])[0]
