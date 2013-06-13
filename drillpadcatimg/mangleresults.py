@@ -4,14 +4,15 @@ import httplib2
 import json
 import csv
 import datetime
+import sys
 
 h = httplib2.Http(".cache")
 
-resp, content = h.request("http://crowdcrafting.org/app/drillpadcatimg/tasks/export?type=task&format=json", "GET")
+resp, content = h.request("http://crowdcrafting.org/app/%s/tasks/export?type=task&format=json" % sys.argv[1], "GET")
 tasks = dict((task['id'], task)
              for task in json.loads(content))
 
-resp, content = h.request("http://crowdcrafting.org/app/drillpadcatimg/tasks/export?type=task_run&format=json", "GET")
+resp, content = h.request("http://crowdcrafting.org/app/%s/tasks/export?type=task_run&format=json" % sys.argv[1], "GET")
 for result in json.loads(content):
     result['created'] = datetime.datetime.strptime(result['created'], '%Y-%m-%dT%H:%M:%S.%f')
     result['finish_time'] = datetime.datetime.strptime(result['finish_time'], '%Y-%m-%dT%H:%M:%S.%f')
@@ -30,7 +31,7 @@ with open("full_results.csv", "w") as f:
         if 'results' not in task: continue
         for result in task['results']:
             c.writerow([result['info']['type'],
-                        task['info']['url'],
+                        task['info'].get('url', 'UNKNOWN://%s' % task['id']),
                         result['user_id'],
                         result['created'].strftime(TIME_FORMAT),
                         result['finish_time'].strftime(TIME_FORMAT)])
@@ -66,6 +67,6 @@ with open("results.csv", "w") as f:
                     answers[1][0],
                     int(100 * answers[0][1] / n_answers),
                     int(100 * answers[1][1] / n_answers),
-                    task['info']['url'],
+                    task['info'].get('url', 'UNKNOWN://%s' % task['id']),
                     min_created.strftime(TIME_FORMAT),
                     max_created.strftime(TIME_FORMAT)])
