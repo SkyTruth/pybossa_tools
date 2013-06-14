@@ -49,7 +49,7 @@ with open("results.csv", "w") as f:
             n_answers += 1
             answer = result['info']['type']
             if answer not in answers:
-                answers[answer] = 0
+                answers[answer] = 1
             else:
                 answers[answer] += 1
             if min_created is None or min_created > result['created']:
