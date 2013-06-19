@@ -27,7 +27,7 @@
 </div>
 
 <div class="row skeleton">
-  {% include "drillpadcatimg/row.html" %}
+  {% include "frackfinder/row.html" %}
 </div>
 
 <div class="row all-done">
@@ -123,7 +123,7 @@
 
 <script>
   $(document).ready(function () {
-    {% include "drillpadcatimg/maphandler.js" %}
+    {% include "frackfinder/maphandler.js" %}
 
     function loadUserProgress() {
       pybossa.userProgress('{{short_name}}').done(setProgress);

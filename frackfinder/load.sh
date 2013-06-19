@@ -12,5 +12,5 @@
       echo "\"longitude\":$lng,\"latitude\":$lat,\"date\":\"$date\"";
     }
   )"
-  ./createTasks.py -s http://crowdcrafting.org -k 3e01d1a2-1efa-47e4-82db-b8dd669f336d -a drillpadcatimg -t "{\"url\":\"https://s3-us-west-2.amazonaws.com/drillpadcat/$name\",$data}"
+  ./createTasks.py -s http://crowdcrafting.org -k 3e01d1a2-1efa-47e4-82db-b8dd669f336d -a frackfinder -t "{\"url\":\"https://s3-us-west-2.amazonaws.com/drillpadcat/$name\",$data}"
 done
