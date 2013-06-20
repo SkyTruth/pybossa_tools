@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
@@ -8,6 +8,7 @@ import createTasks
 import csv
 import json
 
+SERVER = "http://crowdcrafting.org"
 URL_ROOT = "https://s3-us-west-2.amazonaws.com/drillpadcat/"
 
 def dictreader(rows):
@@ -17,7 +18,7 @@ def dictreader(rows):
         yield dict(zip(header, row))
 
 if len(sys.argv) != 4:
-    print """Usage: drillpadcatimgtaskload.py http://crowdcrafting.org 00000000-0000-0000-0000-000000000000 somefile.csv
+    print """Usage: drillpadcatimgtaskload.py frackfinder 00000000-0000-0000-0000-000000000000 somefile.csv
 
 Replace the zeroes with your access key
 
@@ -28,16 +29,18 @@ latitude,longitude,path
 Path is the path relative to teh root of the drillpadcat s3 bucket.
 """
 else:
-    with open(sys.argv[3]) as f:
+    app, accesskey, csvfile = sys.argv[1:]
+
+    with open(csvfile) as f:
         for row in dictreader(csv.reader(f)):
             row['url'] = URL_ROOT + row.pop("path")
             class options:
-                api_url = sys.argv[1]
-                api_key = sys.argv[2]
+                api_url = SERVER
+                api_key = accesskey
                 create_app = False
                 update_template = False
                 update_tasks = False
-                app_root = "drillpadcatimg"
+                app_root = app
                 create_task = json.dumps(row)
                 n_answers = 30
                 app_name = None

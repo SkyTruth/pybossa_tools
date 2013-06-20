@@ -13,9 +13,13 @@ function setProgress(data) {
 }
 
 function updateMap(info) {
-  var img = $("<img>");
-  img.attr("src", info.url);
-  $("#map").html(img);
+  $("#map .image").hide();
+  $("#map .loading").show();
+  $("#map .image").load(function () {
+    $("#map .loading").hide();
+    $("#map .image").show();
+  });
+  $("#map .image").attr("src", info.url);
   $(".latitude").html(info.latitude);
   $(".longitude").html(info.longitude);
   $(".date").html(info.date);

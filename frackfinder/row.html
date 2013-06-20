@@ -1,32 +1,36 @@
-<div id="content">
-  <div id="center">
-    <div id="centerinner">
-      <div id="mapborder">
-        <div class="item">
-          <span class="latitude"></span>, <span class="longitude"></span> @ <span class="date"></span>
+<div class="row">
+    <div class="span4">
+        <div class="row">
+            <div class="span4 answer-buttons">
+                <h5><strong>This is a...</strong></h5>
+                <div><button class="btn btn-success btn-answer" value="empty">Bare pad</button></div>
+                <div><button class="btn btn-inverse btn-answer" value="equipment">Pad with equipment</button></div>
+                <div><button class="btn btn-danger btn-answer" value="nopad">No pad visible</button></div>
+                <div><button class="btn btn-answer" value="unknown">Don't know</button></div>
+            </div>
         </div>
 
-        <div id="map" class="item"></div>
-
-        <div class="item">
-          <button class="btn btn-success btn-answer" value="empty">Bare pad</button>
-          <button class="btn btn-inverse btn-answer" value="equipment">Pad with equipment</button>
-          <button class="btn btn-danger btn-answer" value="nopad">No pad visible</button>
-          <button class="btn btn-answer" value="unknown">Don't know</button>
+        <div class="row">
+            <div class="span4">
+                <hr>
+                <h5><strong>Your progress</strong></h5>
+                <p>You are working on task: <span id="task-id" class="label">#</span></p>
+                <p>You have completed: <span id="done" class="label"></span> from a total of <span id="total" class="label"></span></p>
+                <div class="progress progress-striped">
+                    <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <div>
-        Task <span id="task-id" class="label">#</span>
-        <div class="progress progress-striped">
-          <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+        <div class="row">
+            <div class="span4">
+                <hr>
+                <a href="http://skytruth.org"><img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/SkyTruth+Logo.jpg"></a>
+            </div>
         </div>
-        <span id="done" class="label"></span> of <span id="total" class="label"></span>
-      </div>
-
-      <div class="item">
-        <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/SkyTruth+Logo.jpg">
-      </div>
     </div>
-  </div>
+    <div class="span8">
+        <div><span class="latitude"></span>, <span class="longitude"></span> @ <span class="date"></span></div>
+        <div id="map"><div class="loading"><h2>Loading imagery...</h2></div><img class="image" src="" style="width: 100%; height: auto;"></div>
+    </div>
 </div>

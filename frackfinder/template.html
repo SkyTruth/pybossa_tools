@@ -26,7 +26,7 @@
     </div>
 </div>
 
-<div class="row skeleton">
+<div class="skeleton">
   {% include "frackfinder/row.html" %}
 </div>
 
@@ -42,77 +42,15 @@
   .all-done {
     display: none;
   }
-  .navbar {
-    z-index: 3;
-    position: absolute;
+  .answer-buttons .btn {
+    margin-bottom: 2pt;
+    width: 120pt;
+    text-align: left;
   }
-  .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
-    margin: 0;
-  }
-  body {
-    padding: 0;
-  }
-  footer, html {
-    background: white;
-  }
-  footer {
-    display: none;
-  }
-  .alert-messages {
-    position: absolute;
-    z-index: 2;
-    left: 80px;
-    right: 80px;
-    top: 140px;
-  }
-  .container {
-    width: 100%;
-  }
-  .container h1 {
-    display: none;
-  }
-  .container .row {
-    margin-left: 0pt;
-    margin-right: 0pt;
-  }
-  .item {
-    margin-top: 4pt;
-    margin-bottom: 4pt;
-  }
-  .progress {
-    width: 50px;
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
-  }
-  #content {
-    overflow: auto;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 81px;
-  }
-  #center {
-    display: table;
-    height: 100%;
-    width: 100%
-  }
-  #centerinner {
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
-  }
-  #mapborder {
-    border: 2px solid #999999;
-    display: inline-block;
-    padding: 5pt;
-    margin: 20pt;
-  }
-  @media (max-width: 979px) {
-    #content {
-      top: 50px !important;
-    }
+  .image {
+    -webkit-border-radius: 8pt;
+    -moz-border-radius: 8pt;
+    border-radius: 8pt;
   }
 </style>
 
