@@ -20,7 +20,10 @@ function updateMap(info) {
     $("#map .image").show();
   });
   $("#map .image").attr("src", info.url);
-  $(".latitude").html(info.latitude);
-  $(".longitude").html(info.longitude);
-  $(".date").html(info.date);
+  $("#site_lat").html(info.latitude);
+  $("#site_lon").html(info.longitude);
+  $("#site_county").html(info.county);
+  $("#site_year").html(info.year);
+  $("#site_id").html(info.siteID);
+  
 }

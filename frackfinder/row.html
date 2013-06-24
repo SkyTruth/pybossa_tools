@@ -2,11 +2,14 @@
     <div class="span4">
         <div class="row">
             <div class="span4 answer-buttons">
-                <h5><strong>This is a...</strong></h5>
-                <div><button class="btn btn-success btn-answer" value="empty">Bare pad</button></div>
-                <div><button class="btn btn-inverse btn-answer" value="equipment">Pad with equipment</button></div>
-                <div><button class="btn btn-danger btn-answer" value="nopad">No pad visible</button></div>
-                <div><button class="btn btn-answer" value="unknown">Don't know</button></div>
+                <h5><strong>Which best describes the primary feature at the center of this image?</strong></h5>
+                <div><img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/nopad-thumbnail.png"/> <button class="btn btn-success btn-answer" value="nopad">No pad visible</button></div>
+                
+
+                
+                <div><img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/barepad-thumbnail.png"/> <button class="btn btn-answer" value="empty">Bare pad</button></div>
+                <div><img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/well+pads+w_equipment/equipment-thumbnail.png"/> <button class="btn btn-danger btn-answer" value="equipment">Pad with equipment</button></div>
+                <div><img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/unknown-thumbnail.png"/> <button class="btn btn-inverse" value="unknown">Don't know</button></div>
             </div>
         </div>
 
@@ -24,14 +27,23 @@
 
         <div class="row">
             <div class="span4">
-                <hr>
-                <a href="http://frack.skytruth.org/frackfinder"><img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/SkyTruth+Logo.jpg"></a>
+            <h5><strong>We Value Your Feedback</strong></h5>               
+                <a href="http://frack.skytruth.org/frackfinder" target="_blank"><img src="https://s3.amazonaws.com/FrackFinder/skytruth_logo.png"></a>
+                <a href="https://www.facebook.com/groups/skytruthvolunteers/" target="_blank"><img src="http://cdn.crackberry.com/sites/crackberry.com/files/styles/large/public/topic_images/2013/facebook-logo-3.png" width="50" height="50"/></a>
                 <div><a href="mailto:crowd@skytruth.org">crowd@skytruth.org</a></div>
             </div>
         </div>
     </div>
     <div class="span8">
-        <div><span class="latitude"></span>, <span class="longitude"></span> @ <span class="date"></span></div>
-        <div id="map"><div class="loading"><h2>Loading imagery...</h2></div><img class="image" src="" style="width: 100%; height: auto;"></div>
+        <div><strong><span id="site_county"></span> County <span id="site_year"></span></strong></div>
+        <div id="map" style="min-height:400px;height:auto important;height:400px;">
+        	<div class="loading">
+        		<h2>Loading imagery...</h2>
+        	</div>
+        	<div>
+        		<img class="image" src="" style="width:400px; height:400px;">
+        	</div>
+    	</div>  
+    	<div><b>Lat:</b> <span id="site_lat"></span>, <b>Long:</b> <span id="site_lon"></span><br/><b>ID:</b> <span id="site_id"></span></div>    
     </div>
 </div>
