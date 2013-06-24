@@ -30,6 +30,16 @@
   {% include "frackfinder/row.html" %}
 </div>
 
+<div class="row lots-done">
+  <div class="span12">
+    <h1><i class="icon-thumbs-up"></i>You're awesome!</h1>
+    
+    <p>You've done <span class="tasksdone"></span> identifications so far! Wow!</p>
+   
+    <button class="continue btn btn-success">Continue with the awesome work</button>
+  </div>
+</div>
+
 <div class="row all-done">
   <div class="span12">
     <h1><i class="icon-thumbs-up"></i>Good Job! You finshed them all!</h1>
@@ -85,6 +95,7 @@
 
 
 <style>
+  .lots-done,
   .all-done {
     display: none;
   }
@@ -103,6 +114,7 @@
 
 <script src="http://openlayers.org/dev/OpenLayers.js"></script>
 <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
 
 
 <script>
@@ -137,10 +149,22 @@
       }
     });
 
+    var continueFn;
+
+    $(".lots-done .continue").click(function (evt) { continueFn(evt); });
+
     var resultFn = function(evt) {
       console.log(["TASK", currentTask.id, evt.target.value, evt])
       pybossa.saveTask(currentTask.id, {"type": evt.target.value}).done(function() {
-        currentDeferred.resolve();
+
+        var tasksdone = parseInt($.cookie('{{short_name}}_tasks_done') || 0);
+        tasksdone += 1;
+        $.cookie('{{short_name}}_tasks_done', tasksdone);
+
+        $(".lots-done .tasksdone").html(tasksdone);
+        continueFn = function (evt) { $(".lots-done").hide(); $(".skeleton").show(); currentDeferred.resolve(); };
+        $(".skeleton").hide();
+        $(".lots-done").show();
       });
 
       $("#loading").fadeIn(500);
