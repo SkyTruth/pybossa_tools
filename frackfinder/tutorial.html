@@ -4,12 +4,12 @@
       <h2>FrackFinder - Drilling site classification</h2>
       <p><strong>Hi!</strong> This is an project to classify images of sites where drilling and fracking has occured or will occur in the future.</p>
       <p>The task is really simple. You will see an image showing an overhead view of a drilling site.  Based on what you can see, we will ask you to select the category that best describes it.</p>
-      <p>First we'll show you a few examples so you can see what the categories are</p>
+      <p>First we'll show you a few examples so you can see what the categories are.</p>
     </div>
 
     <div id="3" class="step" style="display:none">
       <p>This is a site where drilling equipment is present, indicating that drilling was taking place at the time the image was captured.</p>
-      <p>For an image like this, please indicate that there is <button class="btn btn-danger">Pad with equipment</button> present.</p>
+      <p>For an image like this, please indicate that there is <button class="btn btn-danger" href="#" onclick="showStep('next')">Pad with equipment</button> present.</p>
 
       <div class="row">
         <div class="span4">
@@ -26,7 +26,7 @@
 
     <div id="2" class="step" style="display:none">
       <p>This is a site where a well pad has been prepared for drilling, but there was no drilling equipment on site at the time the image was captured.</p>
-      <p>For an image like this, please indicate that there is a <button class="btn btn-answer">Bare pad</button>.</p>
+      <p>For an image like this, please indicate that there is a <button class="btn btn-answer" href="#" onclick="showStep('next')">Bare pad</button></p>
 
       <div class="row">
         <div class="span4">
@@ -43,7 +43,7 @@
 
     <div id="1" class="step" style="display:none">
       <p>This is a site where a drilling permit has been issued but no preperation for drilling has taken place yet.</p>
-      <p>For an image like this, please indicate that there is <button class="btn btn-success ">No pad visible</button>.</p>
+      <p>For an image like this, please indicate that there is <button class="btn btn-success" href="#" onclick="showStep('next')">No pad visible</button></p>
 
       <div class="row">
         <div class="span4">
@@ -68,7 +68,8 @@
 
     <div id="5" class="step" style="display:none">
       <h2>On your mark, get set, go!</h2>
-      Great! You are now ready to begin helping out!
+      <p>Great! You're ready to start contributing to the project!</p>
+      <p>Click Previous now if you want to go back and review.  Otherwise click Start and dive right in!</p>
     </div>
 
     <div class="navigation">
@@ -79,7 +80,7 @@
   </div>
 </div>
 
-<style>
+<!--style>
   .navigation {
    margin-top: 10px;
   }
@@ -117,6 +118,22 @@
     margin: 20pt;
   }
 
+</style-->
+
+<style>
+  #start {
+    display: none;
+  }
+  .answer-buttons .btn {
+    margin-bottom: 2pt;
+    width: 120pt;
+    text-align: left;
+  }
+  .image {
+    -webkit-border-radius: 8pt;
+    -moz-border-radius: 8pt;
+    border-radius: 8pt;
+  }
 </style>
 
 
@@ -130,9 +147,9 @@
   laststep = 5;
 
   testruns = [
-    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer73.png", "answer":"nopad", "latitude": 47.11, "longitude": 13.00, "year": "2013", "county":"Tioga"},
-    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer41.png", "answer":"empty", "latitude": 47.12, "longitude": 14.00, "year": "2013", "county":"Tioga"},
-    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/Tioga/images_Tioga_2010SPUDS/2010tioga_spudbuffer30.png", "answer":"equipment", "latitude": 47.13, "longitude": 15.00, "year": "2013", "county":"Tioga"},
+    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/tutorial/2010tioga_spudbuffer73.png", "answer":"nopad", "latitude": 41.7268, "longitude": -77.1718, "year": "2010", "county":"Tioga", "siteID": "7e0b00c6-309f-52b6-8029-3eed15a817de"},
+    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/tutorial/2010tioga_spudbuffer41.png", "answer":"empty", "latitude": 41.7708, "longitude": -77.4097, "year": "2010", "county":"Tioga", "siteID": "f258d929-b41b-53f7-8f53-8b3f2524e255"},
+    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/tutorial/2010tioga_spudbuffer30.png", "answer":"equipment", "latitude": 41.6886, "longitude": -77.5275, "year": "2010", "county":"Tioga", "siteID": "a14c83a0-0986-552a-bc33-8520d640871e"},
   ];
 
   initializedSteps = {};

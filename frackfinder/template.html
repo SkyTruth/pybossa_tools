@@ -34,17 +34,17 @@
   <div class="span12">
     <h1><i class="icon-thumbs-up"></i>You're awesome!</h1>
     
-    <p>You've done <span class="tasksdone"></span> identifications so far! Wow!</p>
+    <h3>You've done <span class="tasksdone"></span> identifications so far! Keep up the good work!</h3>
    
-    <button class="continue btn btn-success">Continue with the awesome work</button>
+    <button class="continue btn btn-success">Continue</button>
   </div>
 </div>
 
 <div class="row all-done">
   <div class="span12">
-    <h1><i class="icon-thumbs-up"></i>Good Job! You finshed them all!</h1>
+    <h1><i class="icon-thumbs-up"></i>Good Job! You finished them all!</h1>
     
-    <p>We thank you for your contribution. We'll be tabulating your results shortly and adding them to our ever-growning database of Marcellus drilling and fracking activity.</p>
+    <p>We thank you for your contribution. We'll be tabulating your results shortly and adding them to our ever-growing database of Marcellus drilling and fracking activity.</p>
    
   </div>
     
@@ -157,17 +157,22 @@
       console.log(["TASK", currentTask.id, evt.target.value, evt])
       pybossa.saveTask(currentTask.id, {"type": evt.target.value}).done(function() {
 
-        var tasksdone = parseInt($.cookie('{{short_name}}_tasks_done') || 0);
+/*        var tasksdone = parseInt($.cookie('{{short_name}}_tasks_done') || 0);
         tasksdone += 1;
         $.cookie('{{short_name}}_tasks_done', tasksdone);
-
-        $(".lots-done .tasksdone").html(tasksdone);
-        continueFn = function (evt) { $(".lots-done").hide(); $(".skeleton").show(); currentDeferred.resolve(); };
-        $(".skeleton").hide();
-        $(".lots-done").show();
+*/
+		var tasksdone = progress_done + 1;
+		if (0 == tasksdone % 50) {
+	        $(".lots-done .tasksdone").html(tasksdone);
+    	    continueFn = function (evt) { $(".lots-done").hide(); $(".skeleton").show(); currentDeferred.resolve(); };
+			$(".lots-done").show();
+	        $(".skeleton").hide();
+		}
+		else
+			currentDeferred.resolve();
       });
 
-      $("#loading").fadeIn(500);
+      /*$("#loading").fadeIn(500);*/
       if ($("#disqus_thread").is(":visible")) {
         $('#disqus_thread').toggle();
         $('.btn-disqus').toggle();

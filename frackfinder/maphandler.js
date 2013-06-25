@@ -1,4 +1,5 @@
 var map;
+var progress_done = 0;
 
 function loadMap() {
 }
@@ -10,6 +11,7 @@ function setProgress(data) {
   $("#progress").tooltip({'placement': 'left'}); 
   $("#total").text(data.total);
   $("#done").text(data.done);
+  progress_done = parseInt(data.done || 0)
 }
 
 function updateMap(info) {
