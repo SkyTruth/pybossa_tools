@@ -43,7 +43,7 @@ def main (app):
 	with open(outfile("full_results"), "w") as f:
 		fieldnames = ['id', 'siteID', 'year', 'county', 'answer', 'user', 'created', 'finished']
 		c = csv.DictWriter(f, fieldnames)
-		
+		c.writeheader ()
 		
 		for task in tasks.values():
 			if 'results' not in task: continue
@@ -72,7 +72,8 @@ def main (app):
 	with open(outfile("results"), "w") as f:
 		fieldnames = ['id', 'siteID', 'year', 'county', 'answer1', 'answer2', 'answer1_count', 'answer2_count', 'answer1_pct', 'answer2_pct',  'total_answers', 'max_answers', 'pct_complete', 'min_created', 'max_created']
 		c = csv.DictWriter(f, fieldnames)
-	
+		c.writeheader ()
+		
 		for task in tasks.values():
 			taskid = task['id']
 			task_info = {
