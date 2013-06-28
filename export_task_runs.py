@@ -41,7 +41,7 @@ def main (app):
 	
 	
 	with open(outfile("full_results"), "w") as f:
-		fieldnames = ['id', 'siteID', 'year', 'county', 'answer', 'user', 'created', 'finished']
+		fieldnames = ['id', 'siteID', 'year', 'county', 'url', 'answer', 'user', 'created', 'finished']
 		c = csv.DictWriter(f, fieldnames)
 		c.writeheader ()
 		
@@ -54,6 +54,7 @@ def main (app):
 				'siteID': task['info'].get('siteID', 'UNKNOWN:%s' % task['id']),
 				'year': task['info'].get('year', 'UNKNOWN:%s' % task['id']),
 				'county': task['info'].get('county', 'UNKNOWN:%s' % task['id']),
+				'url': task['info'].get('url', 'UNKNOWN:%s' % task['id'])
 			}
 			
 			for result in task['results']:
@@ -70,7 +71,7 @@ def main (app):
 	county_results = {}
 	            
 	with open(outfile("results"), "w") as f:
-		fieldnames = ['id', 'siteID', 'year', 'county', 'answer1', 'answer2', 'answer1_count', 'answer2_count', 'answer1_pct', 'answer2_pct',  'total_answers', 'max_answers', 'pct_complete', 'min_created', 'max_created']
+		fieldnames = ['id', 'siteID', 'year', 'county', 'url', 'answer1', 'answer2', 'answer1_count', 'answer2_count', 'answer1_pct', 'answer2_pct',  'total_answers', 'max_answers', 'pct_complete', 'min_created', 'max_created']
 		c = csv.DictWriter(f, fieldnames)
 		c.writeheader ()
 		
@@ -81,6 +82,7 @@ def main (app):
 				'siteID': task['info'].get('siteID', 'UNKNOWN:%s' % task['id']),
 				'year': task['info'].get('year', 'UNKNOWN:%s' % task['id']),
 				'county': task['info'].get('county', 'UNKNOWN:%s' % task['id']),
+				'url': task['info'].get('url', 'UNKNOWN:%s' % task['id'])				
 			}
 
 
