@@ -16,10 +16,13 @@ RETRIEVE EGIL'S CODE CHANGES
 
 CREATING NEW CROWDCRAFTING APP
 
-	$ python createTasks.py -s http://crowdcrafting.org -k "1a15c5f5-1092-45ab-aa51-35f624abcb60" -a frackfinder -r drillpadtestapp -c -v
+	$ python createTasks.py -s http://crowdcrafting.org -k "[API KEY]" -a frackfinder -r drillpadtestapp -c -v
 
-		(-u if updating existing app)
-		(in "" api key points to an account in crowdcrafting)
+		(-c to create a new app, -u if updating existing app)
+		
+		[API KEY] is the key for your crowdcrafting account. Find it in "Edit Your Profile"
+
+	
 
 CREATING TASKS  
 Spuds from 2005-2010 were combined and broken into counties. they are located in C:\Users\Yolandita\Documents\Well Pad App\site info\sites-spuds_by_county

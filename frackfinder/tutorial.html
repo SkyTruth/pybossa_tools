@@ -2,14 +2,14 @@
   <div class="span12">
     <div id="0" class="step" style="display:none">
       <h2>FrackFinder - Drilling site classification</h2>
-      <p><strong>Hi!</strong> This is an project to classify images of sites where drilling and fracking has occured or will occur in the future.</p>
+      <p><strong>Hi!</strong> This is a project to classify images of sites where drilling and fracking has occured or will occur in the future.</p>
       <p>The task is really simple. You will see an image showing an overhead view of a drilling site.  Based on what you can see, we will ask you to select the category that best describes it.</p>
       <p>First we'll show you a few examples so you can see what the categories are.</p>
     </div>
 
     <div id="3" class="step" style="display:none">
-      <p>This is a site where drilling equipment is present, indicating that drilling was taking place at the time the image was captured.</p>
-      <p>For an image like this, please indicate that there is <button class="btn btn-danger" href="#" onclick="showStep('next')">Pad with equipment</button> present.</p>
+      <p>This is a site where drilling equipment is present, indicating that drilling activity was taking place at the time the image was captured. For our purposes, &quot;Equipment&quot; means more than just a few trucks parked on the pad - we're looking for many trucks and other large equipment.   If you're not sure how much equipment is enough, then just make your best guess and move on.</p>
+      <p>For images like this, please indicate that there is <button class="btn btn-danger" href="#" onclick="showStep('next')">Pad with equipment</button> present.</p>
 
       <div class="row">
         <div class="span4">
@@ -19,18 +19,18 @@
           <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer34.png" class="img-polaroid">
         </div>
         <div class="span4">
-          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer40.png" class="img-polaroid">
+          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/well+pads+w_equipment/2008_X-079.3670_Y0040.6300.png" class="img-polaroid">
         </div>
       </div>
     </div>
 
     <div id="2" class="step" style="display:none">
-      <p>This is a site where a well pad has been prepared for drilling, but there was no drilling equipment on site at the time the image was captured.</p>
-      <p>For an image like this, please indicate that there is a <button class="btn btn-answer" href="#" onclick="showStep('next')">Bare pad</button></p>
+      <p>This is a site where a well pad has been prepared for drilling, but there was no drilling equipment on site at the time the image was captured. A bare pad will be roughly rectangular and appear close to the center of the image, with an access road visible and partially or completely clear of vegetation. Usually they are covered in bare dirt or gravel. You may also see an artificial water storage pond.</p>
+      <p>For images like this, please indicate that there is a <button class="btn btn-answer" href="#" onclick="showStep('next')">Bare pad</button></p>
 
       <div class="row">
         <div class="span4">
-          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/2010tioga_spudbuffer16.png" class="img-polaroid">
+          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/2010_X-076.9908_Y0041.9884.png" class="img-polaroid">
         </div>
         <div class="span4">
           <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/2010tioga_spudbuffer21.png" class="img-polaroid">
@@ -42,15 +42,15 @@
     </div>
 
     <div id="1" class="step" style="display:none">
-      <p>This is a site where a drilling permit has been issued but no preparation for drilling has taken place yet.</p>
-      <p>For an image like this, please indicate that there is <button class="btn btn-success" href="#" onclick="showStep('next')">No pad visible</button></p>
+      <p>This is a site where a drilling permit has been issued but no preparation for drilling has taken place yet.  Sometimes you may see a clearing in the forest which might look like a drilling area, but if you don't see an access road, then it is not a drill pad. Also, if the cleared area is not close to the center of the image, then it does not count either.</p>
+      <p>For images like this, please indicate that there is <button class="btn btn-success" href="#" onclick="showStep('next')">No pad visible</button></p>
 
       <div class="row">
         <div class="span4">
           <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2010tioga_spudbuffer136.png" class="img-polaroid">
         </div>
         <div class="span4">
-          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2010tioga_spudbuffer139.png" class="img-polaroid">
+          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2010_X-079.2094_Y0041.5985.png" class="img-polaroid">
         </div>
         <div class="span4">
           <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2010tioga_spudbuffer142.png" class="img-polaroid">
@@ -59,6 +59,23 @@
     </div>
 
     <div id="4" class="step" style="display:none">
+      <p>For some images, you just can't say for sure what's going on. In that case, we give you a &quot;Don't Know&quot; button so you can move on and leave the hard ones to us to figure out. In some cases, you may have a large cleared area in the center of the image, but it's too large and not rectangular, like the first two examples here.  Or you may have something in the right place and about the right size and shape, but based on the context it looks more like a farm or residential area, like in the third image.</p>
+      <p>In cases like this, or anything else that just looks weird, click <button class="btn btn-inverse" href="#" onclick="showStep('next')">Don't know</button></p>
+
+      <div class="row">
+        <div class="span4">
+          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/unknown/2008_X-079.6266_Y0040.7788.png" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/unknown/2008_X-079.5392_Y0040.8886.png" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/unknown/2008_X-079.5970_Y0040.7876.png" class="img-polaroid">
+        </div>
+      </div>
+    </div>
+
+    <div id="5" class="step" style="display:none">
       <h2>Practice run</h2>
       
       {% include "frackfinder/row.html" %}
@@ -66,7 +83,7 @@
       <span id="maperrors"></span>
     </div>
 
-    <div id="5" class="step" style="display:none">
+    <div id="6" class="step" style="display:none">
       <h2>On your mark, get set, go!</h2>
       <p>Great! You're ready to start contributing to the project!</p>
       <p>Whether you can give us 5 minutes or 50, any contribution will help us reach our goal, so do as much as you can now, and you can always come back later if you want some more.</p>
@@ -134,6 +151,12 @@
     -webkit-border-radius: 8pt;
     -moz-border-radius: 8pt;
     border-radius: 8pt;
+  	position:absolute;
+  	z-index:0;
+  }
+  .imgoverlay {
+  	position:absolute;
+  	z-index:1;
   }
 </style>
 
@@ -144,13 +167,16 @@
 <script>
   {% include "frackfinder/maphandler.js" %}
 
-  testrunstep = 4;
-  laststep = 5;
-
+  testrunstep = 5;
+  laststep = 6;
+  
   testruns = [
-    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/tutorial/2010tioga_spudbuffer73.png", "answer":"nopad", "latitude": 41.7268, "longitude": -77.1718, "year": "2010", "county":"Tioga", "siteID": "7e0b00c6-309f-52b6-8029-3eed15a817de"},
-    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/tutorial/2010tioga_spudbuffer41.png", "answer":"empty", "latitude": 41.7708, "longitude": -77.4097, "year": "2010", "county":"Tioga", "siteID": "f258d929-b41b-53f7-8f53-8b3f2524e255"},
-    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/tutorial/2010tioga_spudbuffer30.png", "answer":"equipment", "latitude": 41.6886, "longitude": -77.5275, "year": "2010", "county":"Tioga", "siteID": "a14c83a0-0986-552a-bc33-8520d640871e"},
+      {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/2010tioga_spudbuffer16.png", "answer":"empty", "latitude": 41.9063, "longitude": -76.9252, "year": "2010", "county":"Tioga", "siteID": "def69ddd-d528-53f3-aa69-60ee4e4fe1a8"},
+    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2010tioga_spudbuffer139.png", "answer":"nopad", "latitude": 41.6453, "longitude": -77.2906, "year": "2010", "county":"Tioga", "siteID": "f0137364-26ef-5ff7-960d-69f92d7b45cc"},
+    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/2010_X-077.1201_Y0041.6894.png", "answer":"empty", "latitude": 41.6894, "longitude": -77.1201, "year": "2010", "county":"Tioga", "siteID": "cf151868-e99b-5b54-849c-fcf59a354462"},
+    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/unknown/2008_X-079.4211_Y0040.8858.png", "answer":"unknown", "latitude": 40.8858, "longitude": -79.4211, "year": "2008", "county":"Tioga", "siteID": "f258d929-b41b-53f7-8f53-8b3f2524e255"},
+    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer40.png", "answer":"equipment", "latitude": 41.6886, "longitude": -77.5275, "year": "2010", "county":"Tioga", "siteID": "a14c83a0-0986-552a-bc33-8520d640871e"},
+    {"url":"https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2008_X-076.3320_Y0041.2842.png", "answer":"nopad", "latitude": 41.2842, "longitude": -76.3320, "year": "2008", "county":"Columbia", "siteID": "c5ee0173-5c21-5932-9f33-af891bf2c0e0"},
   ];
 
   initializedSteps = {};

@@ -27,7 +27,11 @@
 </div>
 
 <div class="skeleton">
-  {% include "frackfinder/row.html" %}
+  <div class="span2 pull-right">
+      <a class="btn btn-primary btn-large" href="/app/{{short_name}}/tutorial"><i class="icon-question-sign"></i> Tutorial</a>
+  </div>     
+    {% include "frackfinder/row.html" %}
+
 </div>
 
 <div class="row lots-done">
@@ -108,7 +112,14 @@
     -webkit-border-radius: 8pt;
     -moz-border-radius: 8pt;
     border-radius: 8pt;
+  	position:absolute;
+  	z-index:0;
   }
+  .imgoverlay {
+  	position:absolute;
+  	z-index:1;
+  }
+  
 </style>
 
 
@@ -162,13 +173,13 @@
         $.cookie('{{short_name}}_tasks_done', tasksdone);
 */
 		var tasksdone = progress_done + 1;
-		if (0 == tasksdone % 50) {
+/*		if (0 == tasksdone % 50) {
 	        $(".lots-done .tasksdone").html(tasksdone);
     	    continueFn = function (evt) { $(".lots-done").hide(); $(".skeleton").show(); currentDeferred.resolve(); };
 			$(".lots-done").show();
 	        $(".skeleton").hide();
 		}
-		else
+		else */
 			currentDeferred.resolve();
       });
 
@@ -186,6 +197,7 @@
         evt.target.value = '';
       }
     });
+
 
     loadMap();
 globalmap = map;

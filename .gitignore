@@ -13,3 +13,5 @@ epio.ini
 *~
 data
 .cache
+reports/*
+.DS_Store
