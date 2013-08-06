@@ -4,7 +4,7 @@ TURN ON VIRTUAL ENVIRONMENT IN CYGWIN
 
 	$ source ~/env/drillpad/bin/activate
 	
-RETRIEVE EGIL'S CODE CHANGES
+RETRIEVE LATEST CODE CHANGES
 
 	$ cd pybossa_tools
 	$ git pull
@@ -16,7 +16,7 @@ RETRIEVE EGIL'S CODE CHANGES
 
 CREATING NEW CROWDCRAFTING APP
 
-	$ python createTasks.py -s http://crowdcrafting.org -k "[API KEY]" -a frackfinder -r drillpadtestapp -c -v
+	$ python createTasks.py -s http://crowdcrafting.org -k "[API KEY]" -a frackfinder -r drillpadtestapp -c -v -n 10
 
 		(-c to create a new app, -u if updating existing app)
 		

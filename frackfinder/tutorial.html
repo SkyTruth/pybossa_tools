@@ -95,6 +95,9 @@
       <a id="nextBtn" href="#" onclick="showStep('next')" class="btn btn-success">Next</a>
       <a id="startContrib" href="../{{short_name}}/newtask" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Start helping out</a>
     </div>
+    <div>
+    <a id="skipBtn" href="../{{short_name}}/newtask">No thanks, I've done this before. I'm ready to start</a>
+    </div>
   </div>
 </div>
 
@@ -220,6 +223,7 @@
     }
 
     $("#prevBtn").toggle(step != 0);
+    $("#skipBtn").toggle(step == 0);
     $("#nextBtn").toggle(step != testrunstep && step != laststep);
     $("#startContrib").toggle(step == laststep);
     $("#" + step).show();

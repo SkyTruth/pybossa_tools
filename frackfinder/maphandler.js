@@ -24,8 +24,8 @@ var atta_girl_phrases = [
 	"Dynamite!"
 ];
 function get_atta_girl (interval_size, progress) {
-	if ((interval_size - 1) == (progress) % interval_size)
-		return '<strong><i class="icon-thumbs-up"></i> ' + atta_girl_phrases[Math.floor((progress + 1) / interval_size) % atta_girl_phrases.length] + "</strong>";
+	if ((interval_size - 2) <= (progress) % interval_size)
+		return '<strong><i class="icon-thumbs-up"></i> ' + atta_girl_phrases[Math.floor((progress) / interval_size) % atta_girl_phrases.length] + "</strong>";
 	else
 		return '<strong>Your Progress</strong>';
 }
@@ -38,7 +38,7 @@ function setProgress(data) {
   $("#total").text(data.total);
   $("#done").text(data.done);
   progress_done = parseInt(data.done || 0)
-  $("#progressmsg").html(get_atta_girl(5,progress_done));
+  $("#progressmsg").html(get_atta_girl(20,progress_done));
 }
 
 function updateMap(info) {
