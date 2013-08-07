@@ -34,20 +34,21 @@ TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 with open("full_results.csv", "w") as f:
     c = csv.writer(f)
-    c.writerow(['answer', sys.argv[2], 'user', 'created', 'finished'])
+    c.writerow(['answer', 'user', 'created', 'finished'] + sys.argv[2:])
 
     for task in tasks.values():
         if 'results' not in task: continue
         for result in task['results']:
             c.writerow([result['info']['type'],
-                        task['info'].get(sys.argv[2], 'UNKNOWN:%s' % task['id']),
                         result['user_id'],
                         result['created'].strftime(TIME_FORMAT),
-                        result['finish_time'].strftime(TIME_FORMAT)])
+                        result['finish_time'].strftime(TIME_FORMAT)] +
+                       [task['info'].get(col, 'UNKNOWN:%s' % task['id'])
+                        for col in sys.argv[2:]])
             
 with open("results.csv", "w") as f:
     c = csv.writer(f)
-    c.writerow(['answer', 'answer2', 'certainty', 'certainty2', 'done', 'n_answers', sys.argv[2], 'min_created', 'max_created'])
+    c.writerow(['answer', 'answer2', 'certainty', 'certainty2', 'done', 'n_answers', 'min_created', 'max_created'] + sys.argv[2:])
 
     for task in tasks.values():
         if 'results' not in task: continue
@@ -77,9 +78,10 @@ with open("results.csv", "w") as f:
                     int(100 * answers[1][1] / done),
                     int(done),
                     task['n_answers'],
-                    task['info'].get(sys.argv[2], 'UNKNOWN:%s' % task['id']),
                     min_created.strftime(TIME_FORMAT),
-                    max_created.strftime(TIME_FORMAT)])
+                    max_created.strftime(TIME_FORMAT)] +
+                   [task['info'].get(col, 'UNKNOWN:%s' % task['id'])
+                    for col in sys.argv[2:]])
 
 
 k = fastkml.kml.KML()
