@@ -1,5 +1,5 @@
 {
-    "name": "FrackFinder",
+    "name": "SkyTruth FrackFinder: Project TADPOLE",
     "thumbnail": "https://s3.amazonaws.com/FrackFinder/covershot.png",
     "description": "Help SkyTruth identify drilling and fracking activity in the Marcellus Shale region",
     "question": "Please identify the type of drillpad depicted in this satellite image"
