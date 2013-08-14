@@ -1,0 +1,159 @@
+<div class="row">
+  <div class="span12">
+    <div id="0" class="step" style="display:none">
+      <h2>Drill pad identification</h2>
+      <p><strong>Hi!</strong> This is an application to help identify drill pads (for oil, gas etc) for <a href="http://skytruth.org">SkyTruth</a>.</p>
+      <p>The application is really simple. It loads a map with satelite imagery and asks you to click on any drill pads you see within a certain area.</p>
+    </div>
+
+    <div id="1" class="step" style="display:none">
+      <h2>What a drill pad looks like</h2>
+      <img src="http://images.nationalgeographic.com/wpf/media-live/photos/000/036/cache/drill-pads-ludwig_3684_990x742.jpg" class="img-polaroid">
+    </div>
+
+    <div id="2" class="step" style="display:none">
+      <h2>How to select drill pads</h2>
+      <p>Click on all drill pads you see within the red rectangle. They will get marked witrh a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
+      <p>Just reload the page if you accidentally clicked somewhere you didn't mean to.</p>
+      <img src="http://farm8.staticflickr.com/7357/8720786128_ef1713497b_z_d.jpg" class="img-polaroid">
+    </div>
+
+    <div id="3" class="step" style="display:none">
+      <h2>Test run</h2>
+      <p>Pleasy try to mark any drill pads you see below.</p>
+      <div id="map"></div>
+      <div class="taskmanager">
+        Task <span id="task-id" class="label">#</span>
+        <div class="progress progress-striped">
+          <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+        </div>
+        <span id="done" class="label"></span> of <span id="total" class="label"></span>
+        <button class="btn btn-success btn-answer" onclick="showStep('next')"><i class="icon icon-white icon-forward"></i> Done</button>
+        <span id="disqus_show_btn">
+          <button class="btn btn-disqus"><i class="icon-comments"></i> Show comments</button>
+        </span>
+      </div>
+      <span id="maperrors"></span>
+    </div>
+
+    <div id="4" class="step" style="display:none">
+      <h2>On your mark, get set, go!</h2>
+      Thank you, you are now ready to begin helping out!
+    </div>
+
+    <div class="navigation">
+      <a id="prevBtn" href="#" onclick="showStep('prev')" class="btn">Previous</a>
+      <a id="nextBtn" href="#" onclick="showStep('next')" class="btn btn-success">Next</a>
+      <a id="startContrib" href="../{{short_name}}/newtask" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Start helping out</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .navigation {
+   margin-top: 10px;
+  }
+  .taskmanager {
+    margin-top: -43px;
+    position: relative;
+    width: 312pt;
+    left: 100%;
+    margin-left: -322pt;
+    z-index: 2;
+    background: white;
+    font-weight: bold;
+    padding: 5pt;
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    border-top-left-radius: 5px;
+  }
+  .progress {
+    width: 50px;
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+  #map {
+    position: relative;
+    width: 100%;
+    height: 400px;
+  }
+  #maperrors {
+    color: #ff0000;
+    font-weight: bold;
+  }
+  #start {
+    display: none;
+  }
+</style>
+
+
+<script src="http://openlayers.org/dev/OpenLayers.js"></script>
+<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+
+<script>
+  {% include "drillpad/maphandler.js" %}
+
+  initializedSteps = {};
+  function initializeStep(step) {
+    if (initializedSteps[step] == undefined) {
+      if (step == 3) {
+        loadMap();
+        setProgress({total: 100, done:50});
+        updateMap({
+          "bbox":"-77.295721,41.83096,-76.966131,41.983755",
+          "url":"http://raster.nationalmap.gov/ArcGIS/services/Orthoimagery/USGS_EDC_Ortho_NAIP/ImageServer/WMSServer",
+          "options":{"request":"getMap", "service":"WMS", "transparent": true}
+        });
+      }
+      initializedSteps[step] = true;
+    }
+  }
+
+  function validateStep() {
+    var errs = [];
+    if (step == 3) {
+      var positions = getMapPositions();
+      if (positions.length != 2) {
+        errs.push("<div>Please mark both of the two drill pads.</div>");
+      }
+      var inside = true;
+      positions.map(function (pos) {
+        inside = inside && OpenLayers.Bounds.fromString("-77.295721,41.83096,-76.966131,41.983755").transform(
+          new OpenLayers.Projection("EPSG:4326"),
+          map.getProjection()).containsLonLat(pos);
+      });
+      if (!inside) errs.push("<div>Please do not mark sites outside the area of the task, marked with a red rectangle.</div>")
+      map.getLayer('drillpads').clearMarkers();
+    }
+    $("#maperrors").html(errs.join(""));
+    return errs.length == 0;
+  }
+
+
+  var step = -1;
+  function showStep(action) {
+    if (!validateStep()) return;
+
+    $("#" + step).hide();
+
+    if (action == 'next') {
+      step = step + 1;
+    }
+    if (action == 'prev') {
+      step = step - 1;
+    }
+
+    $("#prevBtn").toggle(step != 0);
+    $("#nextBtn").toggle(step != 4);
+    $("#startContrib").toggle(step == 4);
+    $("#" + step).show();
+    initializeStep(step);
+  }
+
+
+  $(document).ready(function () {
+    showStep('next');
+    $("#modal").modal('show');
+  });
+</script>
