@@ -1,5 +1,7 @@
 var map;
 
+drawStyle = 'morph';
+
 function loadMap() {
   map = new OpenLayers.Map({
       div: "map",
@@ -15,7 +17,10 @@ function loadMap() {
 
   map.addLayers([drillpads]);
 
-  drillpads.mod = new OpenLayers.Control.ModifyFeature(drillpads);
+  if (drawStyle == 'new')
+    drillpads.mod = new OpenLayers.Control.DrawFeature(drillpads, OpenLayers.Handler.Polygon);
+  else
+    drillpads.mod = new OpenLayers.Control.ModifyFeature(drillpads);
   map.addControls([
     new OpenLayers.Control.Navigation(),
     new OpenLayers.Control.Attribution(),
@@ -36,34 +41,28 @@ function setProgress(data) {
   $("#done").text(data.done);
 }
 
-function updateMap(info) {
-  if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
-  var imagery = new OpenLayers.Layer.WMS(
-    "Imagery",
-    info.url,
-    info.options);
-  imagery.id = 'imagery';
-  map.addLayer(imagery);
-  map.setLayerIndex(imagery, 0);
-  map.setBaseLayer(imagery);
+function clearData () {
+  var drillpads = map.getLayer('drillpads');
+
+  drillpads.mod.deactivate();
+  drillpads.removeAllFeatures();
+  drillpads.mod.activate();
+
+  if (drawStyle == 'new') return;
+  
+  var info = drillpads.taskinfo;
 
   var center = new OpenLayers.LonLat(info.position);
 
   var bbox = new OpenLayers.Bounds();
   var radius = 250;
-    var bboxradius = 2500;
 
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, radius));
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, radius));
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 180, radius));
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 270, radius));
 
-  var bbox = bbox.transform(
-    new OpenLayers.Projection("EPSG:4326"),
-    map.getProjection());
-
-  map.getLayer('drillpads').removeAllFeatures();
-  map.getLayer('drillpads').addFeatures([
+  drillpads.addFeatures([
     new OpenLayers.Feature.Vector(
       bbox.toGeometry(),
       null,
@@ -75,7 +74,25 @@ function updateMap(info) {
       }
     )
   ]);
+}
 
+function updateMap(info) {
+  map.getLayer('drillpads').taskinfo = info;
+
+  if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
+  var imagery = new OpenLayers.Layer.WMS(
+    "Imagery",
+    info.url,
+    info.options);
+  imagery.id = 'imagery';
+  map.addLayer(imagery);
+  map.setLayerIndex(imagery, 0);
+  map.setBaseLayer(imagery);
+
+  clearData();
+
+  var center = new OpenLayers.LonLat(info.position);
+  var bboxradius = 2500;
   bbox = new OpenLayers.Bounds();
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, bboxradius));
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, bboxradius));
