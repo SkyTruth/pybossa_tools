@@ -1,6 +1,6 @@
 var map;
 
-drawStyle = 'morph';
+drawStyle = 'new';
 
 function loadMap() {
   map = new OpenLayers.Map({
@@ -14,8 +14,10 @@ function loadMap() {
 
   var drillpads = new OpenLayers.Layer.Vector("Drill pads");
   drillpads.id = "drillpads";
+  var guide = new OpenLayers.Layer.Vector("Guide");
+  guide.id = "guide";
 
-  map.addLayers([drillpads]);
+  map.addLayers([guide, drillpads]);
 
   if (drawStyle == 'new')
     drillpads.mod = new OpenLayers.Control.DrawFeature(drillpads, OpenLayers.Handler.Polygon);
@@ -92,7 +94,26 @@ function updateMap(info) {
   clearData();
 
   var center = new OpenLayers.LonLat(info.position);
-  var bboxradius = 2500;
+
+  if (drawStyle == 'new') {
+    var radius = Math.abs(center.lon - OpenLayers.Util.destinationVincenty(center, 90, 250).lon);
+    var guide = map.getLayer('guide');
+    guide.removeAllFeatures();
+
+    guide.addFeatures([new OpenLayers.Feature.Vector(
+      OpenLayers.Geometry.Polygon.createRegularPolygon(new OpenLayers.Geometry.Point(center.lon, center.lat), radius, 20, 0),
+      null,
+      {
+        strokeColor: "#000000",
+        strokeWidth: 3,
+        strokeOpacity: 0.5,
+        fillOpacity: 0.1,
+        fillColor: "#000000"
+      }
+    )]);
+  }
+
+  var bboxradius = 500;
   bbox = new OpenLayers.Bounds();
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, bboxradius));
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, bboxradius));
