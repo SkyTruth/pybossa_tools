@@ -62,18 +62,18 @@ function clearData () {
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 180, radius));
   bbox.extend(OpenLayers.Util.destinationVincenty(center, 270, radius));
 
-  drillpads.addFeatures([
-    new OpenLayers.Feature.Vector(
-      bbox.toGeometry(),
-      null,
-      {
-        strokeColor: "#ff0000",
-        strokeWidth: 3,
-        fillOpacity: 0.1,
-        fillColor: "#ff0000"
-      }
-    )
-  ]);
+  var feature = new OpenLayers.Feature.Vector(
+    bbox.toGeometry(),
+    null,
+    {
+      strokeColor: "#ff0000",
+      strokeWidth: 3,
+      fillOpacity: 0.1,
+      fillColor: "#ff0000"
+    }
+  );
+  drillpads.addFeatures([feature]);
+  drillpads.mod.selectFeature(feature);
 }
 
 function updateMap(info) {
