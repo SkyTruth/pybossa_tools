@@ -45,55 +45,36 @@ function setProgress(data) {
 
 function clearData () {
   var drillpads = map.getLayer('drillpads');
+  var info = drillpads.taskinfo;
+  var center = new OpenLayers.LonLat(info.position);
 
   drillpads.mod.deactivate();
   drillpads.removeAllFeatures();
   drillpads.mod.activate();
 
-  if (drawStyle == 'new') return;
-  
-  var info = drillpads.taskinfo;
+  if (drawStyle != 'new') {
+    var bbox = new OpenLayers.Bounds();
+    var radius = 250;
 
-  var center = new OpenLayers.LonLat(info.position);
+    bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, radius));
+    bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, radius));
+    bbox.extend(OpenLayers.Util.destinationVincenty(center, 180, radius));
+    bbox.extend(OpenLayers.Util.destinationVincenty(center, 270, radius));
 
-  var bbox = new OpenLayers.Bounds();
-  var radius = 250;
+    var feature = new OpenLayers.Feature.Vector(
+      bbox.toGeometry(),
+      null,
+      {
+        strokeColor: "#ff0000",
+        strokeWidth: 3,
+        fillOpacity: 0.1,
+        fillColor: "#ff0000"
+      }
+    );
+    drillpads.addFeatures([feature]);
+    drillpads.mod.selectFeature(feature);
 
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, radius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, radius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 180, radius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 270, radius));
-
-  var feature = new OpenLayers.Feature.Vector(
-    bbox.toGeometry(),
-    null,
-    {
-      strokeColor: "#ff0000",
-      strokeWidth: 3,
-      fillOpacity: 0.1,
-      fillColor: "#ff0000"
-    }
-  );
-  drillpads.addFeatures([feature]);
-  drillpads.mod.selectFeature(feature);
-}
-
-function updateMap(info) {
-  map.getLayer('drillpads').taskinfo = info;
-
-  if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
-  var imagery = new OpenLayers.Layer.WMS(
-    "Imagery",
-    info.url,
-    info.options);
-  imagery.id = 'imagery';
-  map.addLayer(imagery);
-  map.setLayerIndex(imagery, 0);
-  map.setBaseLayer(imagery);
-
-  clearData();
-
-  var center = new OpenLayers.LonLat(info.position);
+  }
 
   if (drawStyle == 'new') {
     var radius = Math.abs(center.lon - OpenLayers.Util.destinationVincenty(center, 90, 250).lon);
@@ -107,7 +88,7 @@ function updateMap(info) {
         strokeColor: "#000000",
         strokeWidth: 3,
         strokeOpacity: 0.5,
-        fillOpacity: 0.1,
+        fillOpacity: 0,
         fillColor: "#000000"
       }
     )]);
@@ -125,6 +106,22 @@ function updateMap(info) {
     map.getProjection());
 
   map.zoomToExtent(bbox);
+}
+
+function updateMap(info) {
+  map.getLayer('drillpads').taskinfo = info;
+
+  if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
+  var imagery = new OpenLayers.Layer.WMS(
+    "Imagery",
+    info.url,
+    info.options);
+  imagery.id = 'imagery';
+  map.addLayer(imagery);
+  map.setLayerIndex(imagery, 0);
+  map.setBaseLayer(imagery);
+
+  clearData();
 }
 
 function getTaskData() {
