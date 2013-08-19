@@ -1,9 +1,9 @@
 <div class="row">
   <div class="span12">
     <div id="0" class="step" style="display:none">
-      <h2>Drill pad identification</h2>
-      <p><strong>Hi!</strong> This is an application to help identify drill pads (for oil, gas etc) for <a href="http://skytruth.org">SkyTruth</a>.</p>
-      <p>The application is really simple. It loads a map with satelite imagery and asks you to click on any drill pads you see within a certain area.</p>
+      <h2>Pad shape outlining</h2>
+      <p><strong>Hi!</strong> This is an application to help estimate the footprint of fracking operations for <a href="http://skytruth.org">SkyTruth</a>.</p>
+      <p>The application is really simple. It loads a map with satelite imagery and asks you to draw an outline around any drill pad you see within a certain area.</p>
     </div>
 
     <div id="1" class="step" style="display:none">
@@ -145,8 +145,8 @@
     }
 
     $("#prevBtn").toggle(step != 0);
-    $("#nextBtn").toggle(step != 4);
-    $("#startContrib").toggle(step == 4);
+    $("#nextBtn").toggle(step != 0); // 4
+    $("#startContrib").toggle(step == 0); // 4
     $("#" + step).show();
     initializeStep(step);
   }
