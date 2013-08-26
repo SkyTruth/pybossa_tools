@@ -5,11 +5,11 @@ drawStyle = 'new';
 function loadMap() {
   map = new OpenLayers.Map({
       div: "map",
-      allOverlays: true,
-      fractionalZoom: true,
+//      allOverlays: true,
+//      fractionalZoom: true,
       controls: [],
-      minScale: 442943842,
-      maxScale: 135
+//      minScale: 442943842,
+//      maxScale: 135
   });
 
   var drillpads = new OpenLayers.Layer.Vector("Drill pads");
@@ -17,7 +17,10 @@ function loadMap() {
   var guide = new OpenLayers.Layer.Vector("Guide");
   guide.id = "guide";
 
-  map.addLayers([guide, drillpads]);
+  var osm = new OpenLayers.Layer.OSM();
+
+  map.addLayers([osm, guide, drillpads]);
+  map.setBaseLayer(osm);
 
   if (drawStyle == 'new')
     drillpads.mod = new OpenLayers.Control.DrawFeature(drillpads, OpenLayers.Handler.Polygon);
@@ -46,23 +49,24 @@ function setProgress(data) {
 function clearData () {
   var drillpads = map.getLayer('drillpads');
   var info = drillpads.taskinfo;
-  var center = new OpenLayers.LonLat(info.position);
+  var bbox = OpenLayers.Bounds.fromString(info.bbox);
+    var center = bbox.getCenterLonLat();
 
   drillpads.mod.deactivate();
   drillpads.removeAllFeatures();
   drillpads.mod.activate();
 
   if (drawStyle != 'new') {
-    var bbox = new OpenLayers.Bounds();
-    var radius = 250;
+    var bbox2 = new OpenLayers.Bounds();
+    var radius = 125;
 
-    bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, radius));
-    bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, radius));
-    bbox.extend(OpenLayers.Util.destinationVincenty(center, 180, radius));
-    bbox.extend(OpenLayers.Util.destinationVincenty(center, 270, radius));
+    bbox2.extend(OpenLayers.Util.destinationVincenty(center, 0, radius));
+    bbox2.extend(OpenLayers.Util.destinationVincenty(center, 90, radius));
+    bbox2.extend(OpenLayers.Util.destinationVincenty(center, 180, radius));
+    bbox2.extend(OpenLayers.Util.destinationVincenty(center, 270, radius));
 
     var feature = new OpenLayers.Feature.Vector(
-      bbox.toGeometry(),
+      bbox2.toGeometry(),
       null,
       {
         strokeColor: "#ff0000",
@@ -77,12 +81,11 @@ function clearData () {
   }
 
   if (drawStyle == 'new') {
-    var radius = Math.abs(center.lon - OpenLayers.Util.destinationVincenty(center, 90, 250).lon);
     var guide = map.getLayer('guide');
     guide.removeAllFeatures();
 
     guide.addFeatures([new OpenLayers.Feature.Vector(
-      OpenLayers.Geometry.Polygon.createRegularPolygon(new OpenLayers.Geometry.Point(center.lon, center.lat), radius, 20, 0),
+      OpenLayers.Geometry.Polygon.createRegularPolygon(new OpenLayers.Geometry.Point(center.lon, center.lat), 125, 20, 0),
       null,
       {
         strokeColor: "#000000",
@@ -94,17 +97,6 @@ function clearData () {
     )]);
   }
 
-  var bboxradius = 500;
-  bbox = new OpenLayers.Bounds();
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, bboxradius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, bboxradius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 180, bboxradius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 270, bboxradius));
-
-  var bbox = bbox.transform(
-    new OpenLayers.Projection("EPSG:4326"),
-    map.getProjection());
-
   map.zoomToExtent(bbox);
 }
 
@@ -112,14 +104,29 @@ function updateMap(info) {
   map.getLayer('drillpads').taskinfo = info;
 
   if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
-  var imagery = new OpenLayers.Layer.WMS(
-    "Imagery",
+
+  var bboxradius = 250;
+  bbox = new OpenLayers.Bounds();
+  var center = new OpenLayers.LonLat(info.position);
+  bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, bboxradius));
+  bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, bboxradius));
+  bbox.extend(OpenLayers.Util.destinationVincenty(center, 180, bboxradius));
+  bbox.extend(OpenLayers.Util.destinationVincenty(center, 270, bboxradius));
+
+  var imagery = new OpenLayers.Layer.Image(
+    'imagery',
     info.url,
-    info.options);
-  imagery.id = 'imagery';
+    OpenLayers.Bounds.fromString(info.bbox),
+    new OpenLayers.Size(info.width, info.height),
+    {
+      opacity: 1.0, 
+      isBaseLayer: false,
+      numZoomLevels: 20,
+      alwaysInRange: true
+    }
+  );
   map.addLayer(imagery);
-  map.setLayerIndex(imagery, 0);
-  map.setBaseLayer(imagery);
+  map.setLayerIndex(imagery, 1);
 
   clearData();
 }
