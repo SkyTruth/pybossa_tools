@@ -1,6 +1,6 @@
 var map;
 
-drawStyle = 'new';
+drawStyle = 'morph';
 
 function loadMap() {
   map = new OpenLayers.Map({
@@ -57,16 +57,8 @@ function clearData () {
   drillpads.mod.activate();
 
   if (drawStyle != 'new') {
-    var bbox2 = new OpenLayers.Bounds();
-    var radius = 125;
-
-    bbox2.extend(OpenLayers.Util.destinationVincenty(center, 0, radius));
-    bbox2.extend(OpenLayers.Util.destinationVincenty(center, 90, radius));
-    bbox2.extend(OpenLayers.Util.destinationVincenty(center, 180, radius));
-    bbox2.extend(OpenLayers.Util.destinationVincenty(center, 270, radius));
-
     var feature = new OpenLayers.Feature.Vector(
-      bbox2.toGeometry(),
+      bbox.toGeometry(),
       null,
       {
         strokeColor: "#ff0000",
