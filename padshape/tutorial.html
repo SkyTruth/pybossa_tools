@@ -96,6 +96,7 @@
             <div class="row">
                 <div class="span4 answer-buttons">
                     <h5><strong>Please mark the outline of the site in the imagery shown to the right</strong></h5>
+                    <span id="maperrors"></span>
                     <div><button class="btn btn-success btn-answer" value="done"><i class="icon icon-white icon-play"></i> Done</button></div>
                     <div><button class="btn btn-danger btn-cancel"><i class="icon icon-white icon-undo"></i> Oups, scratch that</button></div>
                     <div><button class="btn btn-inverse btn-answer" value="skip"><i class="icon icon-white icon-forward"></i> Skip this pad</button></div>
@@ -130,7 +131,6 @@
         </div>
         <div id="mapcontainer"><div id="map"></div></div>
     </div>
-    <span id="maperrors"></span>
   </div>
 
   <div id="6" class="step" style="display:none">
@@ -321,6 +321,7 @@ xxx = shape; yyy = inner; zzz = outer;
 
   $(document).ready(function () {
     $('.btn-cancel').click(clearData);
+    $('.btn-answer').click(function () {showStep('next');});
     showStep('next');
     $("#modal").modal('show');
   });
