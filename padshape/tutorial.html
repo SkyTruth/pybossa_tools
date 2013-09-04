@@ -250,22 +250,46 @@
   };
 
 
+  var setMapTask = function (step) {
+    setProgress({total: initializedSteps[step].tasks.length, done:initializedSteps[step].task});
+    updateMap(initializedSteps[step].tasks[initializedSteps[step].task]);
+  };
+
   initializedSteps = {};
   function initializeStep(step) {
     if (initializedSteps[step] == undefined) {
       if (step == 5) {
+        initializedSteps[step] = {};
+        initializedSteps[step].task = 0;
+        initializedSteps[step].tasks = [
+          {
+            "url": "http://ewn4.skytruth.org/test/Tioga/2010_X-076.9588_Y0041.6822.png",
+            "bbox": "-8567215.4491574950516224,5113293.3045046702027321,-8566815.0137488394975662,5113693.7399133248254657",
+            "outer": {"type":"Polygon","coordinates":[[[-8567107.1947528,5113362.1460667],[-8566874.3006823,5113392.0042808],[-8566844.4424681,5113630.8699942],[-8567156.1622241,5113596.2344657],[-8567107.1947528,5113362.1460667]]]},
+            "inner": {"type":"Polygon","coordinates":[[[-8567064.7960887,5113454.1093663],[-8566968.0554748,5113467.2469805],[-8566976.4157748,5113543.6840088],[-8567075.5450458,5113531.7407231],[-8567064.7960887,5113454.1093663]]]},
+            "width": 299, "height": 299,
+            "guuid":"foobar"
+          },
+          {
+            "url": "http://ewn4.skytruth.org/test/Tioga/2010_X-076.9588_Y0041.6822.png",
+            "bbox": "-8567215.4491574950516224,5113293.3045046702027321,-8566815.0137488394975662,5113693.7399133248254657",
+            "outer": {"type":"Polygon","coordinates":[[[-8567107.1947528,5113362.1460667],[-8566874.3006823,5113392.0042808],[-8566844.4424681,5113630.8699942],[-8567156.1622241,5113596.2344657],[-8567107.1947528,5113362.1460667]]]},
+            "inner": {"type":"Polygon","coordinates":[[[-8567064.7960887,5113454.1093663],[-8566968.0554748,5113467.2469805],[-8566976.4157748,5113543.6840088],[-8567075.5450458,5113531.7407231],[-8567064.7960887,5113454.1093663]]]},
+            "width": 299, "height": 299,
+            "guuid":"foobar"
+          }
+        ];
+
+console.log(initializedSteps[step]);
+
         loadMap();
-        setProgress({total: 100, done:50});
-        updateMap({
-          "url": "http://ewn4.skytruth.org/test/Tioga/2010_X-076.9588_Y0041.6822.png",
-          "bbox": "-8567215.4491574950516224,5113293.3045046702027321,-8566815.0137488394975662,5113693.7399133248254657",
-          "outer": {"type":"Polygon","coordinates":[[[-8567107.1947528,5113362.1460667],[-8566874.3006823,5113392.0042808],[-8566844.4424681,5113630.8699942],[-8567156.1622241,5113596.2344657],[-8567107.1947528,5113362.1460667]]]},
-          "inner": {"type":"Polygon","coordinates":[[[-8567064.7960887,5113454.1093663],[-8566968.0554748,5113467.2469805],[-8566976.4157748,5113543.6840088],[-8567075.5450458,5113531.7407231],[-8567064.7960887,5113454.1093663]]]},
-          "width": 299, "height": 299,
-          "guuid":"foobar"
-        });
+        setMapTask(step);
+        $('.btn-cancel').click(clearData);
+        $('.btn-answer').click(function () { showStep('next'); });
+
+      } else {
+        initializedSteps[step] = true;
       }
-      initializedSteps[step] = true;
     }
   }
 
@@ -278,9 +302,6 @@
       var shape = geojson.read(data.shape, "Geometry");
       var inner = geojson.read(info.inner, "Geometry");
       var outer = geojson.read(info.outer, "Geometry");
-console.log("XXXXX");
-xxx = shape; yyy = inner; zzz = outer;
-
 
       if (outer.contains(shape)) {
         if (!shape.contains(inner)) {
@@ -293,6 +314,13 @@ xxx = shape; yyy = inner; zzz = outer;
           errs.push("<div>Your shape is too big</div>")
         }
       }
+
+      if (errs.length == 0 && initializedSteps[step].task < initializedSteps[step].tasks.length - 1) {
+        initializedSteps[step].task++;
+        setMapTask(step);
+        return false;
+      }
+
     }
     $("#maperrors").html(errs.join(""));
     return errs.length == 0;
@@ -320,8 +348,6 @@ xxx = shape; yyy = inner; zzz = outer;
   }
 
   $(document).ready(function () {
-    $('.btn-cancel').click(clearData);
-    $('.btn-answer').click(function () {showStep('next');});
     showStep('next');
     $("#modal").modal('show');
   });
