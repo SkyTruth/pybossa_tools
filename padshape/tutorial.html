@@ -1,47 +1,150 @@
-<div class="row">
-  <div class="span12">
-    <div id="0" class="step" style="display:none">
-      <h2>Pad shape outlining</h2>
-      <p><strong>Hi!</strong> This is an application to help estimate the footprint of fracking operations for <a href="http://skytruth.org">SkyTruth</a>.</p>
-      <p>The application is really simple. It loads a map with satelite imagery and asks you to draw an outline around any drill pad you see within a certain area.</p>
-    </div>
-
-    <div id="1" class="step" style="display:none">
-      <h2>What a drill pad looks like</h2>
-      <img src="http://images.nationalgeographic.com/wpf/media-live/photos/000/036/cache/drill-pads-ludwig_3684_990x742.jpg" class="img-polaroid">
-    </div>
-
-    <div id="2" class="step" style="display:none">
-      <h2>How to select drill pads</h2>
-      <p>Click on all drill pads you see within the red rectangle. They will get marked witrh a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
-      <p>Just reload the page if you accidentally clicked somewhere you didn't mean to.</p>
-      <img src="http://farm8.staticflickr.com/7357/8720786128_ef1713497b_z_d.jpg" class="img-polaroid">
-    </div>
-
-    <div id="3" class="step" style="display:none">
-      <h2>Test run</h2>
-      <p>Pleasy try to mark any drill pads you see below.</p>
-      <div id="map"></div>
-      <div class="taskmanager">
-        Task <span id="task-id" class="label">#</span>
-        <div class="progress progress-striped">
-          <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
-        </div>
-        <span id="done" class="label"></span> of <span id="total" class="label"></span>
-        <button class="btn btn-success btn-answer" onclick="showStep('next')"><i class="icon icon-white icon-forward"></i> Done</button>
-        <span id="disqus_show_btn">
-          <button class="btn btn-disqus"><i class="icon-comments"></i> Show comments</button>
-        </span>
+<div>
+  <div id="0" class="step" style="display:none">
+    <div class="row">
+      <div class="span12">
+        <h2>Pad shape outlining</h2>
+        <p><strong>Hi!</strong> This is an application to help estimate the footprint of fracking operations for <a href="http://skytruth.org">SkyTruth</a>.</p>
+        <p>The application is really simple. It loads a map with satelite imagery and asks you to draw an outline around any drill pad you see within a certain area.</p>
       </div>
-      <span id="maperrors"></span>
+    </div>
+  </div>
+
+  <div id="1" class="step" style="display:none">
+    <div class="row">
+      <div class="span12">
+        <p>These are simple rectangular sites where the outline is pretty obvious. Draw a rectangle around the area, but don't include the access road.</p>
+      </div>
     </div>
 
-    <div id="4" class="step" style="display:none">
-      <h2>On your mark, get set, go!</h2>
-      Thank you, you are now ready to begin helping out!
+    <div class="row">
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2010tioga_spudbuffer136.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2010_X-079.2094_Y0041.5985.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/no+pad+visible/2010tioga_spudbuffer142.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div id="2" class="step" style="display:none">
+    <div class="row">
+      <div class="span12">
+        <p>These are slightly overgrown sites. Be sure to include any part of the pad that has been overgrown, but again, don't include the access road.</p>
+      </div>
     </div>
 
-    <div class="navigation">
+    <div class="row">
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/2010_X-076.9908_Y0041.9884.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/2010tioga_spudbuffer21.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/empty+well+pads/2010tioga_spudbuffer44.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div id="3" class="step" style="display:none">
+    <div class="row">
+      <div class="span12">
+        <p>These sites are slightly more complex. As we're mainly interested in the environmental footprint of the drillpads, just outline the whole area as shown below.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer11.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer34.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/well+pads+w_equipment/2008_X-079.3670_Y0040.6300.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div id="4" class="step" style="display:none">
+    <div class="row">
+      <div class="span12">
+        <p>These sites are mostly rectangular like the first ones we showed, but their outline is not as well defined, as some side sof the pad have grassy slopes down to the surrounding ground. Try to identify the outer edge of teh slopes as shown below.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/unknown/2008_X-079.6266_Y0040.7788.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/unknown/2008_X-079.5392_Y0040.8886.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="https://s3.amazonaws.com/FrackFinder/Tadpole/well+pad+examples/unknown/2008_X-079.5970_Y0040.7876.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div id="5" class="step" style="display:none">
+    <div class="row"><div class="span12"><h2>Test run</h2></div></div>
+    <div class="skeleton">
+        <div id="controls">
+            <div class="row">
+                <div class="span4 answer-buttons">
+                    <h5><strong>Please mark the outline of the site in the imagery shown to the right</strong></h5>
+                    <div><button class="btn btn-success btn-answer" value="done"><i class="icon icon-white icon-play"></i> Done</button></div>
+                    <div><button class="btn btn-danger btn-cancel"><i class="icon icon-white icon-undo"></i> Oups, scratch that</button></div>
+                    <div><button class="btn btn-inverse btn-answer" value="skip"><i class="icon icon-white icon-forward"></i> Skip this pad</button></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="span4">
+                    <!-- hr -->
+                    <h4 id="progressmsg"><strong>Your Progress</strong></h4>
+                    <span class="label label-warning">
+                        <i class="icon icon-bullhorn"></i>
+                            Tip
+                    </span>
+                    You can take a break whenever you want.  We'll be here when you get back.
+                    <p>You are working on task: <span id="task-id" class="label">#</span></p>
+                    <p>You have completed: <span id="done" class="label"></span> from a total of <span id="total" class="label"></span></p>
+                    <div class="progress progress-striped">
+                        <div id="progress" rel="tooltip" class="bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="span4">
+                <h5><strong>We Value Your Feedback</strong></h5>               
+                    <a href="http://frack.skytruth.org/frackfinder" target="_blank"><img src="https://s3.amazonaws.com/FrackFinder/skytruth_logo.png"></a>
+                    <a href="https://www.facebook.com/groups/skytruthvolunteers/" target="_blank"><img src="http://cdn.crackberry.com/sites/crackberry.com/files/styles/large/public/topic_images/2013/facebook-logo-3.png" width="50" height="50"></a>
+                    <div><a href="mailto:crowd@skytruth.org">crowd@skytruth.org</a></div>
+                </div>
+            </div>
+        </div>
+        <div id="mapcontainer"><div id="map"></div></div>
+    </div>
+    <span id="maperrors"></span>
+  </div>
+
+  <div id="6" class="step" style="display:none">
+    <div class="row">
+      <div class="span12">
+        <h2>On your mark, get set, go!</h2>
+        <p>Thank you, you are now ready to begin helping out!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span12">
+      <br/>
       <a id="prevBtn" href="#" onclick="showStep('prev')" class="btn">Previous</a>
       <a id="nextBtn" href="#" onclick="showStep('next')" class="btn btn-success">Next</a>
       <a id="startContrib" href="../{{short_name}}/newtask" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Start helping out</a>
@@ -50,33 +153,59 @@
 </div>
 
 <style>
-  .navigation {
-   margin-top: 10px;
+  @media (max-width: 979px) {
+    .skeleton #controls,
+    .skeleton #map {
+      top: 50px !important;
+    }
   }
-  .taskmanager {
-    margin-top: -43px;
-    position: relative;
-    width: 312pt;
-    left: 100%;
-    margin-left: -322pt;
-    z-index: 2;
+  .navbar {
+    z-index: 3;
+    position: absolute;
+  }
+  .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
+    margin: 0;
+  }
+  body {
+    padding: 0;
+  }
+  footer, html {
     background: white;
-    font-weight: bold;
-    padding: 5pt;
-    -webkit-border-top-left-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    border-top-left-radius: 5px;
   }
-  .progress {
-    width: 50px;
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
+  footer {
+    display: none;
   }
-  #map {
-    position: relative;
+  .alert-messages {
+    position: absolute;
+    z-index: 2;
+    left: 80px;
+    right: 80px;
+    top: 140px;
+  }
+  .container {
+    margin-top: 84px;
+  }
+  .navbar .container {
+    margin-top: 0;
+  }
+  .container h1 {
+    display: none;
+  }
+  .skeleton {
+    display: table-row;
+  }
+  .skeleton #controls {
+    display: table-cell;
+    padding-right: 8pt;
+  }
+  .skeleton #mapcontainer {
+    display: table-cell;
     width: 100%;
-    height: 400px;
+    height: 1px; // Hack to allow height: 100% on child element...
+  }
+  .skeleton #mapcontainer #map {
+    height: 100%;
+    width: 100%;
   }
   #maperrors {
     color: #ff0000;
@@ -92,18 +221,48 @@
 <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
 
 <script>
-  {% include "drillpad/maphandler.js" %}
+  {% include "padshape/maphandler.js" %}
+
+
+  OpenLayers.Geometry.Polygon.prototype.contains = function(geometry) {
+      var i, len;
+      if (geometry.CLASS_NAME == "OpenLayers.Geometry.Point") {
+          return this.containsPoint(geometry);
+      } else if (geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
+          // A polygon is contained if its outer contour is contained,
+          // and none of it covers any holes in this geometry
+          var outercontour = geometry.components[0];
+          for (i=0, len=outercontour.components.length; i<len; ++i) {
+              if (!this.containsPoint(outercontour.components[i])) return false;
+          }
+          // Check that any holes in this polygon does not cover geometry
+          for (i=1, len=this.components.length; i<len; ++i) {
+              if (this.components[i].intersects(geometry)) return false;
+          }
+          return true;
+      } else {
+          // Any other shape is contained if all of its components are
+          for (i=0, len=this.components.length; i<len; ++i) {
+              if (!this.contains(this.components[i])) return false
+          }
+          return true;
+      }
+  };
+
 
   initializedSteps = {};
   function initializeStep(step) {
     if (initializedSteps[step] == undefined) {
-      if (step == 3) {
+      if (step == 5) {
         loadMap();
         setProgress({total: 100, done:50});
         updateMap({
-          "bbox":"-77.295721,41.83096,-76.966131,41.983755",
-          "url":"http://raster.nationalmap.gov/ArcGIS/services/Orthoimagery/USGS_EDC_Ortho_NAIP/ImageServer/WMSServer",
-          "options":{"request":"getMap", "service":"WMS", "transparent": true}
+          "url": "http://ewn4.skytruth.org/test/Tioga/2010_X-076.9588_Y0041.6822.png",
+          "bbox": "-8567215.4491574950516224,5113293.3045046702027321,-8566815.0137488394975662,5113693.7399133248254657",
+          "outer": {"type":"Polygon","coordinates":[[[-8567107.1947528,5113362.1460667],[-8566874.3006823,5113392.0042808],[-8566844.4424681,5113630.8699942],[-8567156.1622241,5113596.2344657],[-8567107.1947528,5113362.1460667]]]},
+          "inner": {"type":"Polygon","coordinates":[[[-8567064.7960887,5113454.1093663],[-8566968.0554748,5113467.2469805],[-8566976.4157748,5113543.6840088],[-8567075.5450458,5113531.7407231],[-8567064.7960887,5113454.1093663]]]},
+          "width": 299, "height": 299,
+          "guuid":"foobar"
         });
       }
       initializedSteps[step] = true;
@@ -112,19 +271,28 @@
 
   function validateStep() {
     var errs = [];
-    if (step == 3) {
-      var positions = getMapPositions();
-      if (positions.length != 2) {
-        errs.push("<div>Please mark both of the two drill pads.</div>");
+    if (step == 5) {
+      var geojson = new OpenLayers.Format.GeoJSON();
+      var info = map.getLayer('drillpads').taskinfo;
+      var data = getTaskData();
+      var shape = geojson.read(data.shape, "Geometry");
+      var inner = geojson.read(info.inner, "Geometry");
+      var outer = geojson.read(info.outer, "Geometry");
+console.log("XXXXX");
+xxx = shape; yyy = inner; zzz = outer;
+
+
+      if (outer.contains(shape)) {
+        if (!shape.contains(inner)) {
+          errs.push("<div>Your shape is too small</div>")
+        }
+      } else {
+        if (!shape.contains(inner)) {
+          errs.push("<div>Your shape is not in the right location</div>")
+        } else {
+          errs.push("<div>Your shape is too big</div>")
+        }
       }
-      var inside = true;
-      positions.map(function (pos) {
-        inside = inside && OpenLayers.Bounds.fromString("-77.295721,41.83096,-76.966131,41.983755").transform(
-          new OpenLayers.Projection("EPSG:4326"),
-          map.getProjection()).containsLonLat(pos);
-      });
-      if (!inside) errs.push("<div>Please do not mark sites outside the area of the task, marked with a red rectangle.</div>")
-      map.getLayer('drillpads').clearMarkers();
     }
     $("#maperrors").html(errs.join(""));
     return errs.length == 0;
@@ -145,14 +313,14 @@
     }
 
     $("#prevBtn").toggle(step != 0);
-    $("#nextBtn").toggle(step != 0); // 4
-    $("#startContrib").toggle(step == 0); // 4
+    $("#nextBtn").toggle(step != 6);
+    $("#startContrib").toggle(step == 6);
     $("#" + step).show();
     initializeStep(step);
   }
 
-
   $(document).ready(function () {
+    $('.btn-cancel').click(clearData);
     showStep('next');
     $("#modal").modal('show');
   });
