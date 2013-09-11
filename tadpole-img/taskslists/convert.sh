@@ -1,0 +1,1 @@
+for file in *.txt; do tail -n +2 $file | while IFS=, read longitude latitude year country url siteID rest; do echo "{\"url\": \"$url\", \"longitude\": \"$longitude\", \"county\": \"$county\", \"siteID\": \"$siteID\", \"year\": \"$year\", \"latitude\": \"$latitude\"}"; done > $file.json; done

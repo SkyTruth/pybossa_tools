@@ -27,7 +27,7 @@
 </div>
 
 <div class="row skeleton">
-  {% include "drillpadcat/row.html" %}
+  {% include "tadpole-wms/row.html" %}
 </div>
 
 
@@ -134,10 +134,10 @@
 
 <script>
   $(document).ready(function () {
-    {% include "drillpadcat/maphandler.js" %}
+    {% include "tadpole-wms/maphandler.js" %}
 
     function loadUserProgress() {
-      pybossa.userProgress('drillpadcat').done(setProgress);
+      pybossa.userProgress('{{short_name}}').done(setProgress);
     }
 
     pybossa.taskLoaded(function(task, deferred) {
@@ -171,6 +171,6 @@
 
     loadMap();
 globalmap = map;
-    pybossa.run('drillpadcat');
+    pybossa.run('{{short_name}}');
   });
 </script>

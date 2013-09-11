@@ -32,7 +32,7 @@
      <h4 id="attagirl"><strong></strong></h4>
      
   </div>     
-    {% include "frackfinder/row.html" %}
+    {% include "tadpole-img/row.html" %}
 
   <div class="span2 pull-right">
      <a class="btn btn-primary btn-large done-for-now-btn" href="javascript:void(0);"><i class="icon-home"></i> I'm done for now</a> (Your work is automatically saved).
@@ -168,7 +168,7 @@
 
 <script>
   $(document).ready(function () {
-    {% include "frackfinder/maphandler.js" %}
+    {% include "tadpole-img/maphandler.js" %}
 
     function loadUserProgress() {
       pybossa.userProgress('{{short_name}}').done(setProgress);
