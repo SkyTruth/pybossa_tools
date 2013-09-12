@@ -24,7 +24,7 @@ import os.path
 import django.template.loader
 import django.conf
 
-django.conf.settings.configure(TEMPLATE_DIRS=(os.path.dirname(__file__),))
+django.conf.settings.configure(TEMPLATE_DIRS=(os.path.dirname(__file__),), INSTALLED_APPS=('pybossa_app',))
 
 
 class CreateTasks(object):
