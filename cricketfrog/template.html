@@ -141,6 +141,7 @@ Tip
     });
 
     pybossa.presentTask(function(task, deferred) {
+globaltask = task;
       if ( !$.isEmptyObject(task) ) {
         $('#task-id').html(task.id);
         loadUserProgress();
