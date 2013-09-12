@@ -1,6 +1,6 @@
 var map;
 
-drawStyle = 'morph';
+drawStyle = 'new';
 
 function loadMap() {
   map = new OpenLayers.Map({
