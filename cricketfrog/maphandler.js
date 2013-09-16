@@ -18,8 +18,10 @@ function loadMap() {
   guide.id = "guide";
 
   var osm = new OpenLayers.Layer.OSM();
+  var gmap = new OpenLayers.Layer.Google("Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22});
 
-  map.addLayers([osm, guide, drillpads]);
+  map.addLayers([osm, gmap, guide, drillpads]);
+  map.addControl(new OpenLayers.Control.LayerSwitcher());
   map.setBaseLayer(osm);
 
   if (drawStyle == 'new')
