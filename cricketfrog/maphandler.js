@@ -76,8 +76,16 @@ function clearData () {
     var guide = map.getLayer('guide');
     guide.removeAllFeatures();
 
+    var p1 = new OpenLayers.LonLat(center.lon, center.lat).transform(
+      map.getProjectionObject(),
+      new OpenLayers.Projection("EPSG:4326"));
+    var p2 = p1.add(0, 1.0 / 1852 / 60);
+    p1 = p1.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+    p2 = p2.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+    var oneMeter = p2.lat - p1.lat;
+
     guide.addFeatures([new OpenLayers.Feature.Vector(
-      OpenLayers.Geometry.Polygon.createRegularPolygon(new OpenLayers.Geometry.Point(center.lon, center.lat), 125, 20, 0),
+      OpenLayers.Geometry.Polygon.createRegularPolygon(new OpenLayers.Geometry.Point(center.lon, center.lat), 125 * oneMeter, 20, 0),
       null,
       {
         strokeColor: "#000000",
