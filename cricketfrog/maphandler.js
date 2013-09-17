@@ -12,7 +12,7 @@ function loadMap() {
 //      maxScale: 135
   });
 
-  var drillpads = new OpenLayers.Layer.Vector("Drill pads");
+    var drillpads = new OpenLayers.Layer.Vector("Drill pads", {displayInLayerSwitcher:false});
   drillpads.id = "drillpads";
   var guide = new OpenLayers.Layer.Vector("Guide");
   guide.id = "guide";
@@ -105,7 +105,9 @@ function clearData () {
 function updateMap(info) {
   map.getLayer('drillpads').taskinfo = info;
 
-  if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
+  globalmap.getLayersByName('imagery').map(function (layer) {
+    map.removeLayer(layer);
+  });
 
   var bboxradius = 250;
   bbox = new OpenLayers.Bounds();
