@@ -105,7 +105,7 @@ function clearData () {
 function updateMap(info) {
   map.getLayer('drillpads').taskinfo = info;
 
-  globalmap.getLayersByName('imagery').map(function (layer) {
+  map.getLayersByName('imagery').map(function (layer) {
     map.removeLayer(layer);
   });
 
