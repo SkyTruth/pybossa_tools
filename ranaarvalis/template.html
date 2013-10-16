@@ -149,10 +149,10 @@
 
 <script>
   $(document).ready(function () {
-    {% include "drillpad/maphandler.js" %}
+    {% include "ranaarvalis/maphandler.js" %}
 
     function loadUserProgress() {
-      pybossa.userProgress('drillpad').done(setProgress);
+      pybossa.userProgress('{{short_name}}').done(setProgress);
     }
 
     pybossa.taskLoaded(function(task, deferred) {
@@ -187,6 +187,6 @@
 
     loadMap();
 globalmap = map;
-    pybossa.run('drillpad');
+    pybossa.run('{{short_name}}');
   });
 </script>

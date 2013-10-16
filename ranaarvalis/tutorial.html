@@ -44,7 +44,7 @@
     <div class="navigation">
       <a id="prevBtn" href="#" onclick="showStep('prev')" class="btn">Previous</a>
       <a id="nextBtn" href="#" onclick="showStep('next')" class="btn btn-success">Next</a>
-      <a id="startContrib" href="../drillpad/newtask" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Start helping out</a>
+      <a id="startContrib" href="../{{short_name}}/newtask" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Start helping out</a>
     </div>
   </div>
 </div>
@@ -92,7 +92,7 @@
 <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
 
 <script>
-  {% include "drillpad/maphandler.js" %}
+  {% include "ranaarvalis/maphandler.js" %}
 
   initializedSteps = {};
   function initializeStep(step) {
@@ -124,7 +124,7 @@
           map.getProjection()).containsLonLat(pos);
       });
       if (!inside) errs.push("<div>Please do not mark sites outside the area of the task, marked with a red rectangle.</div>")
-      map.getLayer('drillpads').clearMarkers();
+      map.getLayer('{{short_name}}s').clearMarkers();
     }
     $("#maperrors").html(errs.join(""));
     return errs.length == 0;
