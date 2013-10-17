@@ -1,7 +1,9 @@
 var map;
 var progress_done = 0;
+var image_loaded = false;
 
 function loadMap() {
+  $("#map .image").load(function () { image_loaded = true; });
 }
 
 var atta_girl_phrases = [
@@ -41,6 +43,14 @@ function setProgress(data) {
   $("#progressmsg").html(get_atta_girl(20,progress_done));
 }
 
+var failureFunction = function () {
+  console.log("UNHANDLED FAILURE!!!");
+}
+
+function setFailureFunction(fn) {
+  failureFunction = fn;
+}
+
 function updateMap(info) {
   $("#map .image").hide();
   $("#map .imgoverlay").hide();
@@ -50,7 +60,14 @@ function updateMap(info) {
     $("#map .image").show();
     $("#map .imgoverlay").show();
   });
+  image_loaded = false;
   $("#map .image").attr("src", info.url);
+  setTimeout(function () {
+    if (!image_loaded) {
+      console.log("Image loading failed");
+      failureFunction();
+    }
+  }, 4000);
   $("#site_lat").html(info.latitude);
   $("#site_lon").html(info.longitude);
   $("#site_county").html(info.county);

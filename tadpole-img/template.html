@@ -194,7 +194,6 @@
         $(".all-done").show();
         $(".skeleton").hide();
         $("#loading").hide();
-/*        $("#finish").fadeIn(500); */
       }
     });
 
@@ -210,28 +209,27 @@
     var resultFn = function(evt) {
       console.log(["TASK", currentTask.id, evt.target.value, evt])
       pybossa.saveTask(currentTask.id, {"type": evt.target.value}).done(function() {
-
-/*        var tasksdone = parseInt($.cookie('{{short_name}}_tasks_done') || 0);
-        tasksdone += 1;
-        $.cookie('{{short_name}}_tasks_done', tasksdone);
-*/
-		var tasksdone = progress_done + 1;
-/*		if (0 == tasksdone % 50) {
-	        $(".lots-done .tasksdone").html(tasksdone);
-    	    continueFn = function (evt) { $(".lots-done").hide(); $(".skeleton").show(); currentDeferred.resolve(); };
-			$(".lots-done").show();
-	        $(".skeleton").hide();
-		}
-		else */
-			currentDeferred.resolve();
+        var tasksdone = progress_done + 1;
+        currentDeferred.resolve();
       });
 
-      /*$("#loading").fadeIn(500);*/
       if ($("#disqus_thread").is(":visible")) {
         $('#disqus_thread').toggle();
         $('.btn-disqus').toggle();
       }
     };
+
+    setFailureFunction(function () {
+      pybossa.saveTask(currentTask.id, {"error": "image-loading"}).done(function() {
+        var tasksdone = progress_done + 1;
+        currentDeferred.resolve();
+      });
+
+      if ($("#disqus_thread").is(":visible")) {
+        $('#disqus_thread').toggle();
+        $('.btn-disqus').toggle();
+      }
+    });
 
     $('.btn-answer').on('click', resultFn);
     $('.input-answer').on('keypress', function(evt) {
