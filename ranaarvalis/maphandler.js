@@ -80,7 +80,7 @@ function updateMap(info) {
     )
   ]);
 
-  map.zoomToExtent(bbox);
+    map.zoomToExtent(bbox.scale(1.1));
 }
 
 function getMapPositions() {
