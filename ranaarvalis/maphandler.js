@@ -51,6 +51,8 @@ function setProgress(data) {
 }
 
 function updateMap(info) {
+  map.getLayer('drillpads').taskinfo = info;
+
   if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
   var imagery = new OpenLayers.Layer.WMS(
     "Imagery",
@@ -60,7 +62,8 @@ function updateMap(info) {
   map.addLayer(imagery);
   map.setLayerIndex(imagery, 0);
   map.setBaseLayer(imagery);
-  var bbox = OpenLayers.Bounds.fromString(info.bbox).transform(
+  var bbox = OpenLayers.Bounds.fromString(info.bbox);
+  var mapbbox = bbox.transform(
     new OpenLayers.Projection("EPSG:4326"),
     map.getProjection());
 
@@ -69,7 +72,7 @@ function updateMap(info) {
   map.getLayer('guide').removeAllFeatures();
   map.getLayer('guide').addFeatures([
     new OpenLayers.Feature.Vector(
-      bbox.toGeometry(),
+      mapbbox.toGeometry(),
       null,
       {
         strokeColor: "#ff0000",
@@ -80,7 +83,14 @@ function updateMap(info) {
     )
   ]);
 
-    map.zoomToExtent(bbox.scale(1.1));
+  map.zoomToExtent(mapbbox.scale(1.1));
+
+  $("#site_county").html(info.county || "");
+  $("#site_state").html(info.state || "");
+  $("#site_year").html(info.year || "");
+  $("#site_lat").html(info.latitude);
+  $("#site_lon").html(info.longitude);
+  $("#site_id").html(info.SiteID);
 }
 
 function getMapPositions() {
@@ -88,3 +98,25 @@ function getMapPositions() {
     return marker.lonlat;
   });
 }
+
+$(document).ready(function () {
+  function cookieToExpander() {
+    var body = $(".expander-body");
+    var control = $(".expander-control i");
+    if ($.cookie('taskmanager_expander') != "collapsed") {
+      control.addClass("icon-minus-sign");
+      control.removeClass("icon-plus-sign");
+      body.show();
+    } else {
+      control.removeClass("icon-minus-sign");
+      control.addClass("icon-plus-sign");
+      body.hide();
+    }
+  }
+  $(".expander-control").click(function (ev) {
+    var expanded = $.cookie('taskmanager_expander') == "expanded";
+    $.cookie('taskmanager_expander', expanded ? "collapsed" : "expanded");
+    cookieToExpander();
+  });
+  cookieToExpander();
+});

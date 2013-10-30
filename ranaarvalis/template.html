@@ -29,20 +29,7 @@
 <div class="row skeleton">
    <div id="map"></div>
 
-   <div class="taskmanager">
-     Task <span id="task-id" class="label">#</span>
-     <div class="progress progress-striped">
-       <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
-     </div>
-     <span id="done" class="label"></span> of <span id="total" class="label"></span>
-     <button class="btn btn-success btn-answer"><i class="icon icon-white icon-forward"></i> Done</button>
-     <span id="disqus_show_btn">
-       <button class="btn btn-disqus" onclick="loadDisqus()"><i class="icon-comments"></i> Show comments</button>
-       <button class="btn btn-disqus" onclick="loadDisqus()" style="display:none"><i class="icon-comments"></i> Hide comments</button>
-     </span>
-   </div>
-
-   <div id="disqus_thread" style="display:none"></div>
+   {% include "ranaarvalis/taskmanager.html" %}
 </div>
 
 
@@ -85,19 +72,6 @@
     margin-left: 0pt;
     margin-right: 0pt;
   }
-  #disqus_thread {
-    position: fixed;
-    top: 120px;
-    z-index: 3;
-    background: white;
-    left: 40px;
-    right: 40px;
-    bottom: 100px;
-    padding: 5pt;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-  }
   .taskmanager {
     z-index: 2;
     position: fixed;
@@ -105,7 +79,10 @@
     right: 0;
     background: white;
     font-weight: bold;
-    padding: 5pt;
+    padding-left: 5pt;
+    padding-top: 5pt;
+    padding-right: 20pt;
+    padding-bottom: 5pt;
     -webkit-border-top-left-radius: 5px;
     -moz-border-radius-topleft: 5px;
     border-top-left-radius: 5px;
@@ -122,35 +99,27 @@
     bottom: 0;
     top: 81px;
   }
+  .expander-control {
+    position: fixed;
+    font-weight: bold;
+    color: #3d5b7f;
+    right: 5pt;
+    font-size: 10pt;
+  }
 </style>
 
 
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  function loadDisqus() {
-    $("#disqus_thread").toggle();
-    $(".btn-disqus").toggle();
-  }
-
-  $(document).ready(function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = 'http://drillpad.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  });
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-
-
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
 <script src="http://openlayers.org/dev/OpenLayers.js"></script>
 <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
 
 
 <script>
-  $(document).ready(function () {
-    {% include "ranaarvalis/maphandler.js" %}
+  app = {};
 
+  {% include "ranaarvalis/maphandler.js" %}
+
+  $(document).ready(function () {
     function loadUserProgress() {
       pybossa.userProgress('{{short_name}}').done(setProgress);
     }
@@ -160,6 +129,8 @@
     });
 
     pybossa.presentTask(function(task, deferred) {
+      app.task = task;
+      app.deferred = deferred;
       if ( !$.isEmptyObject(task) ) {
         $('#task-id').html(task.id);
         loadUserProgress();
@@ -172,10 +143,6 @@
           });
 
           $("#loading").fadeIn(500);
-          if ($("#disqus_thread").is(":visible")) {
-            $('#disqus_thread').toggle();
-            $('.btn-disqus').toggle();
-          }
         });
         $("#loading").hide();
       } else {
@@ -186,7 +153,7 @@
     });
 
     loadMap();
-globalmap = map;
+    app.map = map;
     pybossa.run('{{short_name}}');
   });
 </script>

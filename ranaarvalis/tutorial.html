@@ -1,42 +1,35 @@
 <div class="row">
   <div class="span12">
-    <div id="0" class="step" style="display:none">
-      <h2>Drill pad identification</h2>
-      <p><strong>Hi!</strong> This is an application to help identify drill pads (for oil, gas etc) for <a href="http://skytruth.org">SkyTruth</a>.</p>
-      <p>The application is really simple. It loads a map with satelite imagery and asks you to click on any drill pads you see within a certain area.</p>
+    <div class="step" style="display:none">
+      <h2>Pond identification</h2>
+      <p><strong>Hi!</strong> This is an application to help identify fracking ponds for <a href="http://skytruth.org">SkyTruth</a>.</p>
+      <p>The application is really simple. It loads a map with satelite imagery and asks you to click on any ponds you see within a certain area.</p>
+      <p>The ponds are often located near or at a fracking site (pad), and so the areas we've selected are centered on known fracking sites.</p>
     </div>
 
-    <div id="1" class="step" style="display:none">
-      <h2>What a drill pad looks like</h2>
+    <div class="step" style="display:none">
+      <h2>What a pond looks like</h2>
       <img src="http://images.nationalgeographic.com/wpf/media-live/photos/000/036/cache/drill-pads-ludwig_3684_990x742.jpg" class="img-polaroid">
     </div>
 
-    <div id="2" class="step" style="display:none">
-      <h2>How to select drill pads</h2>
-      <p>Click on all drill pads you see within the red rectangle. They will get marked witrh a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
-      <p>Just reload the page if you accidentally clicked somewhere you didn't mean to.</p>
-      <img src="http://farm8.staticflickr.com/7357/8720786128_ef1713497b_z_d.jpg" class="img-polaroid">
+    <div class="step" style="display:none">
+      <h2>How to select ponds</h2>
+      <p>Click on all ponds you see within the red rectangle. They will get marked witrh a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
+      <p>Click again on the same spot to remove a marker you accidentally placed in the wrong place.</p>
+      <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/screenshots/screenshot-basic.png" class="img-polaroid">
     </div>
 
-    <div id="3" class="step" style="display:none">
+    <div class="step mapstep" style="display:none">
       <h2>Test run</h2>
-      <p>Pleasy try to mark any drill pads you see below.</p>
-      <div id="map"></div>
-      <div class="taskmanager">
-        Task <span id="task-id" class="label">#</span>
-        <div class="progress progress-striped">
-          <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
-        </div>
-        <span id="done" class="label"></span> of <span id="total" class="label"></span>
-        <button class="btn btn-success btn-answer" onclick="showStep('next')"><i class="icon icon-white icon-forward"></i> Done</button>
-        <span id="disqus_show_btn">
-          <button class="btn btn-disqus"><i class="icon-comments"></i> Show comments</button>
-        </span>
+      <p>Pleasy try to mark ponds you see below.</p>
+      <div class="mapcontainer">
+        <div id="map"></div>
+        {% include "ranaarvalis/taskmanager.html" %}
       </div>
       <span id="maperrors"></span>
     </div>
 
-    <div id="4" class="step" style="display:none">
+    <div class="step" style="display:none">
       <h2>On your mark, get set, go!</h2>
       Thank you, you are now ready to begin helping out!
     </div>
@@ -51,18 +44,22 @@
 
 <style>
   .navigation {
-   margin-top: 10px;
+    margin-top: 10px;
+  }
+  .mapcontainer {
+    position: relative;
   }
   .taskmanager {
-    margin-top: -43px;
-    position: relative;
-    width: 312pt;
-    left: 100%;
-    margin-left: -322pt;
     z-index: 2;
+    position: absolute;
+    bottom: 0;
+    right: 0;
     background: white;
     font-weight: bold;
-    padding: 5pt;
+    padding-left: 5pt;
+    padding-top: 5pt;
+    padding-right: 20pt;
+    padding-bottom: 5pt;
     -webkit-border-top-left-radius: 5px;
     -moz-border-radius-topleft: 5px;
     border-top-left-radius: 5px;
@@ -85,46 +82,84 @@
   #start {
     display: none;
   }
+  .expander-control {
+    position: absolute;
+    font-weight: bold;
+    color: #3d5b7f;
+    right: 5pt;
+    font-size: 10pt;
+  }
 </style>
 
-
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
 <script src="http://openlayers.org/dev/OpenLayers.js"></script>
 <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
 
 <script>
   {% include "ranaarvalis/maphandler.js" %}
 
+  var setMapTask = function (step) {
+    setProgress({total: initializedSteps[step].tasks.length, done:initializedSteps[step].task});
+    updateMap(initializedSteps[step].tasks[initializedSteps[step].task]);
+    $("#maperrors").html("");
+  };
+
   initializedSteps = {};
   function initializeStep(step) {
     if (initializedSteps[step] == undefined) {
-      if (step == 3) {
+      if ($("#" + step).hasClass("mapstep")) {
+        initializedSteps[step] = {};
+        initializedSteps[step].task = 0;
+        initializedSteps[step].tasks = [
+          /* Clear examples of a frack pond */
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -77.145002, "county": "Tioga", "state": "PA", "SiteID": "277ad7c2-1890-5ce9-a924-d5425ce42d79", "bbox": "-77.1495124372,41.7727717175,-77.1404915628,41.7795242805", "year": "2010", "latitude": 41.776148, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.145310610892,"lat":41.776873318054}], "distance": 100},
+
+          /* Sites with some natural ponds */
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -76.96821, "county": "Tioga", "state": "PA", "SiteID": "5d9f00f1-6e0d-57cb-b6d7-b301a89757f5", "bbox": "-76.9727221159,41.7967177317,-76.9636978841,41.8034702664", "year": "2010", "latitude": 41.800094, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions": [{"lon":-76.971554059412,"lat":41.800188964888},{"lon":-76.972018296172,"lat":41.802417301339}], "distance": 100},
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -76.984005, "county": "Tioga", "state": "PA", "SiteID": "3bd729db-68f7-5641-a536-f9b19d2dcb78", "bbox": "-76.9885189529,41.8228867471,-76.9794910471,41.8296392509", "year": "2010", "latitude": 41.826263, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions": [{"lon":-76.984127583995,"lat":41.825576873233},{"lon":-76.981472161876,"lat":41.826412495578}], "distance": 100},
+
+          /* Some more difficult cases */
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -77.580592, "county": "Tioga", "state": "PA", "SiteID": "85547453-a86e-57a5-8b14-ccac8b61365b", "bbox": "-77.5850956977,41.6763456607,-77.5760883023,41.6830983373", "year": "2010", "latitude": 41.679722, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions": [{"lon":-77.580416503393,"lat":41.680576671125}], "distance": 100},
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -77.548494, "county": "Tioga", "state": "PA", "SiteID": "0bc3885b-17af-5063-a689-47155a02674f", "bbox": "-77.5529990533,41.6957796721,-77.5439889467,41.7025323259", "year": "2010", "latitude": 41.699156, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions": [{"lon":-77.547449069169,"lat":41.699251403515}], "distance": 100}
+        ];
         loadMap();
-        setProgress({total: 100, done:50});
-        updateMap({
-          "bbox":"-77.295721,41.83096,-76.966131,41.983755",
-          "url":"http://raster.nationalmap.gov/ArcGIS/services/Orthoimagery/USGS_EDC_Ortho_NAIP/ImageServer/WMSServer",
-          "options":{"request":"getMap", "service":"WMS", "transparent": true}
-        });
+        setMapTask(step);
+        $('.btn-answer').click(function () { showStep('next'); }); // FIXME
+      } else {
+        initializedSteps[step] = true;
       }
-      initializedSteps[step] = true;
     }
   }
 
   function validateStep() {
     var errs = [];
-    if (step == 3) {
+    if ($("#" + step).hasClass("mapstep")) {
+      var info = map.getLayer('drillpads').taskinfo;
       var positions = getMapPositions();
-      if (positions.length != 2) {
-        errs.push("<div>Please mark both of the two drill pads.</div>");
+      if (positions.length != info.positions.length) {
+        errs.push("<div>You have marked " + positions.length.toString() + " while there are " + info.positions.length.toString() + " ponds in reality.</div>");
       }
-      var inside = true;
+      allFound = true;
       positions.map(function (pos) {
-        inside = inside && OpenLayers.Bounds.fromString("-77.295721,41.83096,-76.966131,41.983755").transform(
-          new OpenLayers.Projection("EPSG:4326"),
-          map.getProjection()).containsLonLat(pos);
+        found = false;
+        info.positions.map(function (taskpos) {
+          if (OpenLayers.Util.distVincenty(pos, taskpos) < info.distance / 1000.0) {
+            found = true;
+          }
+        });
+        if (!found) {
+          allFound = false;
+        }
       });
-      if (!inside) errs.push("<div>Please do not mark sites outside the area of the task, marked with a red rectangle.</div>")
-      map.getLayer('{{short_name}}s').clearMarkers();
+      if (!allFound) errs.push("<div>Your markers are too far off from the ponds.</div>")
+
+      if (errs.length == 0 && initializedSteps[step].task < initializedSteps[step].tasks.length - 1) {
+         initializedSteps[step].task++;
+         setMapTask(step);
+         return false;
+       } else {
+         map.getLayer('drillpads').clearMarkers();
+       }
     }
     $("#maperrors").html(errs.join(""));
     return errs.length == 0;
@@ -153,7 +188,9 @@
 
 
   $(document).ready(function () {
-    document.location = "../{{short_name}}/newtask";
+    $(".step").each(function (idx, step) {
+      $(step).attr("id", idx)
+    });
 
     showStep('next');
     $("#modal").modal('show');
