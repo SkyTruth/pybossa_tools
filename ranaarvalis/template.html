@@ -128,6 +128,9 @@
       deferred.resolve(task);
     });
 
+    var answer = function () {};
+    $('.btn-answer').on('click', function(evt) { answer(evt); });
+
     pybossa.presentTask(function(task, deferred) {
       app.task = task;
       app.deferred = deferred;
@@ -136,14 +139,14 @@
         loadUserProgress();
         updateMap(task.info);
 
-        $('.btn-answer').on('click', function(evt) {
+        answer = function(evt) {
 
           pybossa.saveTask(task.id, {"positions": getMapPositions()}).done(function() {
             deferred.resolve();
           });
 
           $("#loading").fadeIn(500);
-        });
+        };
         $("#loading").hide();
       } else {
         $(".skeleton").hide();
