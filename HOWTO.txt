@@ -19,10 +19,16 @@ CREATING NEW CROWDCRAFTING APP
 	$ python createTasks.py -s http://crowdcrafting.org -k "[API KEY]" -a frackfinder -r drillpadtestapp -c -v -n 10
 
 		(-c to create a new app, -u if updating existing app)
-		
+
+		(-a directory name, -r name on server)
 		[API KEY] is the key for your crowdcrafting account. Find it in "Edit Your Profile"
 
+
 	
+EDIT - CREATE APP FOR RANAARVALIS
+	in pybossa directory
+	$ python createTasks.py -s http://crowd.skytruth.org -k "d6648f59-5d3a-4874-84ea-c02bd8b11869" -a ranaarvalis -c
+
 
 CREATING TASKS  
 Spuds from 2005-2010 were combined and broken into counties. they are located in C:\Users\Yolandita\Documents\Well Pad App\site info\sites-spuds_by_county
@@ -40,6 +46,9 @@ In S3 open drillpadcat/data/TitasTest/ and click upload. In upload window click 
 click START UPLOAD
 In crowdcrafting app, go to Import Tasks page. Now back in the S3 page, look at the images_names.csv properties. Copy the url displayed and paste it into the URL bar back in crowdcrafting app. Click IMPORT
 
+UPLOADING TASKS FOR PADMAPPER
+
+	$ while read task; do ./createTasks.py -s http://crowd.skytruth.org -k "[api key]" -a [app name in cygwin] -r [app name on server] -t "$task"; done < [taskdirectory]/[taskfilename.json]
 
 RETRIEVE RESULTS
 
