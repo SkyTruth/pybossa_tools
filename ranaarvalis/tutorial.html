@@ -9,19 +9,19 @@
 
     <div class="step" style="display:none">
       <h2>What a pond looks like</h2>
-      <img src="http://images.nationalgeographic.com/wpf/media-live/photos/000/036/cache/drill-pads-ludwig_3684_990x742.jpg" class="img-polaroid">
+      <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/frackpond1.jpg" class="img-polaroid">
     </div>
 
     <div class="step" style="display:none">
       <h2>How to select ponds</h2>
-      <p>Click on all ponds you see within the red rectangle. They will get marked witrh a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
+      <p>Click on all ponds you see within the red rectangle. They will get marked with a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
       <p>Click again on the same spot to remove a marker you accidentally placed in the wrong place.</p>
       <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/screenshots/screenshot-basic.png" class="img-polaroid">
     </div>
 
     <div class="step mapstep" style="display:none">
       <h2>Test run</h2>
-      <p>Pleasy try to mark ponds you see below.</p>
+      <p>Please try to mark ponds you see below. <span id="mapcomment"></span></p>
       <div class="mapcontainer">
         <div id="map"></div>
         {% include "ranaarvalis/taskmanager.html" %}
@@ -89,6 +89,10 @@
     right: 5pt;
     font-size: 10pt;
   }
+  #mapcomment {
+    font-weight: bold;
+    color: #ff0000;
+  }
 </style>
 
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
@@ -101,6 +105,7 @@
   var setMapTask = function (step) {
     setProgress({total: initializedSteps[step].tasks.length, done:initializedSteps[step].task});
     updateMap(initializedSteps[step].tasks[initializedSteps[step].task]);
+    $("#mapcomment").html(initializedSteps[step].tasks[initializedSteps[step].task].comment || "");
     $("#maperrors").html("");
   };
 
@@ -111,16 +116,12 @@
         initializedSteps[step] = {};
         initializedSteps[step].task = 0;
         initializedSteps[step].tasks = [
-          /* Clear examples of a frack pond */
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -77.145002, "county": "Tioga", "state": "PA", "SiteID": "277ad7c2-1890-5ce9-a924-d5425ce42d79", "bbox": "-77.1495124372,41.7727717175,-77.1404915628,41.7795242805", "year": "2010", "latitude": 41.776148, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.145310610892,"lat":41.776873318054}], "distance": 100},
-
-          /* Sites with some natural ponds */
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -76.96821, "county": "Tioga", "state": "PA", "SiteID": "5d9f00f1-6e0d-57cb-b6d7-b301a89757f5", "bbox": "-76.9727221159,41.7967177317,-76.9636978841,41.8034702664", "year": "2010", "latitude": 41.800094, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions": [{"lon":-76.971554059412,"lat":41.800188964888},{"lon":-76.972018296172,"lat":41.802417301339}], "distance": 100},
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -76.984005, "county": "Tioga", "state": "PA", "SiteID": "3bd729db-68f7-5641-a536-f9b19d2dcb78", "bbox": "-76.9885189529,41.8228867471,-76.9794910471,41.8296392509", "year": "2010", "latitude": 41.826263, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions": [{"lon":-76.984127583995,"lat":41.825576873233},{"lon":-76.981472161876,"lat":41.826412495578}], "distance": 100},
-
-          /* Some more difficult cases */
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -77.580592, "county": "Tioga", "state": "PA", "SiteID": "85547453-a86e-57a5-8b14-ccac8b61365b", "bbox": "-77.5850956977,41.6763456607,-77.5760883023,41.6830983373", "year": "2010", "latitude": 41.679722, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions": [{"lon":-77.580416503393,"lat":41.680576671125}], "distance": 100},
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "question": "Please click on any fracking pond(s) you see in this map", "longitude": -77.548494, "county": "Tioga", "state": "PA", "SiteID": "0bc3885b-17af-5063-a689-47155a02674f", "bbox": "-77.5529990533,41.6957796721,-77.5439889467,41.7025323259", "year": "2010", "latitude": 41.699156, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions": [{"lon":-77.547449069169,"lat":41.699251403515}], "distance": 100}
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -76.969928, "county": "Tioga", "state": "PA", "SiteID": "9745ac0d-a851-5a86-b094-022cb3774255", "bbox": "-76.9771331235,41.6672118494,-76.9627228765,41.6780161455", "year": "2010", "latitude": 41.672614, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-76.971196358494,"lat":41.670834091787}], "distance": 100},
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.121018, "county": "Tioga", "state": "PA", "SiteID": "b90bfd9f-2755-5049-aafc-01b83a68276b", "bbox": "-77.1282254104,41.6877088688,-77.1138105896,41.6985131261", "year": "2010", "latitude": 41.693111, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.119634763931,"lat":41.694328356627}], "distance": 100},
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.145002, "county": "Tioga", "state": "PA", "SiteID": "277ad7c2-1890-5ce9-a924-d5425ce42d79", "bbox": "-77.1522186994,41.7707459471,-77.1377853006,41.7815500478", "year": "2010", "latitude": 41.776148, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.145276994811,"lat":41.776827725659}], "distance": 100},
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.580592, "county": "Tioga", "state": "PA", "SiteID": "85547453-a86e-57a5-8b14-ccac8b61365b", "bbox": "-77.5877979163,41.6743198561,-77.5733860837,41.6851241388", "year": "2010", "latitude": 41.679722, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.580345462516,"lat":41.680579217363}], "distance": 100, "comment": "This one is quite small and nearly empty"},
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.548494, "county": "Tioga", "state": "PA", "SiteID": "0bc3885b-17af-5063-a689-47155a02674f", "bbox": "-77.5557020853,41.6937538745,-77.5412859147,41.7045581204", "year": "2010", "latitude": 41.699156, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.547427345881,"lat":41.699269488817}], "distance": 100, "comment": "This one is quite small and nearly empty"},
+          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -76.984005, "county": "Tioga", "state": "PA", "SiteID": "3bd729db-68f7-5641-a536-f9b19d2dcb78", "bbox": "-76.9912273246,41.8208609944,-76.9767826754,41.8316650005", "year": "2010", "latitude": 41.826263, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-76.984143391565,"lat":41.825600434034},{"lon":-76.984282746974,"lat":41.825090107298}], "distance": 100}
         ];
         loadMap();
         setMapTask(step);
