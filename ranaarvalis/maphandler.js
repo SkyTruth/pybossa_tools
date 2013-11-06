@@ -103,7 +103,7 @@ $(document).ready(function () {
   function cookieToExpander() {
     var body = $(".expander-body");
     var control = $(".expander-control i");
-    if ($.cookie('taskmanager_expander') != "collapsed") {
+    if ($.cookie('taskmanager_expander') == "expanded") {
       control.addClass("icon-minus-sign");
       control.removeClass("icon-plus-sign");
       body.show();
