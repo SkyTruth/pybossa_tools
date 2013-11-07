@@ -20,14 +20,17 @@
     <script src="http://openlayers.org/dev/OpenLayers.js"></script>
     <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
     <script>
-      app = {};
-
       {% include "tadpole-wms/maphandler.js" %}
     </script>    
   {% endblock %}
   {% block page_libraries %}
 
   {% endblock %}
+  <script>
+    $(document).ready(function () {
+      page = new Page(new App());
+    });
+  </script>
 {% endblock %}
 
 <style>

@@ -88,44 +88,58 @@
 
 {% block page_libraries %}
   <script>
-    $(document).ready(function () {
-      function loadUserProgress() {
-        pybossa.userProgress('{{short_name}}').done(setProgress);
-      }
+    GenericPage = Page;
+    Page = function (app) {
+      GenericPage.call(this, app);
+      var page = this;
 
       pybossa.taskLoaded(function(task, deferred) {
-        deferred.resolve(task);
+        return page.taskLoaded(task, deferred);
       });
 
       pybossa.presentTask(function(task, deferred) {
-        app.task = task;
-        if ( !$.isEmptyObject(task) ) {
-          $('#task-id').html(task.id);
-          loadUserProgress();
-          updateMap(task.info);
-
-          app.report_answer = function() {
-            pybossa.saveTask(task.id, getAnswer()).done(function() {
-              deferred.resolve();
-            });
-
-            $("#loading").fadeIn(500);
-            if ($("#disqus_thread").is(":visible")) {
-              $('#disqus_thread').toggle();
-              $('.btn-disqus').toggle();
-            }
-          };
-          $("#loading").hide();
-        } else {
-          $(".skeleton").hide();
-          $("#loading").hide();
-          $("#finish").fadeIn(500);
-        }
+        return page.presentTask(task, deferred);
       });
 
-      loadMap();
-      app.map = map;
+      page.app.loadMap();
       pybossa.run('{{short_name}}');
-    });
+    };
+    Page.prototype.taskLoaded = function(task, deferred) {
+      deferred.resolve(task);
+    };
+    Page.prototype.loadUserProgress = function() {
+      var page = this;
+      pybossa.userProgress('{{short_name}}').done(function (data) {
+        return page.app.setProgress(data); });
+    };
+    Page.prototype.reportAnswer = function () {
+      var page = this;
+
+      pybossa.saveTask(page.task.id, page.app.getAnswer()).done(function() {
+        page.deferred.resolve();
+      });
+
+      $("#loading").fadeIn(500);
+      if ($("#disqus_thread").is(":visible")) {
+        $('#disqus_thread').toggle();
+        $('.btn-disqus').toggle();
+      }
+    };
+    Page.prototype.presentTask = function(task, deferred) {
+      var page = this;
+      page.task = task;
+      page.deferred = deferred;
+      if ( !$.isEmptyObject(task) ) {
+        $('#task-id').html(task.id);
+        page.loadUserProgress();
+        page.app.updateMap(task.info);
+        $("#loading").hide();
+      } else {
+        $(".skeleton").hide();
+        $("#loading").hide();
+        $("#finish").fadeIn(500);
+      }
+    };
+
   </script>
 {% endblock %}

@@ -1,7 +1,22 @@
-var map;
-
-function loadMap() {
-  map = new OpenLayers.Map({
+App = function() {
+  var app = this;
+  app.map = undefined;
+  $(".expander-control").click(function (ev) {
+    var expanded = $.cookie('taskmanager_expander') == "expanded";
+    $.cookie('taskmanager_expander', expanded ? "collapsed" : "expanded");
+    app.cookieToExpander();
+  });
+  app.cookieToExpander();
+  $('.btn-answer').on('click', function(evt) {
+    app.answer = {"type": evt.target.value};
+    app.page.reportAnswer();
+  });
+  app.mapIsLoaded = false;
+}
+App.prototype.loadMap = function() {
+  var app = this;
+  if (app.mapIsLoaded) return;
+  app.map = new OpenLayers.Map({
       div: "map",
       allOverlays: true,
       fractionalZoom: true,
@@ -13,18 +28,19 @@ function loadMap() {
   var guide = new OpenLayers.Layer.Vector("Guide");
   guide.id = "guide";
 
-  map.addLayer(guide);
+  app.map.addLayer(guide);
 
-  map.addControls([
+  app.map.addControls([
     new OpenLayers.Control.Navigation(),
     new OpenLayers.Control.Attribution(),
     new OpenLayers.Control.PanZoomBar()
   ]);
 
-  map.zoomToMaxExtent();
+  app.map.zoomToMaxExtent();
+  app.mapIsLoaded = true;
 }
 
-function setProgress(data) {
+App.prototype.setProgress = function(data) {
   var pct = Math.round((data.done*100)/data.total);
   $("#progress").css("width", pct.toString() +"%");
   $("#progress").attr("title", pct.toString() + "% completed!");
@@ -33,28 +49,29 @@ function setProgress(data) {
   $("#done").text(data.done);
 }
 
-function updateMap(info) {
+App.prototype.updateMap = function(info) {
+  var app = this;
   app.answer = undefined;
   app.info = info;
-  if (map.getLayer('imagery')) map.removeLayer(map.getLayer('imagery'));
+  if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
   var imagery = new OpenLayers.Layer.WMS(
     "Imagery",
     info.url,
     info.options);
   imagery.id = 'imagery';
-  map.addLayer(imagery);
-  map.setLayerIndex(imagery, 0);
-  map.setBaseLayer(imagery);
+  app.map.addLayer(imagery);
+  app.map.setLayerIndex(imagery, 0);
+  app.map.setBaseLayer(imagery);
 
-  var guide = map.getLayer('guide');
+  var guide = app.map.getLayer('guide');
   guide.removeAllFeatures();
 
   var p1 = new OpenLayers.LonLat(info.longitude, info.latitude).transform(
-    map.getProjectionObject(),
+    app.map.getProjectionObject(),
     new OpenLayers.Projection("EPSG:4326"));
   var p2 = p1.add(0, 1.0 / 1852 / 60);
-  p1 = p1.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
-  p2 = p2.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+  p1 = p1.transform(new OpenLayers.Projection("EPSG:4326"), app.map.getProjectionObject());
+  p2 = p2.transform(new OpenLayers.Projection("EPSG:4326"), app.map.getProjectionObject());
   var oneMeter = p2.lat - p1.lat;
 
   var center = new OpenLayers.Geometry.Point(info.longitude, info.latitude);
@@ -87,7 +104,7 @@ function updateMap(info) {
   );
   guide.addFeatures([circle]);
 
-  map.zoomToExtent(circleGeom.getBounds().scale(1.2));
+  app.map.zoomToExtent(circleGeom.getBounds().scale(1.2));
   $("#site_county").html(info.county || "");
   $("#site_state").html(info.state || "");
   $("#site_year").html(info.year || "");
@@ -96,7 +113,7 @@ function updateMap(info) {
   $("#site_id").html(info.SiteID);
 }
 
-function cookieToExpander() {
+App.prototype.cookieToExpander = function() {
   var body = $(".expander-body");
   var control = $(".expander-control i");
   if ($.cookie('taskmanager_expander') == "expanded") {
@@ -110,19 +127,20 @@ function cookieToExpander() {
   }
 }
 
-function getAnswer() {
-  return app.answer;
+App.prototype.getAnswer = function() {
+  return this.answer;
 }
 
 $(document).ready(function () {
-  $(".expander-control").click(function (ev) {
-    var expanded = $.cookie('taskmanager_expander') == "expanded";
-    $.cookie('taskmanager_expander', expanded ? "collapsed" : "expanded");
-    cookieToExpander();
-  });
-  cookieToExpander();
-  $('.btn-answer').on('click', function(evt) {
-    app.answer = {"type": evt.target.value};
-    app.report_answer();
-  });
 });
+
+
+Page = function (app) {
+  var page = this;
+  page.app = app;
+  app.page = page;
+};
+Page.prototype.reportAnswer = function () {
+  // This should be overridden by a real page...
+  console.log(page.app.getAnswer());
+};
