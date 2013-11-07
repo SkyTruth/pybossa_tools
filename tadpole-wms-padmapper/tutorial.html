@@ -1,0 +1,59 @@
+{% extends "tadpole-wms/tutorial.html" %}
+
+{% block steps %}
+   <div class="step">
+     <h2>Drill pad identification</h2>
+     <p><strong>Hi!</strong> This is an application to help classify drill pads into different categories for <a href="http://skytruth.org">SkyTruth</a>.</p>
+     <p>The application is really simple. It loads a map with satelite imagery and asks you to select what type of drill pad you see in the image.</p>
+   </div>
+
+   <div class="step">
+     <h2>What the different drill pad types look like</h2>
+     <div class="row">
+       <div class="span4">
+         <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/well+pad+examples/empty+well+pads/2010tioga_spudbuffer21.png" class="img-polaroid">
+         <button class="btn btn-success">Grass</button>
+       </div>
+       <div class="span4">
+         <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/well+pad+examples/empty+well+pads/2010tioga_spudbuffer16.png" class="img-polaroid">
+         <button class="btn">Gravel</button>
+       </div>
+       <div class="span4">
+         <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer34.png" class="img-polaroid">
+         <button class="btn btn-inverse">Drill rigg</button>
+       </div>
+     </div>
+
+     <br />
+
+     <div class="row">
+       <div class="span4">
+         <img src="http://images.nationalgeographic.com/wpf/media-live/photos/000/036/cache/drill-pads-ludwig_3684_990x742.jpg" class="img-polaroid">
+         <button class="btn btn-info">Frack tank</button>
+       </div>
+       <div class="span4">
+         <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/well+pad+examples/no+pad+visible/2010tioga_spudbuffer136.png" class="img-polaroid">
+         <button class="btn btn-danger">No pad visible</button>
+       </div>
+     </div>
+   </div>
+
+   <div class="step">
+     <h2>How to select drill pad type</h2>
+     <p>Click on the buttons in the bottom right of the image corresponding to what you see in the image. You can zoom and pan the map to see more details.</p>
+     <img src="http://farm8.staticflickr.com/7285/8737303873_ac0bd171b8_b_d.jpg" class="img-polaroid">
+   </div>
+{% endblock %}
+
+{% block testrun_description %}
+  <h2>Test run</h2>
+  <p>Pleasy try to mark any drill pads you see below. <span id="mapcomment"></span></p>
+{% endblock %}
+
+{% block row %}
+  {% include "tadpole-wms-padmapper/row.html" %}
+{% endblock %}
+
+{% block tasks %}
+  {"bbox":"-77.295721,41.83096,-76.966131,41.983755", "url":"http://raster.nationalmap.gov/ArcGIS/services/Orthoimagery/USGS_EDC_Ortho_NAIP/ImageServer/WMSServer", "options":{"request":"getMap", "service":"WMS", "transparent": true}, "answer": "grass"}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "tadpole-wms/tutorial.html" %}
+
+{% block steps %}
+  <div class="step">
+    <h2>Pond identification</h2>
+    <p><strong>Hi!</strong> This is an application to help classify ponds into different categories for <a href="http://skytruth.org">SkyTruth</a>.</p>
+    <p>The application is really simple. It loads a map with satelite imagery and asks you to select what type of pond you see in the image.</p>
+  </div>
+
+  <div class="step">
+    <h2>What the ponds look like</h2>
+    <div class="row">
+      <div class="span4">
+        <p>This is a <button class="btn btn-inverse btn-small">Fracking
+        pond</button>. Especially note the black plastic lining and
+        the rectangular shape.</p>
+        <img src="http://crowd.skytruth.org/appstatic/tadpole-wms-pondmapper/frackpond.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <p>This is a <button class="btn btn-success btn-small">Natural pond</button>. It has no lining, and an irregular shape.</p>
+        <img src="http://crowd.skytruth.org/appstatic/tadpole-wms-pondmapper/naturalpond.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <p>There is no pond here, so all we can answer is <button class="btn btn-danger btn-small">Not sure which one</button>.</p>
+        <img src="http://crowd.skytruth.org/appstatic/tadpole-wms-pondmapper/nopond.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h2>How to select pond type</h2>
+    <p>Click on the buttons in the bottom right of the image corresponding to what you see in the image. You can zoom and pan the map to see more details.</p>
+    <img src="http://farm8.staticflickr.com/7285/8737303873_ac0bd171b8_b_d.jpg" class="img-polaroid">
+  </div>
+{% endblock %}
+
+{% block testrun_description %}
+  <h2>Test run</h2>
+  <p>Pleasy try to categorize any ponds you see below. <span id="mapcomment"></span></p>
+{% endblock %}
+
+{% block row %}
+  {% include "tadpole-wms-pondmapper/row.html" %}
+{% endblock %}
+
+ {% block tasks %}
+   {"url":"https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/","longitude":-76.937213648092,"county":"Tioga","state":"PA","year":"2010","latitude":41.889000490352,"options":{"layers":"06136759344167181854-16779344390631852423-4","version":"1.3.0"},"size":200, "answer": "fracking"},
+   {"url":"https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/","longitude":-77.580555248041,"county":"Tioga","state":"PA","year":"2010","latitude":41.680526254615,"options":{"layers":"06136759344167181854-16779344390631852423-4","version":"1.3.0"},"size":200, "answer": "fracking"},
+   {"url":"https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/","longitude":-77.216056529367,"county":"Tioga","state":"PA","year":"2010","latitude":41.788525212312,"options":{"layers":"06136759344167181854-16779344390631852423-4","version":"1.3.0"},"size":200, "answer": "fracking"},
+   {"url":"https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/","longitude":-77.131340670126,"county":"Tioga","state":"PA","year":"2010","latitude":41.780323715864,"options":{"layers":"06136759344167181854-16779344390631852423-4","version":"1.3.0"},"size":200, "answer": "fracking"}
+ {% endblock %}

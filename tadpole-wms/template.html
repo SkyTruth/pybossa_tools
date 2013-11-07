@@ -1,37 +1,42 @@
-<div class="row">
-    <div class="span6 offset2">
-        <div id="success" class="alert alert-success" style="display:none;">
-            <a class="close">×</a>
-            <strong>Well done!</strong> Your answer has been saved
-        </div>
-        <div id="loading" class="alert alert-info" style="display:none;">
-            <a class="close">×</a>
-            Loading next task...
-        </div>
-        <div id="taskcompleted" class="alert alert-info" style="display:none;">
-            <strong>The task has been completed!</strong> Thanks a lot!
-        </div>
-        <div id="finish" class="alert alert-success" style="display:none;">
-            <strong>Congratulations!</strong> You have participated in all available tasks!
-            <br/>
-            <div class="alert-actions">
-                <a class="btn small" href="/">Go back</a>
-                <a class="btn small" href="/app">or, Check other applications</a>
-            </div>
-        </div>
-        <div id="error" class="alert alert-error" style="display:none;">
-            <a class="close">×</a>
-            <strong>Error!</strong> Something went wrong, please contact the site administrators
-        </div>
-    </div>
-</div>
+{% extends "tadpole-wms/base.html" %}
 
-<div class="row skeleton">
-  {% include "tadpole-wms/row.html" %}
-</div>
+{% block body %}
+  <div class="row">
+      <div class="span6 offset2">
+          <div id="success" class="alert alert-success" style="display:none;">
+              <a class="close">×</a>
+              <strong>Well done!</strong> Your answer has been saved
+          </div>
+          <div id="loading" class="alert alert-info" style="display:none;">
+              <a class="close">×</a>
+              Loading next task...
+          </div>
+          <div id="taskcompleted" class="alert alert-info" style="display:none;">
+              <strong>The task has been completed!</strong> Thanks a lot!
+          </div>
+          <div id="finish" class="alert alert-success" style="display:none;">
+              <strong>Congratulations!</strong> You have participated in all available tasks!
+              <br/>
+              <div class="alert-actions">
+                  <a class="btn small" href="/">Go back</a>
+                  <a class="btn small" href="/app">or, Check other applications</a>
+              </div>
+          </div>
+          <div id="error" class="alert alert-error" style="display:none;">
+              <a class="close">×</a>
+              <strong>Error!</strong> Something went wrong, please contact the site administrators
+          </div>
+      </div>
+  </div>
 
+  <div class="row skeleton">
+    {% block row %}
+      {% include "tadpole-wms/row.html" %}
+    {% endblock %}
+  </div>
+{% endblock%}
 
-<style>
+{% block page_styles %}
   @media (max-width: 979px) {
     #map {
       top: 50px !important;
@@ -70,36 +75,8 @@
     margin-left: 0pt;
     margin-right: 0pt;
   }
-  #disqus_thread {
-    position: fixed;
-    top: 120px;
-    z-index: 3;
-    background: white;
-    left: 40px;
-    right: 40px;
-    bottom: 100px;
-    padding: 5pt;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-  }
   .taskmanager {
-    z-index: 2;
     position: fixed;
-    bottom: 0;
-    right: 0;
-    background: white;
-    font-weight: bold;
-    padding: 5pt;
-    -webkit-border-top-left-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    border-top-left-radius: 5px;
-  }
-  .progress {
-    width: 50px;
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
   }
   #map {
     width: 100%;
@@ -107,70 +84,48 @@
     bottom: 0;
     top: 81px;
   }
-</style>
+{% endblock %}
 
-
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  function loadDisqus() {
-    $("#disqus_thread").toggle();
-    $(".btn-disqus").toggle();
-  }
-
-  $(document).ready(function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = 'http://drillpad.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  });
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-
-
-<script src="http://openlayers.org/dev/OpenLayers.js"></script>
-<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
-
-
-<script>
-  $(document).ready(function () {
-    {% include "tadpole-wms/maphandler.js" %}
-
-    function loadUserProgress() {
-      pybossa.userProgress('{{short_name}}').done(setProgress);
-    }
-
-    pybossa.taskLoaded(function(task, deferred) {
-      deferred.resolve(task);
-    });
-
-    pybossa.presentTask(function(task, deferred) {
-      if ( !$.isEmptyObject(task) ) {
-        $('#task-id').html(task.id);
-        loadUserProgress();
-        updateMap(task.info);
-
-        $('.btn-answer').on('click', function(evt) {
-          pybossa.saveTask(task.id, {"type": evt.target.value}).done(function() {
-            deferred.resolve();
-          });
-
-          $("#loading").fadeIn(500);
-          if ($("#disqus_thread").is(":visible")) {
-            $('#disqus_thread').toggle();
-            $('.btn-disqus').toggle();
-          }
-        });
-        $("#loading").hide();
-      } else {
-        $(".skeleton").hide();
-        $("#loading").hide();
-        $("#finish").fadeIn(500);
+{% block page_libraries %}
+  <script>
+    $(document).ready(function () {
+      function loadUserProgress() {
+        pybossa.userProgress('{{short_name}}').done(setProgress);
       }
-    });
 
-    loadMap();
-globalmap = map;
-    pybossa.run('{{short_name}}');
-  });
-</script>
+      pybossa.taskLoaded(function(task, deferred) {
+        deferred.resolve(task);
+      });
+
+      pybossa.presentTask(function(task, deferred) {
+        app.task = task;
+        if ( !$.isEmptyObject(task) ) {
+          $('#task-id').html(task.id);
+          loadUserProgress();
+          updateMap(task.info);
+
+          app.report_answer = function() {
+            pybossa.saveTask(task.id, getAnswer()).done(function() {
+              deferred.resolve();
+            });
+
+            $("#loading").fadeIn(500);
+            if ($("#disqus_thread").is(":visible")) {
+              $('#disqus_thread').toggle();
+              $('.btn-disqus').toggle();
+            }
+          };
+          $("#loading").hide();
+        } else {
+          $(".skeleton").hide();
+          $("#loading").hide();
+          $("#finish").fadeIn(500);
+        }
+      });
+
+      loadMap();
+      app.map = map;
+      pybossa.run('{{short_name}}');
+    });
+  </script>
+{% endblock %}
