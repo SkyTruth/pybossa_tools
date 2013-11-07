@@ -1,0 +1,88 @@
+{% block libraries %}
+  {% block base_libraries %}
+    <script type="text/javascript">
+      /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      function loadDisqus() {
+        $("#disqus_thread").toggle();
+        $(".btn-disqus").toggle();
+      }
+
+      $(document).ready(function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://drillpad.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
+    <script src="http://openlayers.org/dev/OpenLayers.js"></script>
+    <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+    <script>
+      {% include "base-openlayers/maphandler.js" %}
+    </script>    
+  {% endblock %}
+  {% block page_libraries %}
+
+  {% endblock %}
+  <script>
+    $(document).ready(function () {
+      page = new Page(new App());
+    });
+  </script>
+{% endblock %}
+
+<style>
+  {% block styles %}
+    {% block base_styles %}
+       .expander-control {
+         position: absolute;
+         font-weight: bold;
+         color: #3d5b7f;
+         right: 5pt;
+         font-size: 10pt;
+       }
+       #disqus_thread {
+         position: fixed;
+         top: 120px;
+         z-index: 3;
+         background: white;
+         left: 40px;
+         right: 40px;
+         bottom: 100px;
+         padding: 5pt;
+         -webkit-border-radius: 5px;
+         -moz-border-radius: 5px;
+         border-radius: 5px;
+       }
+       .progress {
+         width: 50px;
+         display: inline-block;
+         margin-bottom: 0;
+         vertical-align: middle;
+       }
+       .taskmanager {
+         z-index: 2;
+         bottom: 0;
+         right: 0;
+         background: white;
+         font-weight: bold;
+         padding-left: 5pt;
+         padding-top: 5pt;
+         padding-right: 20pt;
+         padding-bottom: 5pt;
+         -webkit-border-top-left-radius: 5px;
+         -moz-border-radius-topleft: 5px;
+         border-top-left-radius: 5px;
+       }
+    {% endblock %}
+    {% block page_styles %}
+
+    {% endblock %}
+  {% endblock %}
+</style>
+
+{% block body %}
+
+{% endblock %}

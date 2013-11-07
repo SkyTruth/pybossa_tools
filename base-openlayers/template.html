@@ -1,0 +1,145 @@
+{% extends "base-openlayers/base.html" %}
+
+{% block body %}
+  <div class="row">
+      <div class="span6 offset2">
+          <div id="success" class="alert alert-success" style="display:none;">
+              <a class="close">×</a>
+              <strong>Well done!</strong> Your answer has been saved
+          </div>
+          <div id="loading" class="alert alert-info" style="display:none;">
+              <a class="close">×</a>
+              Loading next task...
+          </div>
+          <div id="taskcompleted" class="alert alert-info" style="display:none;">
+              <strong>The task has been completed!</strong> Thanks a lot!
+          </div>
+          <div id="finish" class="alert alert-success" style="display:none;">
+              <strong>Congratulations!</strong> You have participated in all available tasks!
+              <br/>
+              <div class="alert-actions">
+                  <a class="btn small" href="/">Go back</a>
+                  <a class="btn small" href="/app">or, Check other applications</a>
+              </div>
+          </div>
+          <div id="error" class="alert alert-error" style="display:none;">
+              <a class="close">×</a>
+              <strong>Error!</strong> Something went wrong, please contact the site administrators
+          </div>
+      </div>
+  </div>
+
+  <div class="row skeleton">
+    {% block row %}
+      {% include "base-openlayers/row.html" %}
+    {% endblock %}
+  </div>
+{% endblock%}
+
+{% block page_styles %}
+  @media (max-width: 979px) {
+    #map {
+      top: 50px !important;
+    }
+  }
+  .navbar {
+    z-index: 3;
+    position: absolute;
+  }
+  .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
+    margin: 0;
+  }
+  body {
+    padding: 0;
+  }
+  footer, html {
+    background: white;
+  }
+  footer {
+    display: none;
+  }
+  .alert-messages {
+    position: absolute;
+    z-index: 2;
+    left: 80px;
+    right: 80px;
+    top: 140px;
+  }
+  .container {
+    width: 100%;
+  }
+  .container h1 {
+    display: none;
+  }
+  .container .row {
+    margin-left: 0pt;
+    margin-right: 0pt;
+  }
+  .taskmanager {
+    position: fixed;
+  }
+  #map {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    top: 81px;
+  }
+{% endblock %}
+
+{% block page_libraries %}
+  <script>
+    GenericPage = Page;
+    Page = function (app) {
+      GenericPage.call(this, app);
+      var page = this;
+
+      pybossa.taskLoaded(function(task, deferred) {
+        return page.taskLoaded(task, deferred);
+      });
+
+      pybossa.presentTask(function(task, deferred) {
+        return page.presentTask(task, deferred);
+      });
+
+      page.app.loadMap();
+      pybossa.run('{{short_name}}');
+    };
+    Page.prototype.taskLoaded = function(task, deferred) {
+      deferred.resolve(task);
+    };
+    Page.prototype.loadUserProgress = function() {
+      var page = this;
+      pybossa.userProgress('{{short_name}}').done(function (data) {
+        return page.app.setProgress(data); });
+    };
+    Page.prototype.reportAnswer = function () {
+      var page = this;
+
+      pybossa.saveTask(page.task.id, page.app.getAnswer()).done(function() {
+        page.deferred.resolve();
+      });
+
+      $("#loading").fadeIn(500);
+      if ($("#disqus_thread").is(":visible")) {
+        $('#disqus_thread').toggle();
+        $('.btn-disqus').toggle();
+      }
+    };
+    Page.prototype.presentTask = function(task, deferred) {
+      var page = this;
+      page.task = task;
+      page.deferred = deferred;
+      if ( !$.isEmptyObject(task) ) {
+        $('#task-id').html(task.id);
+        page.loadUserProgress();
+        page.app.updateMap(task.info);
+        $("#loading").hide();
+      } else {
+        $(".skeleton").hide();
+        $("#loading").hide();
+        $("#finish").fadeIn(500);
+      }
+    };
+
+  </script>
+{% endblock %}
