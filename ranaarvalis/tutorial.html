@@ -1,25 +1,65 @@
 <div class="row">
   <div class="span12">
-    <div class="step" style="display:none">
+    <div class="step">
       <h2>Pond identification</h2>
       <p><strong>Hi!</strong> This is an application to help identify fracking ponds for <a href="http://skytruth.org">SkyTruth</a>.</p>
       <p>The application is really simple. It loads a map with satelite imagery and asks you to click on any ponds you see within a certain area.</p>
       <p>The ponds are often located near or at a fracking site (pad), and so the areas we've selected are centered on known fracking sites.</p>
     </div>
 
-    <div class="step" style="display:none">
+    <div class="step">
       <h2>What a pond looks like</h2>
       <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/frackpond1.jpg" class="img-polaroid">
     </div>
 
-    <div class="step" style="display:none">
+    <div class="step">
+      <h2>What a pond looks like</h2>
+      <div class="row">
+        <div class="span4">
+          <p>Well pad with no pond</p>
+          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/1_NoPond.small.jpg" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <p>Example of a normal fracking pond</p>
+          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/2_FrackPond.small.jpg" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <p>Another normal fracking pond</p>
+          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/3_smallFrackPond.small.jpg" class="img-polaroid">
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="span4">
+          <p>Example of a dried up pond</p>
+          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/4_EmptyPond.small.jpg" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <p>Another dried up pond</p>
+          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/5_EmptyPond.small.jpg" class="img-polaroid">
+        </div>
+        <div class="span4">
+          <p>Example of a natural / farming pond</p>
+          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/6_FarmPond.small.jpg" class="img-polaroid">
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="span4">
+          <p>Another example of a natural / farming pond</p>
+          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/7_FarmPond.small.jpg" class="img-polaroid">
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
       <h2>How to select ponds</h2>
       <p>Click on all ponds you see within the red rectangle. They will get marked with a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
       <p>Click again on the same spot to remove a marker you accidentally placed in the wrong place.</p>
       <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/screenshots/screenshot-basic.png" class="img-polaroid">
     </div>
 
-    <div class="step mapstep" style="display:none">
+    <div class="step mapstep">
       <h2>Test run</h2>
       <p>Please try to mark ponds you see below. <span id="mapcomment"></span></p>
       <div class="mapcontainer">
@@ -29,7 +69,7 @@
       <span id="maperrors"></span>
     </div>
 
-    <div class="step" style="display:none">
+    <div class="step">
       <h2>On your mark, get set, go!</h2>
       Thank you, you are now ready to begin helping out!
     </div>
@@ -92,6 +132,9 @@
   #mapcomment {
     font-weight: bold;
     color: #ff0000;
+  }
+  .step {
+    display: none;
   }
 </style>
 
@@ -169,20 +212,20 @@
 
   var step = -1;
   function showStep(action) {
-    if (!validateStep()) return;
-
-    $("#" + step).hide();
-
+    var nrofsteps = $(".step").length;
+    var oldstep = step;
     if (action == 'next') {
+      if (!validateStep()) return;
       step = step + 1;
     }
     if (action == 'prev') {
       step = step - 1;
     }
 
+    $("#" + oldstep).hide();
     $("#prevBtn").toggle(step != 0);
-    $("#nextBtn").toggle(step != 4);
-    $("#startContrib").toggle(step == 4);
+    $("#nextBtn").toggle(step != nrofsteps - 1);
+    $("#startContrib").toggle(step == nrofsteps - 1);
     $("#" + step).show();
     initializeStep(step);
   }
