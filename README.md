@@ -1,15 +1,11 @@
 A generic framework for PyBossa client applications, and a set of client applications based on that framework.
 
-Dependencies:
+# Installation
 
-* Django
-* httplib2
-* pybossa-client
+    pip install -r pybossa_tools/requirements.txt
+    
 
-For mangleresults.py
-
-* shapely
-* fastkml
+# Usage
 
 The createTasks.py script is a front-end to work with all the applications - to upload them and tasks for them to pybossa. The command
 
