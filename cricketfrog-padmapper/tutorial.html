@@ -1,5 +1,12 @@
 {% extends "cricketfrog/tutorial.html" %}
 
+{% block page_libraries %}
+  {{block.super}}
+  <script>
+    {% include "cricketfrog-padmapper/maphandler.js" %}
+  </script>
+{% endblock %}
+
 {% block steps %}
   <div class="step">
     <div class="row">

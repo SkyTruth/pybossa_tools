@@ -9,11 +9,6 @@ App.prototype.init = function () {
 }
 
 App.prototype.drawStyle = 'new';
-App.prototype.useMapUnderlayes = true;
-// When using OpenLayers.Layer.Image the task projection must be the
-// same as the map projection, which comes from Google Maps if using
-// map underlays...
-App.prototype.taskProjection = new OpenLayers.Projection("EPSG:900913");
 
 App.prototype.loadMapAddLayers = function() {
   var app = this;
@@ -71,8 +66,6 @@ App.prototype.getTaskBounds = function() {
   var app = this;
   return OpenLayers.Bounds.fromString(app.info.bbox);
 }
-
-App.prototype.loadImagery = BaseOpenlayersApp.prototype.loadImageryIMG;
 
 App.prototype.loadGuide = function() {
   var app = this;
