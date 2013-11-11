@@ -1,5 +1,42 @@
 var map;
 
+OpenLayers.Control.AppKeyboardDefaults = OpenLayers.Class(OpenLayers.Control.KeyboardDefaults, {
+  defaultKeyPress: function (evt) {
+    var size, handled = true;
+
+    var target = OpenLayers.Event.element(evt);
+    if (target  &&
+        (target.tagName == 'INPUT' ||
+         target.tagName == 'TEXTAREA' ||
+         target.tagName == 'SELECT')) {
+        return;
+    }
+    switch (evt.keyCode) {
+      case "W".charCodeAt():
+        this.map.pan(0, -this.slideFactor);
+        break;
+      case "S".charCodeAt():
+        this.map.pan(0, this.slideFactor);
+        break;
+      case "A".charCodeAt():
+        this.map.pan(-this.slideFactor, 0);
+        break;
+      case "D".charCodeAt():
+        this.map.pan(this.slideFactor, 0);
+        break;
+      default:
+        OpenLayers.Control.KeyboardDefaults.prototype.defaultKeyPress.apply(this, arguments);
+        handled = false;
+    }
+    if (handled) {
+      // prevent browser default not to move the page
+      // when moving the page with the keyboard
+      OpenLayers.Event.stop(evt);
+    }
+  },
+  CLASS_NAME: "OpenLayers.Control.AppKeyboardDefaults"
+});
+
 function loadMap() {
   map = new OpenLayers.Map({
       div: "map",
@@ -21,7 +58,7 @@ function loadMap() {
     new OpenLayers.Control.Navigation(),
     new OpenLayers.Control.Attribution(),
     new OpenLayers.Control.PanZoomBar(),
-    new OpenLayers.Control.KeyboardDefaults()
+    new OpenLayers.Control.AppKeyboardDefaults()
   ]);
 
   map.zoomToMaxExtent();
