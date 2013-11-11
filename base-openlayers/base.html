@@ -28,7 +28,7 @@
   {% endblock %}
   <script>
     $(document).ready(function () {
-      page = new Page(new App());
+      page = new Page().init(new App().init());
     });
   </script>
 {% endblock %}

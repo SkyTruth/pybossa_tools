@@ -1,64 +1,63 @@
-var map;
-
-drawStyle = 'new';
-
-function loadMap() {
-  map = new OpenLayers.Map({
+CricketFrogApp = App = function() {
+  BaseOpenlayersApp.apply(this, arguments);
+};
+App.prototype = new BaseOpenlayersApp();
+App.prototype.init = function () {
+  BaseOpenlayersApp.prototype.init.apply(this, arguments);
+  var app = this;
+  return app;
+}
+App.prototype.drawStyle = 'new';
+App.prototype.loadMapCreateMap = function() {
+  var app = this;
+  app.map = new OpenLayers.Map({
       div: "map",
-//      allOverlays: true,
-//      fractionalZoom: true,
       controls: [],
-//      minScale: 442943842,
-//      maxScale: 135
   });
+}
+App.prototype.loadMapAddLayers = function() {
+  var app = this;
 
-    var drillpads = new OpenLayers.Layer.Vector("Drill pads", {displayInLayerSwitcher:false});
-  drillpads.id = "drillpads";
-  var guide = new OpenLayers.Layer.Vector("Guide");
-  guide.id = "guide";
+  app.layers.osm = new OpenLayers.Layer.OSM();
+  app.map.addLayer(app.layers.osm);
 
-  var osm = new OpenLayers.Layer.OSM();
-  var gmap = new OpenLayers.Layer.Google("Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22});
+  app.layers.gmap = new OpenLayers.Layer.Google("Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22});
+  app.map.addLayer(app.layers.gmap);
 
-  map.addLayers([osm, gmap, guide, drillpads]);
-  map.addControl(new OpenLayers.Control.LayerSwitcher());
-  map.setBaseLayer(osm);
+  BaseOpenlayersApp.prototype.loadMapAddLayers.call(this);
 
-  if (drawStyle == 'new')
-    drillpads.mod = new OpenLayers.Control.DrawFeature(drillpads, OpenLayers.Handler.Polygon);
+  app.layers.drillpads = new OpenLayers.Layer.Vector("Drill pads", {displayInLayerSwitcher: false});
+  app.layers.drillpads.id = "drillpads";
+  app.map.addLayer(app.layers.drillpads);
+
+  app.map.setBaseLayer(app.layers.osm);
+}
+App.prototype.loadMapAddControls = function() {
+  var app = this;
+  BaseOpenlayersApp.prototype.loadMapAddControls.call(this);
+
+  app.map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+  if (app.drawStyle == 'new')
+    app.layers.drillpads.mod = new OpenLayers.Control.DrawFeature(app.layers.drillpads, OpenLayers.Handler.Polygon);
   else
-    drillpads.mod = new OpenLayers.Control.ModifyFeature(drillpads);
-  map.addControls([
-    new OpenLayers.Control.Navigation(),
-    new OpenLayers.Control.Attribution(),
-    new OpenLayers.Control.PanZoomBar(),
-    drillpads.mod
-  ]);
-  drillpads.mod.activate();
-
-  map.zoomToMaxExtent();
+    app.layers.drillpads.mod = new OpenLayers.Control.ModifyFeature(app.layers.drillpads);
+  app.map.addControl(app.layers.drillpads.mod);
+  app.layers.drillpads.mod.activate();
 }
 
-function setProgress(data) {
-  var pct = Math.round((data.done*100)/data.total);
-  $("#progress").css("width", pct.toString() +"%");
-  $("#progress").attr("title", pct.toString() + "% completed!");
-  $("#progress").tooltip({'placement': 'left'}); 
-  $("#total").text(data.total);
-  $("#done").text(data.done);
-}
+App.prototype.clearData = function() {
+  var app = this;
 
-function clearData () {
-  var drillpads = map.getLayer('drillpads');
-  var info = drillpads.taskinfo;
-  var bbox = OpenLayers.Bounds.fromString(info.bbox);
-    var center = bbox.getCenterLonLat();
+  var drillpads = app.map.getLayer('drillpads');
+  var bbox = OpenLayers.Bounds.fromString(app.info.bbox);
+  var center = bbox.getCenterLonLat();
 
-  drillpads.mod.deactivate();
-  drillpads.removeAllFeatures();
-  drillpads.mod.activate();
+  app.layers.drillpads.mod.deactivate();
+  app.layers.drillpads.removeAllFeatures();
+  app.layers.drillpads.mod.activate();
 
-  if (drawStyle != 'new') {
+  if (app.drawStyle != 'new') {
     var feature = new OpenLayers.Feature.Vector(
       bbox.toGeometry(),
       null,
@@ -69,21 +68,53 @@ function clearData () {
         fillColor: "#ff0000"
       }
     );
-    drillpads.addFeatures([feature]);
-    drillpads.mod.selectFeature(feature);
-
+    app.layers.drillpads.addFeatures([feature]);
+    app.layers.drillpads.mod.selectFeature(feature);
   }
 
-  if (drawStyle == 'new') {
-    var guide = map.getLayer('guide');
+  BaseOpenlayersApp.prototype.clearData.call(app);
+}
+
+App.prototype.getTaskBounds = function() {
+  var app = this;
+  return OpenLayers.Bounds.fromString(app.info.bbox);
+}
+
+App.prototype.loadImagery = function() {
+  var app = this;
+  if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
+  var imagery = new OpenLayers.Layer.Image(
+    'imagery',
+    app.info.url,
+    OpenLayers.Bounds.fromString(app.info.bbox),
+    new OpenLayers.Size(app.info.width, app.info.height),
+    {
+      opacity: 1.0, 
+      isBaseLayer: false,
+      numZoomLevels: 20,
+      alwaysInRange: true
+    }
+  );
+  app.map.addLayer(imagery);
+  app.map.setLayerIndex(imagery, 1);
+}
+
+App.prototype.loadGuide = function() {
+  var app = this;
+
+  if (app.drawStyle == 'new') {
+    var bbox = OpenLayers.Bounds.fromString(app.info.bbox);
+    var center = bbox.getCenterLonLat();
+
+    var guide = app.map.getLayer('guide');
     guide.removeAllFeatures();
 
     var p1 = new OpenLayers.LonLat(center.lon, center.lat).transform(
-      map.getProjectionObject(),
+      app.map.getProjectionObject(),
       new OpenLayers.Projection("EPSG:4326"));
     var p2 = p1.add(0, 1.0 / 1852 / 60);
-    p1 = p1.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
-    p2 = p2.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+    p1 = p1.transform(new OpenLayers.Projection("EPSG:4326"), app.map.getProjectionObject());
+    p2 = p2.transform(new OpenLayers.Projection("EPSG:4326"), app.map.getProjectionObject());
     var oneMeter = p2.lat - p1.lat;
 
     guide.addFeatures([new OpenLayers.Feature.Vector(
@@ -97,49 +128,18 @@ function clearData () {
         fillColor: "#000000"
       }
     )]);
+
   }
-
-  map.zoomToExtent(bbox);
 }
 
-function updateMap(info) {
-  map.getLayer('drillpads').taskinfo = info;
-
-  map.getLayersByName('imagery').map(function (layer) {
-    map.removeLayer(layer);
-  });
-
-  var bboxradius = 250;
-  bbox = new OpenLayers.Bounds();
-  var center = new OpenLayers.LonLat(info.position);
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 0, bboxradius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 90, bboxradius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 180, bboxradius));
-  bbox.extend(OpenLayers.Util.destinationVincenty(center, 270, bboxradius));
-
-  var imagery = new OpenLayers.Layer.Image(
-    'imagery',
-    info.url,
-    OpenLayers.Bounds.fromString(info.bbox),
-    new OpenLayers.Size(info.width, info.height),
-    {
-      opacity: 1.0, 
-      isBaseLayer: false,
-      numZoomLevels: 20,
-      alwaysInRange: true
-    }
-  );
-  map.addLayer(imagery);
-  map.setLayerIndex(imagery, 1);
-
-  clearData();
-}
-
-function getTaskData() {
+App.prototype.getAnswer = function() {
+  var app = this;
   var geojson = new OpenLayers.Format.GeoJSON();
-  var drillpads = map.getLayer('drillpads');
+  var drillpads = app.map.getLayer('drillpads');
   drillpads.mod.deactivate();
-  var res = {shape: JSON.parse(geojson.write(drillpads.features[0].geometry))};
+  if (app.answer.selection == "done" && drillpads.features.length > 0) {
+    app.answer.shape = JSON.parse(geojson.write(drillpads.features[0].geometry));
+  }
   drillpads.mod.activate();
-  return res;
+  return app.answer;
 }

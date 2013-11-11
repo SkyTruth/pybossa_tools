@@ -88,9 +88,11 @@
 
 {% block page_libraries %}
   <script>
-    GenericPage = Page;
-    Page = function (app) {
-      GenericPage.call(this, app);
+    BaseTemplatePage = Page = function () {
+      GenericPage.apply(this, arguments);
+    };
+    Page.prototype.init = function () {
+      GenericPage.prototype.init.apply(this, arguments);
       var page = this;
 
       pybossa.taskLoaded(function(task, deferred) {
@@ -103,6 +105,7 @@
 
       page.app.loadMap();
       pybossa.run('{{short_name}}');
+      return page;
     };
     Page.prototype.taskLoaded = function(task, deferred) {
       deferred.resolve(task);

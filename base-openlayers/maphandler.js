@@ -1,6 +1,11 @@
-App = function() {
+BaseOpenlayersApp = App = function() {
   var app = this;
   app.map = undefined;
+  app.mapIsLoaded = false;
+}
+
+App.prototype.init = function () {
+  var app = this;
   $(".expander-control").click(function (ev) {
     var expanded = $.cookie('taskmanager_expander') == "expanded";
     $.cookie('taskmanager_expander', expanded ? "collapsed" : "expanded");
@@ -8,14 +13,30 @@ App = function() {
   });
   app.cookieToExpander();
   $('.btn-answer').on('click', function(evt) {
-    app.answer = {"type": evt.target.value};
+    app.answer = {"selection": evt.target.value};
     app.page.reportAnswer();
   });
-  app.mapIsLoaded = false;
+  $('.btn-cancel').on('click', function(evt) {
+    app.clearData();
+  });
+  return app;
 }
+
 App.prototype.loadMap = function() {
   var app = this;
   if (app.mapIsLoaded) return;
+
+  app.loadMapCreateMap();
+  app.layers = {};
+  app.loadMapAddLayers();
+  app.loadMapAddControls();
+
+  app.map.zoomToMaxExtent();
+  app.mapIsLoaded = true;
+}
+
+App.prototype.loadMapCreateMap = function() {
+  var app = this;
   app.map = new OpenLayers.Map({
       div: "map",
       allOverlays: true,
@@ -24,20 +45,20 @@ App.prototype.loadMap = function() {
       minScale: 442943842,
       maxScale: 135
   });
-
-  var guide = new OpenLayers.Layer.Vector("Guide");
-  guide.id = "guide";
-
-  app.map.addLayer(guide);
-
+}
+App.prototype.loadMapAddLayers = function() {
+  var app = this;
+  app.layers.guide = new OpenLayers.Layer.Vector("Guide");
+  app.layers.guide.id = "guide";
+  app.map.addLayer(app.layers.guide);
+}
+App.prototype.loadMapAddControls = function() {
+  var app = this;
   app.map.addControls([
     new OpenLayers.Control.Navigation(),
     new OpenLayers.Control.Attribution(),
     new OpenLayers.Control.PanZoomBar()
   ]);
-
-  app.map.zoomToMaxExtent();
-  app.mapIsLoaded = true;
 }
 
 App.prototype.setProgress = function(data) {
@@ -49,24 +70,34 @@ App.prototype.setProgress = function(data) {
   $("#done").text(data.done);
 }
 
-App.prototype.updateMap = function(info) {
+App.prototype.clearData = function() {
   var app = this;
-  app.answer = undefined;
-  app.info = info;
+  app.map.zoomToExtent(app.getTaskBounds());
+}
+
+App.prototype.getTaskBounds = function() {
+  return this.taskBounds;
+}
+
+App.prototype.loadImagery = function() {
+  var app = this;
   if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
   var imagery = new OpenLayers.Layer.WMS(
     "Imagery",
-    info.url,
-    info.options);
+    app.info.url,
+    app.info.options);
   imagery.id = 'imagery';
   app.map.addLayer(imagery);
   app.map.setLayerIndex(imagery, 0);
   app.map.setBaseLayer(imagery);
+}
 
+App.prototype.loadGuide = function() {
+  var app = this;
   var guide = app.map.getLayer('guide');
   guide.removeAllFeatures();
 
-  var p1 = new OpenLayers.LonLat(info.longitude, info.latitude).transform(
+  var p1 = new OpenLayers.LonLat(app.info.longitude, app.info.latitude).transform(
     app.map.getProjectionObject(),
     new OpenLayers.Projection("EPSG:4326"));
   var p2 = p1.add(0, 1.0 / 1852 / 60);
@@ -74,7 +105,7 @@ App.prototype.updateMap = function(info) {
   p2 = p2.transform(new OpenLayers.Projection("EPSG:4326"), app.map.getProjectionObject());
   var oneMeter = p2.lat - p1.lat;
 
-  var center = new OpenLayers.Geometry.Point(info.longitude, info.latitude);
+  var center = new OpenLayers.Geometry.Point(app.info.longitude, app.info.latitude);
 
   var style = {
     strokeColor: "#000000",
@@ -87,30 +118,40 @@ App.prototype.updateMap = function(info) {
   guide.addFeatures([
     new OpenLayers.Feature.Vector(
       new OpenLayers.Geometry.LineString([
-        new OpenLayers.Geometry.Point(info.longitude - info.size * oneMeter, info.latitude),
-        new OpenLayers.Geometry.Point(info.longitude + info.size * oneMeter, info.latitude)]),
+        new OpenLayers.Geometry.Point(app.info.longitude - app.info.size * oneMeter, app.info.latitude),
+        new OpenLayers.Geometry.Point(app.info.longitude + app.info.size * oneMeter, app.info.latitude)]),
       null, style),
     new OpenLayers.Feature.Vector(
       new OpenLayers.Geometry.LineString([
-        new OpenLayers.Geometry.Point(info.longitude, info.latitude - info.size * oneMeter),
-        new OpenLayers.Geometry.Point(info.longitude, info.latitude + info.size * oneMeter)]),
+        new OpenLayers.Geometry.Point(app.info.longitude, app.info.latitude - app.info.size * oneMeter),
+        new OpenLayers.Geometry.Point(app.info.longitude, app.info.latitude + app.info.size * oneMeter)]),
       null, style)]);
 
-  var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(center, info.size * oneMeter, 20, 0);
+  var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(center, app.info.size * oneMeter, 20, 0);
   var circle = new OpenLayers.Feature.Vector(
     circleGeom,
     null,
     style
   );
   guide.addFeatures([circle]);
+  app.taskBounds = circleGeom.getBounds().scale(1.2);
+}
 
-  app.map.zoomToExtent(circleGeom.getBounds().scale(1.2));
-  $("#site_county").html(info.county || "");
-  $("#site_state").html(info.state || "");
-  $("#site_year").html(info.year || "");
-  $("#site_lat").html(info.latitude);
-  $("#site_lon").html(info.longitude);
-  $("#site_id").html(info.SiteID);
+App.prototype.updateMap = function(info) {
+  var app = this;
+  app.answer = undefined;
+  app.info = info;
+
+  app.loadImagery();
+  app.loadGuide();
+  app.clearData();
+
+  $("#site_county").html(app.info.county || "");
+  $("#site_state").html(app.info.state || "");
+  $("#site_year").html(app.info.year || "");
+  $("#site_lat").html(app.info.latitude);
+  $("#site_lon").html(app.info.longitude);
+  $("#site_id").html(app.info.SiteID);
 }
 
 App.prototype.cookieToExpander = function() {
@@ -135,10 +176,14 @@ $(document).ready(function () {
 });
 
 
-Page = function (app) {
+GenericPage = Page = function () {
+};
+Page.prototype.init = function (app) {
   var page = this;
   page.app = app;
   app.page = page;
+
+  return page;
 };
 Page.prototype.reportAnswer = function () {
   // This should be overridden by a real page...

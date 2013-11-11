@@ -62,14 +62,19 @@
 
 {% block page_libraries %}
   <script>
-    GenericPage = Page;
-    Page = function (app) {
-      GenericPage.call(this, app);
+    BaseTutorialPage = Page = function () {
+      GenericPage.apply(this, arguments);
       var page = this;
 
       page.initializedSteps = {};
-      page.nrofsteps = $(".step").length;
       page.step = -1;
+    };
+    Page.prototype = new GenericPage();
+    Page.prototype.init = function () {
+      GenericPage.prototype.init.apply(this, arguments);
+      var page = this;
+
+      page.nrofsteps = $(".step").length;
 
       page.showStep('next');
       $("#modal").modal('show');
@@ -82,6 +87,8 @@
 
       $("#prevBtn").click(function (ev) { page.showStep('prev'); });
       $("#nextBtn").click(function (ev) { page.showStep('next'); });
+
+      return page;
     };
     Page.prototype.reportAnswer = function () {
       this.showStep('next');
@@ -113,26 +120,31 @@
         }
       }
     }
+    Page.prototype.validateMapStep = function() {
+      var info = page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task];
+      var answer = page.app.getAnswer();
+      if (answer == undefined || answer.type == undefined) {
+        page.errs.push("Please use one of the buttons at the bottom of the image to indicate the type of drill pad your see.");
+      } else if (answer.type != info.answer) {
+        page.errs.push("You selected " + answer.type + " while the correct answer was " + info.answer);
+      }
+
+      if (page.errs.length == 0 && page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
+        page.initializedSteps[page.step].task++;
+        page.setMapTask(page.step);
+        page.stayOnStep = true;
+      }
+    }
     Page.prototype.validateStep = function() {
       var page = this;
-      var answer = page.app.getAnswer();
-      var errs = [];
+      page.errs = [];
+      page.stayOnStep = false;
       if ($("#" + page.step).hasClass("mapstep")) {
-        var info = page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task];
-        if (answer == undefined || answer.type == undefined) {
-          errs.push("Please use one of the buttons at the bottom of the image to indicate the type of drill pad your see.");
-        } else if (answer.type != info.answer) {
-          errs.push("You selected " + answer.type + " while the correct answer was " + info.answer);
-        }
-
-        if (errs.length == 0 && page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
-          page.initializedSteps[page.step].task++;
-          page.setMapTask(page.step);
-          return false;
-        }
+        page.validateMapStep();
       }
-      $("#maperrors").html(errs.join(""));
-      return errs.length == 0;
+      if (page.stayOnStep) return false;
+      $("#maperrors").html(page.errs.join(""));
+      return page.errs.length == 0;
     }
     Page.prototype.showStep = function(action) {
       var page = this;
