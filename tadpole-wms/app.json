@@ -1,6 +1,6 @@
 {
-    "name": "Drill pad classification",
+    "name": "Object classification",
     "thumbnail": "http://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Oil_Well_Derrick_-_Kettleman_North_Dome_4-30-11_B1.jpg/450px-Oil_Well_Derrick_-_Kettleman_North_Dome_4-30-11_B1.jpg",
-    "description": "Drill pad classification",
-    "question": "Please identify the type of drillpad depicted in this image"
+    "description": "Base application for object classification",
+    "question": "Please identify the type of object depicted in this image"
 }
