@@ -18,5 +18,9 @@ will give you a list of all available applications, while
 will give you the customary help on the command itself and its options.
 
 
-Each application is made up of a directory containing set of templates, e.g. tadpole-padmapper. All templates are passed through the Django templating engine before uploading. Django template inheritance is used to share code between apps.
-The applion definition from app.json available as template variables. In particular, {{short_name}} is used for the application name to ensure that renaming apps on the fly during upload, using the -r flag will work.
+# Framework structure
+Each application is made up of a directory containing set of templates, e.g. tadpole-padmapper.
+All templates are passed through the Django templating engine before uploading.
+Django template inheritance is used to share code between apps.
+The applion definition from app.json available as template variables.
+In particular, {{short_name}} is used for the application name to ensure that renaming apps on the fly during upload, using the -r flag will work.
