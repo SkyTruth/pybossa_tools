@@ -101,6 +101,8 @@ App.prototype.clearData = function() {
 }
 
 App.prototype.getTaskBounds = function() {
+  var app = this;
+  var oneMeter = app.getOneMeterForMapFromTask(app.info.longitude, app.info.latitude);
   var bounds = new OpenLayers.Bounds();
   [[app.info.longitude - app.info.size * oneMeter, app.info.latitude],
    [app.info.longitude + app.info.size * oneMeter, app.info.latitude],
@@ -143,7 +145,7 @@ App.prototype.loadImageryIMG = function() {
   app.map.addLayer(imagery);
   app.map.setLayerIndex(imagery, 1);
 }
-App.prototype.loadImagery = App.prototype.loadImagery;
+App.prototype.loadImagery = App.prototype.loadImageryWMS;
 
 App.prototype.getOneMeter = function (projection, lonlat) {
   var wgs84 = new OpenLayers.Projection("EPSG:4326");
@@ -154,7 +156,16 @@ App.prototype.getOneMeter = function (projection, lonlat) {
   p2 = p2.transform(wgs84, projection);
 
   return p2.lat - p1.lat;
-}
+};
+
+App.prototype.getOneMeterForMapFromTask = function(lon, lat) {
+  var app = this;
+  return app.getOneMeter(app.map.getProjectionObject(), 
+    new OpenLayers.LonLat(lon, lat).transform(
+      app.taskProjection,
+      app.map.getProjectionObject()));
+};
+
 App.prototype.guideStyle = {
   strokeColor: "#000000",
   strokeWidth: 3,
@@ -166,10 +177,7 @@ App.prototype.guideStyle = {
 App.prototype.loadGuideCrossHair = function() {
   var app = this;
   var guide = app.map.getLayer('guide');
-  var oneMeter = app.getOneMeter(app.map.getProjectionObject(), 
-    new OpenLayers.LonLat(app.info.longitude, app.info.latitude).transform(
-      app.taskProjection,
-      app.map.getProjectionObject()));
+  var oneMeter = app.getOneMeterForMapFromTask(app.info.longitude, app.info.latitude);
   guide.addFeatures([
     new OpenLayers.Feature.Vector(
       new OpenLayers.Geometry.LineString([
@@ -187,10 +195,7 @@ App.prototype.loadGuideCircle = function() {
   var app = this;
   var guide = app.map.getLayer('guide');
   var center = new OpenLayers.Geometry.Point(app.info.longitude, app.info.latitude);
-  var oneMeter = app.getOneMeter(app.map.getProjectionObject(), 
-    new OpenLayers.LonLat(app.info.longitude, app.info.latitude).transform(
-      app.taskProjection,
-      app.map.getProjectionObject()));
+  var oneMeter = app.getOneMeterForMapFromTask(app.info.longitude, app.info.latitude);
   var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(center, app.info.size * oneMeter, 40, 0);
   var circle = new OpenLayers.Feature.Vector(
     circleGeom,
