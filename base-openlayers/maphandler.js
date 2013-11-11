@@ -79,6 +79,7 @@ App.prototype.loadMapAddControls = function() {
     new OpenLayers.Control.Navigation(),
     new OpenLayers.Control.Attribution(),
     new OpenLayers.Control.PanZoomBar(),
+    new OpenLayers.Control.KeyboardDefaults(),
     new OpenLayers.Control.LayerSwitcher()
   ]);
 }
