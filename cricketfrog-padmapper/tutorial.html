@@ -1,0 +1,205 @@
+{% extends "cricketfrog/tutorial.html" %}
+
+{% block steps %}
+  <div class="step">
+    <div class="row">
+      <div class="span12">
+        <h2>Pad shape outlining</h2>
+        <p><strong>Hi!</strong> This is an application to help estimate the footprint of fracking operations for <a href="http://skytruth.org">SkyTruth</a>.</p>
+        <p>The application is really simple. It loads a map with satelite imagery and asks you to draw an outline around any drill pad you see within a certain area.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="row">
+      <div class="span12">
+        <p>These are simple rectangular sites where the outline is pretty obvious. Draw a rectangle around the area, but don't include the access road.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/4.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/6.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/9.png" class="img-polaroid">
+      </div>
+    </div>
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/4.marked.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/6.marked.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/9.marked.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="row">
+      <div class="span12">
+        <p>These are slightly overgrown sites. Be sure to include any part of the pad that has been overgrown, but again, don't include the access road.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/1.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/5.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/8.png" class="img-polaroid">
+      </div>
+    </div>
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/1.marked.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/5.marked.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/8.marked.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="row">
+      <div class="span12">
+        <p>These sites are slightly more complex. As we're mainly interested in the environmental footprint of the drillpads, just outline the whole area as shown below.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/2.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/3.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/7.png" class="img-polaroid">
+      </div>
+    </div>
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/2.marked.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/3.marked.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/cricketfrog/screenshots/7.marked.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="row">
+      <div class="span12">
+        <p>Please watch the instructional video below on how to mark outlines.</p>
+        <iframe width="940" height="705" src="//www.youtube.com/embed/kc4TwsezRDQ" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block testrun_description %}
+  <h2>Test run</h2>
+  <p>Please mark the outline of the site in the imagery shown below. <span id="mapcomment"></span></p>
+{% endblock %}
+
+
+{% block tasks %}
+  {
+    "url": "https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Armstrong/2010/2010_X-079.5097_Y0040.7528.png",
+    "height":400,
+    "width":400,
+    "siteID":"57ca5c45-127e-52e3-88b6-6b150c9f0b2c",
+    "bbox":"-8851249.66,4975690.013,-8850719.66,4976220.013",
+    "inner": {"type":"Polygon","coordinates":[[[-8851025.2671713,4976008.7577855],[-8850938.0811859,4975975.3165856],[-8850932.1095431,4975927.543443],[-8850961.9677572,4975886.9362717],[-8851074.2346425,4975956.2073286],[-8851055.1253854,4975980.0938999],[-8851021.6841856,4975975.3165856],[-8851025.2671713,4976008.7577855]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8851053.9310569,4976070.862871],[-8850905.8343146,4976012.3407712],[-8850887.9193861,4975900.0738859],[-8850960.7734287,4975831.9971576],[-8851122.0077852,4975945.4583715],[-8851071.8459854,4976019.5067426],[-8851053.9310569,4976070.862871]]]}
+  },
+  {
+    "url":"https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Armstrong/2010/2010_X-079.5049_Y0040.7828.png",
+    "height":400,
+    "width":400,
+    "siteID":"dffdd2f9-9238-5f9c-bfcc-2d30668ab35b",
+    "bbox":"-8850712.21,4980095.395,-8850182.21,4980625.395",
+    "inner": {"type":"Polygon","coordinates":[[[-8850394.661688,4980401.4982542],[-8850442.4348307,4980376.4173543],[-8850462.7384163,4980344.170483],[-8850323.001974,4980213.9886692],[-8850251.34226,4980235.4865834],[-8850283.5891313,4980280.8710689],[-8850364.8034738,4980344.170483],[-8850338.5282454,4980378.8060114],[-8850361.2204881,4980403.8869113],[-8850394.661688,4980401.4982542]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8850408.9936308,4980446.8827397],[-8850475.8760305,4980403.8869113],[-8850508.1229019,4980334.6158544],[-8850345.6942168,4980172.1871693],[-8850197.5974745,4980209.2113549],[-8850240.5933029,4980284.4540546],[-8850326.5849597,4980351.3364544],[-8850296.7267455,4980385.9719828],[-8850342.1112311,4980434.939454],[-8850408.9936308,4980446.8827397]]]}
+  },
+  {
+    "url":"https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Armstrong/2010/2010_X-079.4092_Y0040.7058.png",
+    "height":400,
+    "width":400,
+    "siteID":"6b4f5860-ac9e-593c-9daf-dc3abbd4921c",
+    "bbox":"-8840059.825,4968783.007,-8839529.825,4969313.007",
+    "inner": {"type":"Polygon","coordinates":[[[-8839878.5986574,4969076.8747839],[-8839789.0240149,4969124.6479265],[-8839724.5302723,4969015.964027],[-8839816.493572,4968952.6646129],[-8839645.7045869,4968845.1750419],[-8839680.3401154,4968787.8472707],[-8839771.1090864,4968834.4260848],[-8839797.3843149,4968821.2884706],[-8839818.8822291,4968849.9523562],[-8839789.0240149,4968878.6162418],[-8839854.7120861,4968932.3610273],[-8839851.1291004,4968990.8831271],[-8839878.5986574,4969076.8747839]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8839931.1491144,4969124.6479265],[-8839780.6637149,4969183.1700263],[-8839654.0648869,4969006.4093984],[-8839670.7854868,4968978.9398414],[-8839638.5386155,4968945.4986415],[-8839597.9314442,4968852.3410133],[-8839614.6520442,4968754.4060708],[-8839808.133272,4968757.9890565],[-8839851.1291004,4968805.7621992],[-8839858.2950718,4968839.2033991],[-8839877.4043289,4968847.563699],[-8839921.5944858,4968826.0657848],[-8839937.1207572,4968864.284299],[-8839896.5135859,4968969.3852129],[-8839915.622843,4969014.7696984],[-8839968.1733,4969038.6562697],[-8839931.1491144,4969124.6479265]]]}
+  },
+  {
+    "url":"https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Elk/2010/2010_X-078.8213_Y0041.5842.png",
+    "height":400,
+    "width":400,
+    "siteID":"afa5f75a-9a8f-5ba4-b46d-49d1066f0695",
+    "bbox":"-8774611.089,5098626.184,-8774081.089,5099156.184",
+    "inner": {"type":"Polygon","coordinates":[[[-8774345.7901977,5099121.3407788],[-8774229.9403267,5099071.178979],[-8774286.0737694,5098960.1064223],[-8774318.3206407,5098943.3858224],[-8774326.6809406,5098880.0864083],[-8774397.1463261,5098898.0013368],[-8774393.5633404,5098935.0255224],[-8774423.4215545,5098961.3007509],[-8774345.7901977,5099121.3407788]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8774372.0654262,5099170.3082501],[-8774184.5558412,5099091.4825646],[-8774294.4340693,5098822.7586371],[-8774335.0412406,5098823.9529657],[-8774456.8627544,5098881.2807369],[-8774438.9478259,5098920.6935796],[-8774477.16634,5098967.2723937],[-8774398.3406546,5099103.4258503],[-8774405.506626,5099141.6443645],[-8774372.0654262,5099170.3082501]]]},
+  },
+  {
+    "url":"https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Elk/2010/2010_X-078.6298_Y0041.5708.png",
+    "height":400,
+    "width":400,
+    "siteID":"0c78e7f3-65b8-5c89-8f1a-feb8a5034dd1",
+    "bbox":"-8753299.752,5096632.71,-8752769.752,5097162.71",
+    "inner": {"type":"Polygon","coordinates":[[[-8753046.1345376,5096930.9421873],[-8752994.7784092,5096904.6669589],[-8753018.6649805,5096855.6994876],[-8753071.2154375,5096887.9463589],[-8753046.1345376,5096930.9421873]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8753061.6608089,5096982.2983157],[-8752956.5598951,5096916.6102445],[-8753013.8876663,5096792.4000736],[-8753087.9360374,5096828.2299306],[-8753120.1829087,5096873.6144161],[-8753061.6608089,5096982.2983157]]]}
+  },
+  {
+    "url":"https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Fayette/2008/2008_X-079.8216_Y0040.1170.png",
+    "height":400,
+    "width":400,
+    "siteID":"0d56faff-9c73-55af-a2e7-b057410599a7",
+    "bbox":"-8885961.415,4882698.217,-8885431.415,4883228.217",
+    "inner": {"type":"Polygon","coordinates":[[[-8885774.256822,4883015.9469182],[-8885665.5729225,4883023.1128896],[-8885654.8239654,4882915.6233186],[-8885767.0908506,4882912.0403329],[-8885774.256822,4883015.9469182]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8885810.086679,4883046.9994609],[-8885641.6863511,4883056.5540895],[-8885623.7714226,4882894.1254044],[-8885732.4553222,4882855.9068903],[-8885801.7263791,4882882.1821187],[-8885810.086679,4883046.9994609]]]}
+  },
+  {
+    "url":"https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Greene/2008/2008_X-079.9685_Y0039.9098.png",
+    "height":400,
+    "width":400,
+    "siteID":"656f426a-aa74-5af7-835c-58515a783b47",
+    "bbox":"-8902320.149,4852576.129,-8901790.149,4853106.129",
+    "inner": {"type":"Polygon","coordinates":[[[-8902113.8659443,4852892.5918066],[-8902018.3196589,4852881.8428495],[-8902070.8701159,4852763.6043214],[-8902068.4814587,4852733.7461072],[-8902123.4205728,4852756.43835],[-8902143.7241585,4852728.968793],[-8902072.0644445,4852693.138936],[-8902089.979373,4852645.3657933],[-8902257.1853723,4852722.9971501],[-8902220.1611867,4852762.4099929],[-8902144.918487,4852732.5517787],[-8902131.7808728,4852761.2156643],[-8902172.3880441,4852789.8795499],[-8902113.8659443,4852892.5918066]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8902141.3355013,4852929.6159922],[-8901971.7408448,4852903.3407637],[-8902036.2345874,4852745.6893929],[-8901986.0727876,4852628.6451934],[-8902076.8417587,4852607.1472792],[-8902302.5698578,4852702.6935645],[-8902229.7158153,4852804.2114927],[-8902205.8292439,4852792.268207],[-8902141.3355013,4852929.6159922]]]}
+  },
+  {
+    "url":"https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Greene/2010/2010_X-080.2806_Y0039.8871.png",
+    "height":400,
+    "width":400,
+    "siteID":"16d25ad2-8857-5864-87a3-ac6d4b551a1e",
+    "bbox":"-8937060.624,4849291.751,-8936530.624,4849821.751",
+    "inner": {"type":"Polygon","coordinates":[[[-8936840.1633523,4849589.0789909],[-8936819.8597666,4849602.2166051],[-8936809.1108095,4849593.8563052],[-8936801.9448381,4849566.3867481],[-8936830.6087237,4849553.2491339],[-8936847.3293237,4849553.2491339],[-8936840.1633523,4849589.0789909]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8936849.7179808,4849652.3784049],[-8936794.7788667,4849654.7670621],[-8936743.4227384,4849626.1031765],[-8936763.726324,4849538.9171911],[-8936824.6370809,4849526.9739054],[-8936913.0173948,4849540.1115197],[-8936901.0741092,4849591.467648],[-8936872.4102236,4849589.0789909],[-8936854.4952951,4849618.9372051],[-8936849.7179808,4849652.3784049]]]}
+  },
+  {
+    "url":"https://s3.amazonaws.com/FrackFinder/CricketFrog_PadMapper/Pennsylvania/Greene/2010/2010_X-079.9718_Y0039.9286.png",
+    "height":400,
+    "width":400,
+    "siteID":"9cbecc8a-e2bb-5b25-ac4f-03a3cf6d62b5",
+    "bbox":"-8902689.284,4855302.399,-8902159.284,4855832.399",
+    "inner": {"type":"Polygon","coordinates":[[[-8902480.5248143,4855651.4907959],[-8902361.0919576,4855683.7376672],[-8902333.6224006,4855560.7218248],[-8902454.2495858,4855530.8636107],[-8902480.5248143,4855651.4907959]]]},
+    "outer": {"type":"Polygon","coordinates":[[[-8902519.937657,4855669.4057244],[-8902338.3997148,4855725.5391671],[-8902271.5173151,4855517.7259964],[-8902386.1728575,4855496.2280822],[-8902411.2537574,4855515.3373393],[-8902474.5531715,4855496.2280822],[-8902519.937657,4855669.4057244]]]},
+  }
+{% endblock %}
