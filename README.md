@@ -1,4 +1,4 @@
-PyBossa client applications
+A generic framework for PyBossa client applications, and a set of client applications based on that framework.
 
 Dependencies:
 
@@ -11,11 +11,16 @@ For mangleresults.py
 * shapely
 * fastkml
 
-The createTasks.py script is a generic version of the script found in the PyBossa example client, usable for multiple pybossa applications.
+The createTasks.py script is a front-end to work with all the applications - to upload them and tasks for them to pybossa. The command
 
-Each application is made up of a directory containing set of templates, e.g. frackfinder.
+    ./createTasks.py --list
+    
+will give you a list of all available applications, while
 
-An application can be renamed when uploading, using the -r switch to createTasks.py, which is usefull for testing...
+    ./createTasks.py --help
+    
+will give you the customary help on the command itself and its options.
 
-All html templates are passed through the Django templating engine before uploading, with the applion definition from app.json available as template variables.
-In particular, use {{short_name}} for the application name to ensure that renaming apps with the -r flag will work.
+
+Each application is made up of a directory containing set of templates, e.g. tadpole-padmapper. All templates are passed through the Django templating engine before uploading. Django template inheritance is used to share code between apps.
+The applion definition from app.json available as template variables. In particular, {{short_name}} is used for the application name to ensure that renaming apps on the fly during upload, using the -r flag will work.
