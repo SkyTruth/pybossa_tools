@@ -37,8 +37,6 @@ App.prototype.clearData = function() {
   var app = this;
 
   var drillpads = app.map.getLayer('drillpads');
-  var bbox = OpenLayers.Bounds.fromString(app.info.bbox);
-  var center = bbox.getCenterLonLat();
 
   app.layers.drillpads.mod.deactivate();
   app.layers.drillpads.removeAllFeatures();
@@ -46,7 +44,7 @@ App.prototype.clearData = function() {
 
   if (app.drawStyle != 'new') {
     var feature = new OpenLayers.Feature.Vector(
-      bbox.toGeometry(),
+      app.getTaskBounds().toGeometry(),
       null,
       {
         strokeColor: "#ff0000",
@@ -62,11 +60,6 @@ App.prototype.clearData = function() {
   BaseOpenlayersApp.prototype.clearData.call(app);
 }
 
-App.prototype.getTaskBounds = function() {
-  var app = this;
-  return OpenLayers.Bounds.fromString(app.info.bbox);
-}
-
 App.prototype.loadGuide = function() {
   var app = this;
   var guide = app.map.getLayer('guide');
@@ -77,15 +70,16 @@ App.prototype.loadGuide = function() {
   }
 }
 
-App.prototype.getAnswer = function() {
+App.prototype.getAnswer = function(isDone) {
   var app = this;
-  var geojson = new OpenLayers.Format.GeoJSON();
   var drillpads = app.map.getLayer('drillpads');
-  drillpads.mod.deactivate();
-  if (app.answer.selection == "done" && drillpads.features.length > 0) {
+  if (!app.answer) app.answer = {};
+  if ((isDone || app.answer.selection == "done") && drillpads.features.length > 0) {
+    var geojson = new OpenLayers.Format.GeoJSON();
+    drillpads.mod.deactivate();
     app.answer.shape = JSON.parse(geojson.write(drillpads.features[0].geometry));
+    drillpads.mod.activate();
   }
-  drillpads.mod.activate();
   return app.answer;
 }
 

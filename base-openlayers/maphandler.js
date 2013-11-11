@@ -102,15 +102,19 @@ App.prototype.clearData = function() {
 
 App.prototype.getTaskBounds = function() {
   var app = this;
-  var oneMeter = app.getOneMeterForMapFromTask(app.info.longitude, app.info.latitude);
-  var bounds = new OpenLayers.Bounds();
-  [[app.info.longitude - app.info.size * oneMeter, app.info.latitude],
-   [app.info.longitude + app.info.size * oneMeter, app.info.latitude],
-   [app.info.longitude, app.info.latitude - app.info.size * oneMeter],
-   [app.info.longitude, app.info.latitude + app.info.size * oneMeter]].map(function (lonlat) {
-    bounds.extend(new OpenLayers.LonLat(lonlat[0], lonlat[1]));
-  });
-  return bounds;
+  if (app.info.bbox) {
+    return OpenLayers.Bounds.fromString(app.info.bbox);
+  } else {
+    var oneMeter = app.getOneMeterForMapFromTask(app.info.longitude, app.info.latitude);
+    var bounds = new OpenLayers.Bounds();
+    [[app.info.longitude - app.info.size * oneMeter, app.info.latitude],
+     [app.info.longitude + app.info.size * oneMeter, app.info.latitude],
+     [app.info.longitude, app.info.latitude - app.info.size * oneMeter],
+     [app.info.longitude, app.info.latitude + app.info.size * oneMeter]].map(function (lonlat) {
+      bounds.extend(new OpenLayers.LonLat(lonlat[0], lonlat[1]));
+    });
+    return bounds;
+  }
 }
 
 App.prototype.loadImageryWMS = function() {
