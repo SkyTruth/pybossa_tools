@@ -20,6 +20,7 @@ import json
 from optparse import OptionParser
 import pbclient
 import os.path
+import glob
 
 import django.template.loader
 import django.conf
@@ -32,6 +33,17 @@ class CreateTasks(object):
        # Arguments for the application
        usage = "usage: %prog [options]"
        parser = OptionParser(usage)
+
+       parser.add_option("-l", "--list",
+                         action="store_true",
+                         help="List available applications")
+
+       parser.add_option("-a", "--application",
+                         dest="app_root",
+                         help="Application (directory) name / path to application",
+                         metavar="APP-DIR",
+                         default="drillpad")
+
        # URL where PyBossa listens
        parser.add_option("-s", "--server", dest="api_url",
                          help="PyBossa URL http://domain.com/", metavar="URL",
@@ -45,11 +57,17 @@ class CreateTasks(object):
                          dest="create_app",
                          help="Create the application",
                          metavar="CREATE-APP")
+
        # Update template for tasks and long_description for app
        parser.add_option("-u", "--update-template", action="store_true",
                          dest="update_template",
                          help="Update Tasks template",
                          metavar="UPDATE-TEMPLATE")
+
+       parser.add_option("-t", "--create-task",
+                         dest="create_task",
+                         help="Create a task",
+                         metavar="CREATE-MORE-TASK")
 
        # Update tasks question
        parser.add_option("-q", "--update-tasks",
@@ -57,11 +75,6 @@ class CreateTasks(object):
                          dest="update_tasks",
                          help="Update Tasks n_answers",
                          metavar="UPDATE-TASKS")
-
-       parser.add_option("-t", "--create-task",
-                         dest="create_task",
-                         help="Create a task",
-                         metavar="CREATE-MORE-TASK")
 
        # Modify the number of TaskRuns per Task
        # (default 30)
@@ -71,12 +84,6 @@ class CreateTasks(object):
                          help="Number of answers per task",
                          metavar="N-ANSWERS",
                          default=30)
-
-       parser.add_option("-a", "--application",
-                         dest="app_root",
-                         help="Application (directory) name / path to application",
-                         metavar="APP-DIR",
-                         default="drillpad")
 
        parser.add_option("-r", "--rename",
                          dest="app_name",
@@ -88,21 +95,17 @@ class CreateTasks(object):
        (options, args) = parser.parse_args()
 
        if not options.create_app and not options.update_template\
-               and not options.create_task and not options.update_tasks:
+               and not options.create_task and not options.update_tasks and not options.list:
            parser.error("Please check --help or -h for the available options")
 
-       if not options.api_key:
+       if not options.api_key and not options.list:
            parser.error("You must supply an API-KEY to create an \
                          application and tasks in PyBossa")
 
        self.options = options
 
 
-    def get_configuration(self, options = None):
-       if options:
-           self.options = options
-       else:
-           self.handle_arguments()
+    def get_configuration(self):
 
        # Load app details
        try:
@@ -141,7 +144,23 @@ class CreateTasks(object):
         pbclient.create_task(self.app.id, task_info)
 
     def __init__(self, options = None):
-        self.get_configuration(options)
+        if options:
+            self.options = options
+        else:
+            self.handle_arguments()
+
+        if self.options.list:
+            for appjson in glob.glob(os.path.join(os.path.dirname(__file__), "*", "app.json")):
+                with open(appjson) as f:
+                    config = json.load(f)
+                    config['dirname'] = os.path.split(os.path.split(appjson)[0])[1]
+                    print """%(dirname)s
+    %(name)s
+    %(description)s
+""" % config
+            return
+
+        self.get_configuration()
 
         pbclient.set('api_key', self.options.api_key)
         pbclient.set('endpoint', self.options.api_url)
