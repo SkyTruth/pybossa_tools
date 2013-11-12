@@ -1,6 +1,6 @@
 {
     "name": "Object shape recognition",
     "thumbnail": "http://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Oil_Well_Derrick_-_Kettleman_North_Dome_4-30-11_B1.jpg/450px-Oil_Well_Derrick_-_Kettleman_North_Dome_4-30-11_B1.jpg",
-    "description": "Base application fo object shape recognition",
+    "description": "Base application for object shape recognition",
     "question": "Please drag on the edges of the shape to make it fit the object you see in the satellite image"
 }
