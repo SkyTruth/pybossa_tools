@@ -40,8 +40,8 @@ class CreateTasks(object):
 
        parser.add_option("-a", "--application",
                          dest="app_root",
-                         help="Application (directory) name / path to application",
-                         metavar="APP-DIR",
+                         help="Application name",
+                         metavar="APP-NAME",
                          default="drillpad")
 
        # URL where PyBossa listens
@@ -55,26 +55,29 @@ class CreateTasks(object):
        # Create App
        parser.add_option("-c", "--create-app", action="store_true",
                          dest="create_app",
-                         help="Create the application",
-                         metavar="CREATE-APP")
+                         help="Create the application")
 
        # Update template for tasks and long_description for app
        parser.add_option("-u", "--update-template", action="store_true",
                          dest="update_template",
-                         help="Update Tasks template",
-                         metavar="UPDATE-TEMPLATE")
+                         help="Update the application")
 
-       parser.add_option("-t", "--create-task",
+       parser.add_option("-t", "--load-tasks",
+                         dest="load_tasks",
+                         help="Load tasks",
+                         metavar="TASKS.json")
+
+       parser.add_option("-T", "--create-task",
                          dest="create_task",
                          help="Create a task",
-                         metavar="CREATE-MORE-TASK")
+                         metavar='{"JSON":"TASK"}')
 
        # Update tasks question
        parser.add_option("-q", "--update-tasks",
                          type="int",
                          dest="update_tasks",
                          help="Update Tasks n_answers",
-                         metavar="UPDATE-TASKS")
+                         metavar="N-ANSWERS")
 
        # Modify the number of TaskRuns per Task
        # (default 30)
@@ -95,7 +98,7 @@ class CreateTasks(object):
        (options, args) = parser.parse_args()
 
        if not options.create_app and not options.update_template\
-               and not options.create_task and not options.update_tasks and not options.list:
+               and not options.create_task and not options.load_tasks and not options.update_tasks and not options.list:
            parser.error("Please check --help or -h for the available options")
 
        if not options.api_key and not options.list:
@@ -135,6 +138,16 @@ class CreateTasks(object):
         self.app.info['tutorial'] = self.contents('tutorial.html')
 
         pbclient.update_app(self.app)
+
+    def load_tasks(self):
+        with open(self.options.load_tasks) as f:
+            for task in json.load(f):
+                if 'info' in task:
+                    task = task['info']
+                    task["question"] = self.app_config['question']
+                    task["n_answers"] = self.options.n_answers
+                    pbclient.create_task(self.app.id, task)
+                    print ".",
 
     def create_task(self):
         # Data for the tasks
@@ -176,6 +189,9 @@ class CreateTasks(object):
             self.setup_app()
         else:
             self.find_app_by_short_name()
+
+        if self.options.load_tasks:
+            self.load_tasks()
 
         if self.options.create_task:
             self.create_task()
