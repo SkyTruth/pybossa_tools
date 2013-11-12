@@ -1,217 +1,131 @@
-<div class="row">
-  <div class="span12">
-    <div class="step">
-      <h2>Pond identification</h2>
-      <p><strong>Hi!</strong> This is an application to help identify fracking ponds for <a href="http://skytruth.org">SkyTruth</a>.</p>
-      <p>The application is really simple. It loads a map with satelite imagery and asks you to click on any ponds you see within a certain area.</p>
-      <p>The ponds are often located near or at a fracking site (pad), and so the areas we've selected are centered on known fracking sites.</p>
-    </div>
+{% extends "base-openlayers/tutorial.html" %}
 
-    <div class="step">
-      <h2>Frack related ponds</h2>
-      <div class="row">
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/1.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/2.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/3.jpg" class="img-polaroid">
-        </div>
+{% block steps %}
+  <div class="step">
+    <h2>Pond identification</h2>
+    <p><strong>Hi!</strong> This is an application to help identify fracking ponds for <a href="http://skytruth.org">SkyTruth</a>.</p>
+    <p>The application is really simple. It loads a map with satelite imagery and asks you to click on any ponds you see within a certain area.</p>
+    <p>The ponds are often located near or at a fracking site (pad), and so the areas we've selected are centered on known fracking sites.</p>
+  </div>
+
+  <div class="step">
+    <h2>Frack related ponds</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/1.jpg" class="img-polaroid">
       </div>
-    </div>
-
-    <div class="step">
-      <h2>Natural/Farm ponds</h2>
-      <div class="row">
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/9.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/10.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/7_FarmPond.small.jpg" class="img-polaroid">
-        </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/2.jpg" class="img-polaroid">
       </div>
-    </div>
-
-    <div class="step">
-      <h2>Odd examples</h2>
-      <div class="row">
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/4.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/5.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/6.jpg" class="img-polaroid">
-        </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/3.jpg" class="img-polaroid">
       </div>
-    </div>
-
-    <div class="step">
-      <h2>Dry ponds</h2>
-      <div class="row">
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/7.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/4_EmptyPond.small.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/8.jpg" class="img-polaroid">
-        </div>
-      </div>
-    </div>
-
-    <div class="step">
-      <h2>Not a frack pond</h2>
-      <div class="row">
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/1_NoPond.small.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/11.jpg" class="img-polaroid">
-        </div>
-        <div class="span4">
-          <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/12.jpg" class="img-polaroid">
-        </div>
-      </div>
-    </div>
-
-    <div class="step">
-      <h2>How to select ponds</h2>
-      <p>Click on all ponds you see within the red rectangle. They will get marked with a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
-      <p>Click again on the same spot to remove a marker you accidentally placed in the wrong place.</p>
-      <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/screenshots/screenshot-basic.png" class="img-polaroid">
-    </div>
-
-    <div class="step mapstep">
-      <h2>Test run</h2>
-      <p>Please try to mark ponds you see below. <span id="mapcomment"></span></p>
-      <div class="mapcontainer">
-        <div id="map"></div>
-        {% include "ranaarvalis/taskmanager.html" %}
-      </div>
-      <span id="maperrors"></span>
-    </div>
-
-    <div class="step">
-      <h2>On your mark, get set, go!</h2>
-      Thank you, you are now ready to begin helping out!
-    </div>
-
-    <div class="navigation">
-      <a id="prevBtn" href="#" onclick="showStep('prev')" class="btn">Previous</a>
-      <a id="nextBtn" href="#" onclick="showStep('next')" class="btn btn-success">Next</a>
-      <a id="startContrib" href="../{{short_name}}/newtask" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Start helping out</a>
     </div>
   </div>
-</div>
 
-<style>
-  .navigation {
-    margin-top: 10px;
-  }
-  .mapcontainer {
-    position: relative;
-  }
-  .taskmanager {
-    z-index: 2;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: white;
-    font-weight: bold;
-    padding-left: 5pt;
-    padding-top: 5pt;
-    padding-right: 20pt;
-    padding-bottom: 5pt;
-    -webkit-border-top-left-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    border-top-left-radius: 5px;
-  }
-  .progress {
-    width: 50px;
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
-  }
-  #map {
-    position: relative;
-    width: 100%;
-    height: 400px;
-  }
-  #maperrors {
-    color: #ff0000;
-    font-weight: bold;
-  }
-  #start {
-    display: none;
-  }
-  .expander-control {
-    position: absolute;
-    font-weight: bold;
-    color: #3d5b7f;
-    right: 5pt;
-    font-size: 10pt;
-  }
-  #mapcomment {
-    font-weight: bold;
-    color: #ff0000;
-  }
-  .step {
-    display: none;
-  }
-</style>
+  <div class="step">
+    <h2>Natural/Farm ponds</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/9.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/10.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/7_FarmPond.small.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
 
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
-<script src="http://openlayers.org/dev/OpenLayers.js"></script>
-<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+  <div class="step">
+    <h2>Odd examples</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/4.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/5.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/6.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
 
-<script>
-  {% include "ranaarvalis/maphandler.js" %}
+  <div class="step">
+    <h2>Dry ponds</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/7.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/4_EmptyPond.small.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/8.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
 
-  var setMapTask = function (step) {
-    setProgress({total: initializedSteps[step].tasks.length, done:initializedSteps[step].task});
-    updateMap(initializedSteps[step].tasks[initializedSteps[step].task]);
-    $("#mapcomment").html(initializedSteps[step].tasks[initializedSteps[step].task].comment || "");
-    $("#maperrors").html("");
-  };
+  <div class="step">
+    <h2>Not a frack pond</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/1_NoPond.small.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/11.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/examples/new/12.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
 
-  initializedSteps = {};
-  function initializeStep(step) {
-    if (initializedSteps[step] == undefined) {
-      if ($("#" + step).hasClass("mapstep")) {
-        initializedSteps[step] = {};
-        initializedSteps[step].task = 0;
-        initializedSteps[step].tasks = [
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -76.969928, "county": "Tioga", "state": "PA", "SiteID": "9745ac0d-a851-5a86-b094-022cb3774255", "bbox": "-76.9771331235,41.6672118494,-76.9627228765,41.6780161455", "year": "2010", "latitude": 41.672614, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-76.971196358494,"lat":41.670834091787}], "distance": 100},
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.121018, "county": "Tioga", "state": "PA", "SiteID": "b90bfd9f-2755-5049-aafc-01b83a68276b", "bbox": "-77.1282254104,41.6877088688,-77.1138105896,41.6985131261", "year": "2010", "latitude": 41.693111, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.119634763931,"lat":41.694328356627}], "distance": 100},
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.145002, "county": "Tioga", "state": "PA", "SiteID": "277ad7c2-1890-5ce9-a924-d5425ce42d79", "bbox": "-77.1522186994,41.7707459471,-77.1377853006,41.7815500478", "year": "2010", "latitude": 41.776148, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.145276994811,"lat":41.776827725659}], "distance": 100},
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.580592, "county": "Tioga", "state": "PA", "SiteID": "85547453-a86e-57a5-8b14-ccac8b61365b", "bbox": "-77.5877979163,41.6743198561,-77.5733860837,41.6851241388", "year": "2010", "latitude": 41.679722, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.580345462516,"lat":41.680579217363}], "distance": 100, "comment": "This one is quite small and nearly empty"},
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.548494, "county": "Tioga", "state": "PA", "SiteID": "0bc3885b-17af-5063-a689-47155a02674f", "bbox": "-77.5557020853,41.6937538745,-77.5412859147,41.7045581204", "year": "2010", "latitude": 41.699156, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.547427345881,"lat":41.699269488817}], "distance": 100, "comment": "This one is quite small and nearly empty"},
-          {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -76.984005, "county": "Tioga", "state": "PA", "SiteID": "3bd729db-68f7-5641-a536-f9b19d2dcb78", "bbox": "-76.9912273246,41.8208609944,-76.9767826754,41.8316650005", "year": "2010", "latitude": 41.826263, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-76.984135068456,"lat":41.825602865424},{"lon":-76.984303121981,"lat":41.825122712495},{"lon":-76.981386192935,"lat":41.826407121581}], "distance": 100}
-        ];
-        loadMap();
-        setMapTask(step);
-        $('.btn-answer').click(function () { showStep('next'); }); // FIXME
-      } else {
-        initializedSteps[step] = true;
-      }
-    }
-  }
+  <div class="step">
+    <h2>How to select ponds</h2>
+    <p>Click on all ponds you see within the red rectangle. They will get marked with a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
+    <p>Click again on the same spot to remove a marker you accidentally placed in the wrong place.</p>
+    <img src="http://crowd.skytruth.org/appstatic/ranaarvalis/screenshots/screenshot-basic.png" class="img-polaroid">
+  </div>
+{% endblock %}
 
-  function validateStep() {
-    var errs = [];
-    if ($("#" + step).hasClass("mapstep")) {
-      var info = map.getLayer('drillpads').taskinfo;
-      var positions = getMapPositions();
+{% block testrun_description %}
+  <h2>Test run</h2>
+  <p>Please try to mark ponds you see below. <span id="mapcomment"></span></p>
+{% endblock %}
+
+{% block row %}
+  {% include "ranaarvalis/row.html" %}
+{% endblock %}
+
+{% block tasks %}
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -76.969928, "county": "Tioga", "state": "PA", "SiteID": "9745ac0d-a851-5a86-b094-022cb3774255", "bbox": "-76.9771331235,41.6672118494,-76.9627228765,41.6780161455", "year": "2010", "latitude": 41.672614, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-76.971196358494,"lat":41.670834091787}], "distance": 100},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.121018, "county": "Tioga", "state": "PA", "SiteID": "b90bfd9f-2755-5049-aafc-01b83a68276b", "bbox": "-77.1282254104,41.6877088688,-77.1138105896,41.6985131261", "year": "2010", "latitude": 41.693111, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.119634763931,"lat":41.694328356627}], "distance": 100},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.145002, "county": "Tioga", "state": "PA", "SiteID": "277ad7c2-1890-5ce9-a924-d5425ce42d79", "bbox": "-77.1522186994,41.7707459471,-77.1377853006,41.7815500478", "year": "2010", "latitude": 41.776148, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.145276994811,"lat":41.776827725659}], "distance": 100},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.580592, "county": "Tioga", "state": "PA", "SiteID": "85547453-a86e-57a5-8b14-ccac8b61365b", "bbox": "-77.5877979163,41.6743198561,-77.5733860837,41.6851241388", "year": "2010", "latitude": 41.679722, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.580345462516,"lat":41.680579217363}], "distance": 100, "comment": "This one is quite small and nearly empty"},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.548494, "county": "Tioga", "state": "PA", "SiteID": "0bc3885b-17af-5063-a689-47155a02674f", "bbox": "-77.5557020853,41.6937538745,-77.5412859147,41.7045581204", "year": "2010", "latitude": 41.699156, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.547427345881,"lat":41.699269488817}], "distance": 100, "comment": "This one is quite small and nearly empty"},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -76.984005, "county": "Tioga", "state": "PA", "SiteID": "3bd729db-68f7-5641-a536-f9b19d2dcb78", "bbox": "-76.9912273246,41.8208609944,-76.9767826754,41.8316650005", "year": "2010", "latitude": 41.826263, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-76.984135068456,"lat":41.825602865424},{"lon":-76.984303121981,"lat":41.825122712495},{"lon":-76.981386192935,"lat":41.826407121581}], "distance": 100}
+{% endblock %}
+
+
+{% block page_libraries %}
+  {{block.super}}
+  <script>
+    {% include "ranaarvalis/maphandler.js" %}
+
+    CricketFrogTutorialPage = Page = function () {
+      BaseTutorialPage.apply(this, arguments);
+    };
+    Page.prototype = new BaseTutorialPage();
+    Page.prototype.validateMapStep = function() {
+      var page = this;
+
+      var info = page.app.info;
+      var positions = page.app.getAnswer().positions;
       if (positions.length != info.positions.length) {
-        errs.push("<div>You have marked " + positions.length.toString() + " while there are " + info.positions.length.toString() + " ponds in reality.</div>");
+        page.errs.push("<div>You have marked " + positions.length.toString() + " while there are " + info.positions.length.toString() + " ponds in reality.</div>");
       }
       allFound = true;
       positions.map(function (pos) {
@@ -225,48 +139,16 @@
           allFound = false;
         }
       });
-      if (!allFound) errs.push("<div>Your markers are too far off from the ponds.</div>")
+      if (!allFound) page.errs.push("<div>Your markers are too far off from the ponds.</div>")
 
-      if (errs.length == 0 && initializedSteps[step].task < initializedSteps[step].tasks.length - 1) {
-         initializedSteps[step].task++;
-         setMapTask(step);
-         return false;
-       } else {
-         map.getLayer('drillpads').clearMarkers();
-       }
+      if (page.errs.length == 0 && page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
+         page.initializedSteps[page.step].task++;
+        page.setMapTask();
+        page.stayOnStep = true;
+      } else {
+        page.app.clearData();
+      }
     }
-    $("#maperrors").html(errs.join(""));
-    return errs.length == 0;
-  }
+  </script>
+{% endblock %}
 
-
-  var step = -1;
-  function showStep(action) {
-    var nrofsteps = $(".step").length;
-    var oldstep = step;
-    if (action == 'next') {
-      if (!validateStep()) return;
-      step = step + 1;
-    }
-    if (action == 'prev') {
-      step = step - 1;
-    }
-
-    $("#" + oldstep).hide();
-    $("#prevBtn").toggle(step != 0);
-    $("#nextBtn").toggle(step != nrofsteps - 1);
-    $("#startContrib").toggle(step == nrofsteps - 1);
-    $("#" + step).show();
-    initializeStep(step);
-  }
-
-
-  $(document).ready(function () {
-    $(".step").each(function (idx, step) {
-      $(step).attr("id", idx)
-    });
-
-    showStep('next');
-    $("#modal").modal('show');
-  });
-</script>
