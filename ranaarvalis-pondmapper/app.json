@@ -1,6 +1,6 @@
 {
-    "name": "Object identification",
+    "name": "SkyTruth FrackFinder: Project RANAARVALIS",
     "thumbnail": "http://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Oil_Well_Derrick_-_Kettleman_North_Dome_4-30-11_B1.jpg/450px-Oil_Well_Derrick_-_Kettleman_North_Dome_4-30-11_B1.jpg",
-    "description": "Base application for object identification",
-    "question": "Please click on any object(s) you see in this map"
+    "description": "Fracking pond identification",
+    "question": "Please click on any fracking pond(s) you see in this map"
 }
