@@ -270,7 +270,10 @@ App.prototype.updateMap = function(info) {
   $("#site_year").html(app.info.year || "");
   $("#site_lat").html(app.info.latitude);
   $("#site_lon").html(app.info.longitude);
-  $("#site_id").html(app.info.SiteID);
+
+  var siteurl = "https://maps.google.com/maps?q=" + encodeURIComponent(app.info.SiteID) + "+%40" + app.info.latitude + "," + app.info.longitude;
+
+  $("#site_id").html("<a href='" + siteurl + "' target='_blank'>" + app.info.SiteID + "</a>");
 }
 
 App.prototype.cookieToExpander = function() {
