@@ -14,14 +14,6 @@
           <div id="taskcompleted" class="alert alert-info" style="display:none;">
               <strong>The task has been completed!</strong> Thanks a lot!
           </div>
-          <div id="finish" class="alert alert-success" style="display:none;">
-              <strong>Congratulations!</strong> You have participated in all available tasks!
-              <br/>
-              <div class="alert-actions">
-                  <a class="btn small" href="/">Go back</a>
-                  <a class="btn small" href="/app">or, Check other applications</a>
-              </div>
-          </div>
           <div id="error" class="alert alert-error" style="display:none;">
               <a class="close">×</a>
               <strong>Error!</strong> Something went wrong, please contact the site administrators
@@ -34,11 +26,55 @@
       {% include "base-openlayers/row.html" %}
     {% endblock %}
   </div>
+
+
+  <div class="row lots-done">
+    {% block lots-done %}
+      <div class="span12">
+        <h1><i class="icon-thumbs-up"></i><span class="progressmsg">You're awesome!</span></h1>
+        <h3>You've done <span class="tasksdone"></span> tasks so far! Keep up the good work!</h3>
+        <button class="continue btn btn-success">Continue</button>
+      </div>
+    {% endblock %}
+  </div>
+
+  <div class="row all-done">
+    {% block all-done %}
+      <div class="span12">
+        <h1><i class="icon-thumbs-up"></i>Good Job! You finished them all!</h1>
+
+        <p>We thank you for your contribution. We'll be tabulating your results shortly and adding them to our ever-growing database.</p>
+      </div>
+
+      {% block all-done-next-tasks %}
+        {% include "base-openlayers/next-tasks.html" %}
+      {% endblock %}
+    {% endblock %}
+  </div>
+
+
+  <div class="row done-for-now">
+    {% block done-for-now %}
+      <div class="span12">
+        <h1><i class="icon-thumbs-up"></i>Thank you for your contribution!</h1>
+
+        <p>We'll be tabulating your results shortly and adding them to our ever-growing database.</p>
+      </div>
+      {% block done-for-now-next-tasks %}
+        {% include "base-openlayers/next-tasks.html" %}
+      {% endblock %}
+    {% endblock %}
+  </div>
 {% endblock%}
 
 {% block page_styles %}
+  .lots-done,
+  .all-done,
+  .done-for-now {
+    display: none;
+  }
   @media (max-width: 979px) {
-    #map {
+    #map, .lots-done, .all-done, .done-for-now {
       top: 50px !important;
     }
   }
@@ -71,6 +107,9 @@
   .container h1 {
     display: none;
   }
+  .lots-done h1, .all-done h1, .done-for-now h1 {
+    display: block;
+  }
   .container .row {
     margin-left: 0pt;
     margin-right: 0pt;
@@ -78,7 +117,7 @@
   .taskmanager {
     position: fixed;
   }
-  #map {
+  #map, .lots-done, .all-done, .done-for-now {
     width: 100%;
     position: fixed;
     bottom: 0;
@@ -105,7 +144,48 @@
 
       page.app.loadMap();
       pybossa.run('{{short_name}}');
+
+      $(".done-for-now-btn").click(function (evt) { page.doneForNow(evt); });
+      $(".lots-done .continue").click(function (evt) { page.lotsDoneContinue(evt); });
+
       return page;
+    };
+    Page.prototype.attaGirlPhrases = [
+      "Nicely done!",
+      "Keep up the good work!",
+      "You rock out loud!",
+      "Who’s better than you?",
+      "This is freaking awesome!",
+      "Fan-freaking-tastic!!",
+      "Great job!",
+      "You’re kicking butt!",
+      "Your help is GREATLY appreciated!",
+      "High five!",
+      "Fabulous job!",
+      "You do nice work, you know that?",
+      "We couldn’t do this without you!",
+      "Who knew you were this talented?",
+      "What a tremendous help!",
+      "Hurray, great progress!",
+      "Dynamite!"
+    ];
+    Page.prototype.attaGirlInterval = 0;
+    Page.prototype.getAttaGirl = function(progress) {
+      var page = this;
+      $(".progressmsg").html(page.attaGirlPhrases[Math.floor((progress) / page.attaGirlInterval) % page.attaGirlPhrases.length]);
+      if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= progress % page.attaGirlInterval)) {
+        $(".lots-done").show();
+        $(".skeleton").hide();
+        $("#loading").hide();
+      }
+    };
+    Page.prototype.doneForNow = function(evt) {
+      $(".done-for-now").show();
+      $(".skeleton").hide();
+    };
+    Page.prototype.lotsDoneContinue = function(evt) {
+      $(".lots-done").hide();
+      $(".skeleton").show();
     };
     Page.prototype.taskLoaded = function(task, deferred) {
       deferred.resolve(task);
@@ -113,7 +193,9 @@
     Page.prototype.loadUserProgress = function() {
       var page = this;
       pybossa.userProgress('{{short_name}}').done(function (data) {
-        return page.app.setProgress(data); });
+        page.getAttaGirl(parseInt(data.done || 0));
+        return page.app.setProgress(data);
+      });
     };
     Page.prototype.reportAnswer = function () {
       var page = this;
@@ -138,9 +220,9 @@
         page.app.updateMap(task.info);
         $("#loading").hide();
       } else {
+        $(".all-done").show();
         $(".skeleton").hide();
         $("#loading").hide();
-        $("#finish").fadeIn(500);
       }
     };
 
