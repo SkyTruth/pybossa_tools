@@ -128,7 +128,7 @@ class CreateTasks(object):
        return django.template.loader.render_to_string(os.path.join(self.options.app_root, filename), self.app_config)
 
     def find_app_by_short_name(self):
-        self.app = pbclient.find_app(short_name=self.app_config['short_name'])[0]
+        self.app = self.handle_result(pbclient.find_app(short_name=self.app_config['short_name']))[0]
 
     def setup_app(self):
         self.find_app_by_short_name()
@@ -137,7 +137,7 @@ class CreateTasks(object):
         self.app.info['thumbnail'] = self.app_config['thumbnail']
         self.app.info['tutorial'] = self.contents('tutorial.html')
 
-        pbclient.update_app(self.app)
+        self.handle_result(pbclient.update_app(self.app))
 
     def load_tasks(self):
         with open(self.options.load_tasks) as f:
@@ -146,7 +146,7 @@ class CreateTasks(object):
                     task = task['info']
                     task["question"] = self.app_config['question']
                     task["n_answers"] = self.options.n_answers
-                    pbclient.create_task(self.app.id, task)
+                    self.handle_result(pbclient.create_task(self.app.id, task))
                     print ".",
 
     def create_task(self):
@@ -154,7 +154,12 @@ class CreateTasks(object):
         task_info = json.loads(self.options.create_task)
         task_info["question"] = self.app_config['question']
         task_info["n_answers"] = self.options.n_answers
-        pbclient.create_task(self.app.id, task_info)
+        self.handle_result(pbclient.create_task(self.app.id, task_info))
+
+    def handle_result(self, res):
+        if isinstance(res, dict) and res.get('status', 'success') == 'failed':
+            raise Exception(res['exception_msg'])
+        return res
 
     def __init__(self, options = None):
         if options:
@@ -175,17 +180,18 @@ class CreateTasks(object):
 
         self.get_configuration()
 
-        pbclient.set('api_key', self.options.api_key)
-        pbclient.set('endpoint', self.options.api_url)
+        self.handle_result(pbclient.set('api_key', self.options.api_key))
+        self.handle_result(pbclient.set('endpoint', self.options.api_url))
 
         if self.options.verbose:
             print('Running against PyBosssa instance at: %s' % self.options.api_url)
             print('Using API-KEY: %s' % self.options.api_key)
 
         if self.options.create_app:
-            pbclient.create_app(self.app_config['name'],
-                                self.app_config['short_name'],
-                                self.app_config['description'])
+            self.handle_result(
+                pbclient.create_app(self.app_config['name'],
+                                    self.app_config['short_name'],
+                                    self.app_config['description']))
             self.setup_app()
         else:
             self.find_app_by_short_name()
@@ -206,7 +212,7 @@ class CreateTasks(object):
                 offset = 0
                 limit = 100
                 while True:
-                    tasks = pbclient.get_tasks(self.app.id, offset=offset, limit=limit)
+                    tasks = self.handle_result(pbclient.get_tasks(self.app.id, offset=offset, limit=limit))
                     if len(tasks) == 0:
                         break
                     for task in tasks:
@@ -218,7 +224,7 @@ class CreateTasks(object):
                 if 'n_answers' in task.info:
                     del(task.info['n_answers'])
                 task.n_answers = self.options.update_tasks
-                pbclient.update_task(task)
+                self.handle_result(pbclient.update_task(task))
                 count[0] += 1
 
             print "Updating task n_answers"
