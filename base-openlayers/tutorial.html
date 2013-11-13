@@ -12,6 +12,26 @@
           <p><span id="mapcomment"></span></p>
         {% endblock %}
 
+        <div class="mapbubble left">
+          <div class="popover left">
+            <div class="arrow"></div>
+            <h3 class="popover-title">Moving around</h3>
+            <div class="popover-content">
+              <p>You can use the mouse wheel and the + and - keys to zoom, and click/drag and arrow keys to pan the map.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mapbubble right">
+          <div class="popover right">
+            <div class="arrow"></div>
+            <h3 class="popover-title">The task box</h3>
+            <div class="popover-content">
+              <p>Click <i class="icon-minus-sign"></i> to minimize the task box to see more of the map.</p>
+            </div>
+          </div>
+        </div>
+
         {% block row %}
           {% include "base-openlayers/row.html" %}
         {% endblock %}
@@ -34,6 +54,20 @@
 {% endblock %}
 
 {% block page_styles %}
+  .mapbubble {
+    position: relative;
+  }
+  .mapbubble.left {
+    left: -160px;
+  }
+  .mapbubble.right {
+    left: 934px;
+    top: 160px;
+  }
+  .mapbubble .popover {
+    display: block;
+    width: 150px;
+  }
   .navigation {
    margin-top: 10px;
   }
