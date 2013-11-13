@@ -10,3 +10,31 @@
     {% include "ranaarvalis/maphandler.js" %}
   </script>
 {% endblock %}
+
+{% block lots-done %}
+  <div class="span12">
+    <h1><i class="icon-thumbs-up"></i><span class="progressmsg">You're awesome!</span></h1>
+    <h3>You've done <span class="done-tasks-display">0</span> tasks and marked <span class="done-positions-display">0</span> places so far! Keep up the good work!</h3>
+    <button class="continue btn btn-success">Continue</button>
+  </div>
+{% endblock %}
+
+{% block all-done-header %}
+  <div class="span12">
+    <h1><i class="icon-thumbs-up"></i>Good Job! You finished them all!</h1>
+
+    <h3>You did <span class="done-tasks-display">0</span> tasks and marked <span class="done-positions-display">0</span> places!</h3>
+
+    <p>We thank you for your contribution. We'll be tabulating your results shortly and adding them to our ever-growing database.</p>
+  </div>
+{% endblock %}
+
+{% block done-for-now-header %}
+  <div class="span12">
+    <h1><i class="icon-thumbs-up"></i>Thank you for your contribution!</h1>
+
+    <h3>You've done <span class="done-tasks-display">0</span> tasks and marked <span class="done-positions-display">0</span> places!</h3>
+
+    <p>We'll be tabulating your results shortly and adding them to our ever-growing database.</p>
+  </div>
+{% endblock %}

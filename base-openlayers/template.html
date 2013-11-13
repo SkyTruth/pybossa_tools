@@ -32,7 +32,7 @@
     {% block lots-done %}
       <div class="span12">
         <h1><i class="icon-thumbs-up"></i><span class="progressmsg">You're awesome!</span></h1>
-        <h3>You've done <span class="tasksdone"></span> tasks so far! Keep up the good work!</h3>
+        <h3>You've done <span class="done-tasks-display">0</span> tasks so far! Keep up the good work!</h3>
         <button class="continue btn btn-success">Continue</button>
       </div>
     {% endblock %}
@@ -40,11 +40,15 @@
 
   <div class="row all-done">
     {% block all-done %}
-      <div class="span12">
-        <h1><i class="icon-thumbs-up"></i>Good Job! You finished them all!</h1>
+      {% block all-done-header %}
+        <div class="span12">
+          <h1><i class="icon-thumbs-up"></i>Good Job! You finished them all!</h1>
 
-        <p>We thank you for your contribution. We'll be tabulating your results shortly and adding them to our ever-growing database.</p>
-      </div>
+          <p>You did <span class="done-tasks-display">0</span> tasks!
+
+          <p>We thank you for your contribution. We'll be tabulating your results shortly and adding them to our ever-growing database.</p>
+        </div>
+      {% endblock %}
 
       {% block all-done-next-tasks %}
         {% include "base-openlayers/next-tasks.html" %}
@@ -55,11 +59,16 @@
 
   <div class="row done-for-now">
     {% block done-for-now %}
-      <div class="span12">
-        <h1><i class="icon-thumbs-up"></i>Thank you for your contribution!</h1>
+      {% block done-for-now-header %}
+        <div class="span12">
+          <h1><i class="icon-thumbs-up"></i>Thank you for your contribution!</h1>
 
-        <p>We'll be tabulating your results shortly and adding them to our ever-growing database.</p>
-      </div>
+          <p>You did <span class="done-tasks-display">0</span> tasks!
+
+          <p>We'll be tabulating your results shortly and adding them to our ever-growing database.</p>
+        </div>
+      {% endblock %}
+
       {% block done-for-now-next-tasks %}
         {% include "base-openlayers/next-tasks.html" %}
       {% endblock %}
@@ -193,6 +202,10 @@
     Page.prototype.loadUserProgress = function() {
       var page = this;
       pybossa.userProgress('{{short_name}}').done(function (data) {
+        var done = JSON.parse($.cookie('{{short_name}}_tasksdone')) || {};
+        for (key in done) {
+           $(".done-" + key + "-display").html(done[key]);
+        }
         page.getAttaGirl(parseInt(data.done || 0));
         return page.app.setProgress(data);
       });
@@ -200,7 +213,17 @@
     Page.prototype.reportAnswer = function () {
       var page = this;
 
-      pybossa.saveTask(page.task.id, page.app.getAnswer()).done(function() {
+      var answer = page.app.getAnswer();
+      var answerdone = answer.done || {};
+      answerdone.tasks = 1;
+      var done = JSON.parse($.cookie('{{short_name}}_tasksdone')) || {};
+      for (key in answerdone) {
+         if (done[key] == undefined) done[key] = 0;
+         done[key] += answerdone[key];
+      }
+      $.cookie('{{short_name}}_tasksdone', JSON.stringify(done));
+
+      pybossa.saveTask(page.task.id, answer).done(function() {
         page.deferred.resolve();
       });
 

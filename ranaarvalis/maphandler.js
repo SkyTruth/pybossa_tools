@@ -71,6 +71,9 @@ App.prototype.getAnswer = function() {
   return {
     "positions": app.map.getLayer('drillpads').markers.map(function (marker) {
       return marker.lonlat;
-    })
+    }),
+    "done": {
+      "positions": app.map.getLayer('drillpads').markers.length
+    }
   };
 }
