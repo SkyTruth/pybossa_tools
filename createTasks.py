@@ -158,7 +158,7 @@ class CreateTasks(object):
 
     def handle_result(self, res):
         if isinstance(res, dict) and res.get('status', 'success') == 'failed':
-            raise Exception(res['exception_msg'])
+            raise Exception("Server reported error: %s" % (res['exception_msg'] or res['exception_cls'],))
         return res
 
     def __init__(self, options = None):
