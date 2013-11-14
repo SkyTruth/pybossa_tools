@@ -125,9 +125,16 @@ App.prototype.loadMapAddControls = function() {
 
 App.prototype.setProgress = function(data) {
   var pct = Math.round((data.done*100)/data.total);
-  $("#progress").css("width", pct.toString() +"%");
-  $("#progress").attr("title", pct.toString() + "% completed!");
-  $("#progress").tooltip({'placement': 'left'}); 
+  $("#progress .bar").css("width", pct.toString() +"%");
+  $("#progress .bar").attr("title", pct.toString() + "% completed!");
+  $("#progress .bar").tooltip({'placement': 'left'});
+  if (pct > 50) {
+    $("#progress .bar").html(pct.toString() +"%");
+    $("#progress .progress-label").html("");
+  } else {
+    $("#progress .bar").html("");
+    $("#progress .progress-label").html(pct.toString() +"%");
+  }
   $("#total").text(data.total);
   $("#done").text(data.done);
 }
@@ -274,7 +281,8 @@ App.prototype.updateMap = function(info) {
 
   var siteurl = "https://maps.google.com/maps?q=" + encodeURIComponent(app.info.SiteID) + "+%40" + app.info.latitude + "," + app.info.longitude;
 
-  $("#site_id").html("<a href='" + siteurl + "' target='_blank'>" + app.info.SiteID + "</a>");
+  $(".latlonlink").attr("href", siteurl);
+  $(".siteid").html(app.info.SiteID);
 }
 
 App.prototype.cookieToExpander = function() {

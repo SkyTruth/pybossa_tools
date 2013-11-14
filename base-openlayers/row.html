@@ -5,9 +5,10 @@
     <a class="expander-control" href="javascript: void(0);"><i class="icon-minus-sign"></i></a>
 
     {% block taskinfo %}
-    Task <span id="task-id" class="label">#</span>
-    <div class="progress progress-striped">
-      <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
+    <!-- Task <span id="task-id" class="label">#</span> -->
+    Progress: 
+    <div id="progress" class="progress progress-striped">
+      <div rel="tooltip" title="#" class="bar" style="width: 0%;"></div><span class="progress-label"></span>
     </div>
     <span id="done" class="label"></span> of <span id="total" class="label"></span>
     {% endblock %}
@@ -21,15 +22,24 @@
 
     <span class="expander-body">
       {% block expander %}
-        <a href="javascript: void(0);" class="btn btn-warning done-for-now-btn">I'm done</a>
         <div>
-          <div><strong><span id="site_county"></span> County, <span id="site_state"></span> <span id="site_year"></span></strong></div>
-          <div><b>Lat:</b> <span id="site_lat"></span>, <b>Long:</b> <span id="site_lon"></span><br><b>ID:</b> <span id="site_id"></span></div>
+          <!-- <div><strong><span id="site_county"></span> County, <span id="site_state"></span> <span id="site_year"></span></strong></div> -->
+          <div><b>Lat:</b> <span id="site_lat"></span>, <b>Long:</b> <span id="site_lon"></span></div>
+          <div><a class="latlonlink" href="" target="_blank">See this site in google maps</a></div>
 
-          <h5><strong>We Value Your Feedback</strong></h5>               
-          <a href="http://frack.skytruth.org/frackfinder" target="_blank"><img src="http://crowd.skytruth.org/appstatic/ranaarvalis/logo.skytruth.jpg"></a>
-          <a href="https://www.facebook.com/groups/skytruthvolunteers/" target="_blank"><img src="http://cdn.crackberry.com/sites/crackberry.com/files/styles/large/public/topic_images/2013/facebook-logo-3.png" width="50" height="50"></a>
-          <div><a href="mailto:crowd@skytruth.org">crowd@skytruth.org</a></div>
+          <div class="row-fluid">
+            <div class="span6">
+              <h5><strong>We Value Your Feedback</strong></h5>
+            </div>
+            <div class="span6">
+              <a href="http://frack.skytruth.org/frackfinder" target="_blank"><img src="http://crowd.skytruth.org/appstatic/ranaarvalis/logo.skytruth.jpg"></a>
+              <a href="https://www.facebook.com/groups/skytruthvolunteers/" target="_blank"><img src="http://cdn.crackberry.com/sites/crackberry.com/files/styles/large/public/topic_images/2013/facebook-logo-3.png" width="50" height="50"></a>
+              <div><a href="mailto:crowd@skytruth.org">crowd@skytruth.org</a></div>
+            </div>
+          </div>
+          <div style="text-align: center;">
+            <a href="javascript: void(0);" class="btn btn-warning done-for-now-btn">Done for now...</a>
+          </div>
         </div>
       {% endblock %}
     </span>
