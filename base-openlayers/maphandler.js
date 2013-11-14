@@ -116,6 +116,7 @@ App.prototype.loadMapAddControls = function() {
   app.map.addControls([
     new OpenLayers.Control.Navigation(),
     new OpenLayers.Control.Attribution(),
+    new OpenLayers.Control.ScaleLine(),
     new OpenLayers.Control.PanZoomBar(),
     new AppKeyboardDefaults(),
     new OpenLayers.Control.LayerSwitcher()
