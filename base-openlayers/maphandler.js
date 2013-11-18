@@ -118,9 +118,13 @@ App.prototype.loadMapAddControls = function() {
     new OpenLayers.Control.Attribution(),
     new OpenLayers.Control.ScaleLine(),
     new OpenLayers.Control.PanZoomBar(),
-    new AppKeyboardDefaults(),
-    new OpenLayers.Control.LayerSwitcher()
+    new AppKeyboardDefaults()
   ]);
+  if (app.useMapUnderlayes) {
+    app.map.addControls([
+      new OpenLayers.Control.LayerSwitcher()
+    ]);
+  }
 }
 
 App.prototype.setProgress = function(data) {
