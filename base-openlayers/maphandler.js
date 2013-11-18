@@ -62,6 +62,9 @@ App.prototype.init = function () {
   $('.btn-cancel').on('click', function(evt) {
     app.clearData();
   });
+
+  $("a.brand").attr({href: "http://frack.skytruth.org/frackfinder"});
+
   return app;
 }
 
