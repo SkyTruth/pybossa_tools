@@ -45,6 +45,7 @@ BaseOpenlayersApp = App = function() {
 App.prototype.useMapUnderlayes = false;
 App.prototype.taskProjection = new OpenLayers.Projection("EPSG:4326");
 App.prototype.taskZoom = 1.2;
+App.prototype.taskMaxZoom = 10;
 
 App.prototype.init = function () {
   var app = this;
@@ -74,9 +75,34 @@ App.prototype.loadMap = function() {
   app.loadMapAddControls();
 
   app.map.zoomToMaxExtent();
+
+  app.map.events.register("moveend", app, app.mapMoveEnd);
   app.mapIsLoaded = true;
 }
 
+/* This is kind of a hack - along the lines of what's suggested here:
+ * http://stackoverflow.com/questions/15571660/openlayer-map-restrict-panning-and-zooming
+ * It just seems very hard to convince OpenLayers to do this itself
+ * using minScale/maxScale/minResolution/maxResolution or something
+ * similar (and the docs are a bit lacking).
+ * 
+ */
+
+App.prototype.mapMoveEnd = function (evt) {
+  var app = this;
+  if (app.taskMaxZoom) {
+    if (app.zoomRecurse) return;
+    app.zoomRecurse = true;
+    var bbox = app.getTaskBounds().transform(
+      App.prototype.taskProjection, app.map.getProjectionObject()
+    ).scale(app.taskMaxZoom);
+
+    if (!bbox.containsBounds(app.map.getExtent())) {
+      app.map.zoomToExtent(bbox);
+    }
+    app.zoomRecurse = false;
+  }
+}
 App.prototype.loadMapCreateMapOptions = function () {
   var app = this;
   var options = {
@@ -145,10 +171,15 @@ App.prototype.setProgress = function(data) {
 
 App.prototype.clearData = function() {
   var app = this;
-  app.map.zoomToExtent(
-    app.getTaskBounds().transform(
-      App.prototype.taskProjection, app.map.getProjectionObject()
-    ).scale(app.taskZoom));
+  var bbox = app.getTaskBounds().transform(
+    App.prototype.taskProjection, app.map.getProjectionObject()
+  );
+  app.map.zoomToExtent(bbox.scale(app.taskZoom));
+  if (app.taskMaxZoom) {
+    app.map.setOptions({restrictedExtent: bbox.scale(app.taskMaxZoom)});
+  } else {
+    app.map.setOptions({restrictedExtent: null});
+  }
 }
 
 App.prototype.getTaskBounds = function() {
