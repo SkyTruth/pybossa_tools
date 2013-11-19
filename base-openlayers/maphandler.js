@@ -178,11 +178,6 @@ App.prototype.clearData = function() {
     App.prototype.taskProjection, app.map.getProjectionObject()
   );
   app.map.zoomToExtent(bbox.scale(app.taskZoom));
-  if (app.taskMaxZoom) {
-    app.map.setOptions({restrictedExtent: bbox.scale(app.taskMaxZoom)});
-  } else {
-    app.map.setOptions({restrictedExtent: null});
-  }
 }
 
 App.prototype.getTaskBounds = function() {
