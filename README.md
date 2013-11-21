@@ -24,3 +24,13 @@ All templates are passed through the Django templating engine before uploading.
 Django template inheritance is used to share code between apps.
 The applion definition from app.json available as template variables.
 In particular, {{short_name}} is used for the application name to ensure that renaming apps on the fly during upload, using the -r flag will work.
+
+# Utilities
+
+## convert.py
+Converts between Pybossa tasks.json format and a geojson container format allowing you to sort through and filter the tasks visually in e.g. QGis, and then convert them back for import into Pybossa.
+
+Usages:
+
+    convert.py tasks.json > tasks.geojson
+    convert.py tasks.geojson > tasks.json
