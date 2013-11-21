@@ -146,8 +146,8 @@ class CreateTasks(object):
                     task = task['info']
                     task["question"] = self.app_config['question']
                     task["n_answers"] = self.options.n_answers
-                    self.handle_result(pbclient.create_task(self.app.id, task))
-                    print ".",
+                self.handle_result(pbclient.create_task(self.app.id, task))
+                print ".",
 
     def create_task(self):
         # Data for the tasks
