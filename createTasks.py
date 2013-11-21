@@ -228,7 +228,7 @@ class CreateTasks(object):
                 count[0] += 1
 
             print "Updating task n_answers"
-            find_app_by_short_name()
+            self.find_app_by_short_name()
 
             n_tasks = [0]
             [update_task(t, n_tasks) for t in tasks()]
