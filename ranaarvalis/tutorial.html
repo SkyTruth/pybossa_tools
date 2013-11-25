@@ -11,16 +11,22 @@
 
 {% block js-templates %}
   {{block.super}}
-  {% block too-few-positions-marked %}
+  {% block nr-of-positions-marked %}
+    <div class="no-positions-marked">
+      You have marked no positions,
+      but this example has <span class="example-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>.
+    </div>
     <div class="too-few-positions-marked">
       You have only marked <span class="marked-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>,
       but this example has <span class="example-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>.
     </div>
-  {% endblock %}
-  {% block too-many-positions-marked %}
     <div class="too-many-positions-marked">
       You have marked <span class="marked-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>,
       but this example only has <span class="example-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>.
+    </div>
+    <div class="no-positions-existing">
+      You have marked <span class="marked-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>,
+      but this example has no positions.
     </div>
   {% endblock %}
 {% endblock %}
@@ -41,8 +47,13 @@
       var positions = page.app.getAnswer().positions;
       if (positions.length != info.positions.length) {
         var template;
-        if (positions.length < info.positions.length) template = $(".js-templates .too-few-positions-marked");
-        if (positions.length > info.positions.length) template = $(".js-templates .too-many-positions-marked");
+        if (positions.length < info.positions.length) {
+          if (positions.length == 0) template = $(".js-templates .no-positions-marked");
+          else template = $(".js-templates .too-few-positions-marked");
+        } else if (positions.length > info.positions.length) {
+          if (info.positions.length == 0) template = $(".js-templates .no-positions-existing");
+          else template = $(".js-templates .too-many-positions-marked");
+        }
         template = template.clone();
         
         template.find(".marked-positions .nr").html(positions.length.toString());

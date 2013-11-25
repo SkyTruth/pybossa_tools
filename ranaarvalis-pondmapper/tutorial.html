@@ -15,16 +15,22 @@
   }
 {% endblock %}
 
-{% block too-few-positions-marked %}
+{% block nr-of-positions-marked %}
+  <div class="no-positions-marked">
+    You have marked no ponds,
+    but this example has <span class="example-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>.
+  </div>
   <div class="too-few-positions-marked">
     You have only marked <span class="marked-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>,
     but this example has <span class="example-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>.
   </div>
-{% endblock %}
-{% block too-many-positions-marked %}
   <div class="too-many-positions-marked">
     You have marked <span class="marked-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>,
     but this example only has <span class="example-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>.
+  </div>
+  <div class="no-positions-existing">
+    You have marked <span class="marked-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>,
+    but this example has no positions.
   </div>
 {% endblock %}
 
