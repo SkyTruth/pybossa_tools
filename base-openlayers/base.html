@@ -90,12 +90,19 @@
        .progress {
          text-align: center;
        }
+       .js-templates {
+         display: none;
+       }
     {% endblock %}
     {% block page_styles %}
 
     {% endblock %}
   {% endblock %}
 </style>
+
+<div class="js-templates">
+  {% block js-templates %}{% endblock %}
+</div>
 
 {% block body %}
 

@@ -9,6 +9,22 @@
   {% include "ranaarvalis/row.html" %}
 {% endblock %}
 
+{% block js-templates %}
+  {{block.super}}
+  {% block too-few-positions-marked %}
+    <div class="too-few-positions-marked">
+      You have only marked <span class="marked-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>,
+      but this example has <span class="example-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>.
+    </div>
+  {% endblock %}
+  {% block too-many-positions-marked %}
+    <div class="too-many-positions-marked">
+      You have marked <span class="marked-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>,
+      but this example only has <span class="example-positions"><span class="nr"></span> <span class="singular">position</span><span class="plural">positions</span></span>.
+    </div>
+  {% endblock %}
+{% endblock %}
+
 {% block page_libraries %}
   {{block.super}}
   <script>
@@ -24,7 +40,20 @@
       var info = page.app.info;
       var positions = page.app.getAnswer().positions;
       if (positions.length != info.positions.length) {
-        page.errs.push("<div>You have marked " + positions.length.toString() + " while there are " + info.positions.length.toString() + " ponds in reality.</div>");
+        var template;
+        if (positions.length < info.positions.length) template = $(".js-templates .too-few-positions-marked");
+        if (positions.length > info.positions.length) template = $(".js-templates .too-many-positions-marked");
+        template = template.clone();
+        
+        template.find(".marked-positions .nr").html(positions.length.toString());
+        template.find(".marked-positions .singular").toggle(positions.length == 1);
+        template.find(".marked-positions .plural").toggle(positions.length != 1);
+
+        template.find(".example-positions .nr").html(info.positions.length.toString());
+        template.find(".example-positions .singular").toggle(info.positions.length == 1);
+        template.find(".example-positions .plural").toggle(info.positions.length != 1);
+
+        page.errs.push(template);
       }
       allFound = true;
       positions.map(function (pos) {

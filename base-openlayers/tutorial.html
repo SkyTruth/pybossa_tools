@@ -180,7 +180,11 @@
         page.validateMapStep();
       }
       if (page.stayOnStep) return false;
-      $("#maperrors").html(page.errs.join(""));
+      $("#maperrors").html("");
+console.log(page.errs);
+      page.errs.map(function (item) {
+        $("#maperrors").append(item)
+      });
       return page.errs.length == 0;
     }
     Page.prototype.showStep = function(action) {
