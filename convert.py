@@ -2,7 +2,9 @@
 
 import json
 import geojson
+import csv
 import sys
+import optparse
 
 colnames = {
     'bbox': 'bbox',
@@ -16,39 +18,76 @@ colnames = {
     'longitude': 'lon'
     }
 
-if len(sys.argv) != 2:
-    print """Converts between Pybossa tasks.json format and a geojson container
-format allowing you to sort through and filter the tasks visually in
+if len(sys.argv) != 3:
+    print """Converts between various data list containers. Supported formats:
+
+json (list containing objects)
+geojson (features with properties)
+csv (optionally containing json in some columns)
+
+Can for example be used to convert between Pybossa tasks.json format and a geojson
+container format allowing you to sort through and filter the tasks visually in
 e.g. QGis, and then convert them back for import into Pybossa.
 
 Usages:
-    convert.py tasks.json
-    convert.py tasks.geojson
+    convert.py INFILE OUTFILE
+
+Examples:
+    convert.py tasks.json tasks.geojson
+    convert.py tasks.geojson tasks.json
+    convert.py tasks.geojson tasks.csv
+    convert.py tasks.csv tasks.json
 """
     sys.exit(0)
 
-infilename = sys.argv[1]
+infilename, outfilename = sys.argv[1:]
+infiletype = infilename.rsplit(".", 1)[1]
+outfiletype = outfilename.rsplit(".", 1)[1]
 
-if infilename.endswith(".geojson"):
-    sys.stdout.write('[')
-    with open(infilename) as f:
-        first = True
+rows = []
+with open(infilename) as f:
+    if infiletype == "geojson":
         for feature in geojson.load(f)['features']:
-            if not first:
-                sys.stdout.write(",")
-            sys.stdout.write(
-                json.dumps(feature['properties']))
-            first = False
-    sys.stdout.write(']\n')
+            rows.append(feature['properties'])
+    elif infiletype == 'json':
+        for row in json.load(f):
+            rows.append(row)
+    elif infiletype == 'csv':
+        def stuffvalue(value):
+            value = value.decode("utf-8")
+            try:
+                return json.loads(value)
+            except:
+                pass
+            return value
+        def addvalue(row, col, value):            
+            for item in col[:-1]:
+                if item not in row: row[item] = {}
+                row = row[item]
+            row[col[-1]] = value
+        for row in csv.DictReader(f):
+            dstrow = {}
+            for key, value in row.iteritems():
+                addvalue(dstrow, key.split("__"), value)
+            rows.append(dstrow)
 
-
-elif infilename.endswith(".json"):
-    sys.stdout.write('{"type": "FeatureCollection", "features": [\n')
-    with open(infilename) as f:
+with open(outfilename, "w") as f:
+    if outfiletype == "json":
+        f.write('[')
         first = True
-        
-        for task in json.load(f):
-            info = task
+        for row in rows:
+            if not first:
+                f.write(",")
+            f.write(
+                json.dumps(row))
+            first = False
+        f.write(']\n')
+    elif outfiletype == "geojson":
+        f.write('{"type": "FeatureCollection", "features": [\n')
+        first = True
+
+        for row in rows:
+            info = row
             if 'info' in info:
                 info = info['info']
 
@@ -68,13 +107,43 @@ elif infilename.endswith(".json"):
                 geom = geojson.loads(info[geocols['geom']])
 
             if not first:
-                sys.stdout.write(",")
-            sys.stdout.write(
+                f.write(",")
+            f.write(
                 geojson.dumps(
                     geojson.Feature(
                         geometry=geom,
-                        properties=task
+                        properties=row
                         )
                     ) + "\n")
             first = False
-        sys.stdout.write(']}\n')
+        f.write(']}\n')
+    elif outfiletype == "csv":
+        # Flatten a column tree from json
+        cols = set()
+        def addcols(row, prefix=()):
+            for key, value in row.iteritems():
+                if isinstance(value, dict):
+                    addcols(value, prefix + (key,))
+                else:
+                    cols.add('__'.join(prefix + (key,)))
+        for row in rows:
+            addcols(row)
+        cols = list(cols)
+        cols.sort()
+        def getvalue(row, col):
+            for item in col:
+                if not isinstance(row, dict) or item not in row:
+                    return None
+                row = row[item]
+            return row
+        def flattenvalue(value):
+            if isinstance(value, str):
+                return value
+            elif isinstance(value, unicode):
+                return value.encode("utf-8")
+            else:
+                return json.dumps(value)
+        w = csv.writer(f)
+        w.writerow(cols)
+        for row in rows:
+            w.writerow([getvalue(row, col.split("__")) for col in cols])
