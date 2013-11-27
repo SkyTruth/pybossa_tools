@@ -251,14 +251,74 @@ App.prototype.getOneMeterForMapFromTask = function(lon, lat) {
 };
 
 App.prototype.guideStyle = {
-  strokeColor: "#000000",
-  strokeWidth: 3,
-  strokeOpacity: 0.5,
+  strokeColor: "#ffffff",
+  strokeWidth: 4,
+  strokeOpacity: 0.75,
   fillOpacity: 0,
   fillColor: "#000000"
 };
-
+App.prototype.unitSize = 20.0; // In % of task size
+App.prototype.getTaskPositions = function () {
+  var app = this;
+  var res = {};
+  res.oneMeter = app.getOneMeterForMapFromTask(app.info.longitude, app.info.latitude);
+  res.unit = app.unitSize * app.info.size * res.oneMeter / 100;
+  res.bounds = app.getTaskBounds();
+  var bounds = res.bounds.toArray();
+  res.left = bounds[0];
+  res.bottom = bounds[1];
+  res.right = bounds[2]
+  res.top = bounds[3];
+  return res;
+}
 App.prototype.loadGuideCrossHair = function() {
+  var app = this;
+  var guide = app.map.getLayer('guide');
+  var p = app.getTaskPositions();
+
+  guide.addFeatures([
+    // The cross
+    [[app.info.longitude - p.unit, app.info.latitude],
+     [app.info.longitude + p.unit, app.info.latitude]],
+    [[app.info.longitude, app.info.latitude - p.unit],
+     [app.info.longitude, app.info.latitude + p.unit]],
+
+    // Top left
+    [[p.left, p.top],
+     [p.left + p.unit, p.top]],
+    [[p.left, p.top],
+     [p.left, p.top - p.unit]],
+
+    // Top right
+    [[p.right, p.top],
+     [p.right - p.unit, p.top]],
+    [[p.right, p.top],
+     [p.right, p.top - p.unit]],
+
+    // Bottom left
+    [[p.left, p.bottom],
+     [p.left + p.unit, p.bottom]],
+    [[p.left, p.bottom],
+     [p.left, p.bottom + p.unit]],
+
+    // Bottom right
+    [[p.right, p.bottom],
+     [p.right - p.unit, p.bottom]],
+    [[p.right, p.bottom],
+     [p.right, p.bottom + p.unit]],
+  ].map(function (positions) {
+    return new OpenLayers.Feature.Vector(
+      new OpenLayers.Geometry.LineString(
+        positions.map(function (coords) {
+          return new OpenLayers.Geometry.Point(coords[0], coords[1]).transform(
+            App.prototype.taskProjection, app.map.getProjectionObject())
+        })),
+      null, app.guideStyle
+    );
+  }));
+}
+App.prototype.loadGuideLargeCross = function() {
+  // FIXME: handle projections
   var app = this;
   var guide = app.map.getLayer('guide');
   var oneMeter = app.getOneMeterForMapFromTask(app.info.longitude, app.info.latitude);
@@ -273,9 +333,9 @@ App.prototype.loadGuideCrossHair = function() {
         new OpenLayers.Geometry.Point(app.info.longitude, app.info.latitude - app.info.size * oneMeter),
         new OpenLayers.Geometry.Point(app.info.longitude, app.info.latitude + app.info.size * oneMeter)]),
       null, app.guideStyle)]);
-
 }
 App.prototype.loadGuideCircle = function() {
+  // FIXME: handle projections
   var app = this;
   var guide = app.map.getLayer('guide');
   var center = new OpenLayers.Geometry.Point(app.info.longitude, app.info.latitude);
@@ -294,7 +354,6 @@ App.prototype.loadGuide = function() {
   guide.removeAllFeatures();
 
   app.loadGuideCrossHair();
-  app.loadGuideCircle();
 }
 
 App.prototype.updateMap = function(info) {
