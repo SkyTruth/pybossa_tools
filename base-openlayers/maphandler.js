@@ -63,8 +63,6 @@ App.prototype.init = function () {
     app.clearData();
   });
 
-  $("a.brand").attr({href: "http://frack.skytruth.org/frackfinder"});
-
   return app;
 }
 
