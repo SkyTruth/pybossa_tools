@@ -1,5 +1,14 @@
 {% extends "base-openlayers/base.html" %}
 
+{% block js-templates %}
+  {{ block.super }}
+  <div class="atta-boy-messages">
+    {% block atta-boy-messages %}
+      {% include "base-openlayers/atta-boy.html" %}
+    {% endblock %}
+  </div>
+{% endblock %}
+
 {% block body %}
   <div class="row">
       <div class="span6 offset2">
@@ -157,6 +166,9 @@
     BaseTemplatePage = Page = function () {
       GenericPage.apply(this, arguments);
     };
+
+    Page.prototype.attaGirlInterval = 0;
+
     Page.prototype.init = function () {
       GenericPage.prototype.init.apply(this, arguments);
       var page = this;
@@ -179,29 +191,10 @@
 
       return page;
     };
-    Page.prototype.attaGirlPhrases = [
-      "Nicely done!",
-      "Keep up the good work!",
-      "You rock out loud!",
-      "Who’s better than you?",
-      "This is freaking awesome!",
-      "Fan-freaking-tastic!!",
-      "Great job!",
-      "You’re kicking butt!",
-      "Your help is GREATLY appreciated!",
-      "High five!",
-      "Fabulous job!",
-      "You do nice work, you know that?",
-      "We couldn’t do this without you!",
-      "Who knew you were this talented?",
-      "What a tremendous help!",
-      "Hurray, great progress!",
-      "Dynamite!"
-    ];
-    Page.prototype.attaGirlInterval = 0;
     Page.prototype.getAttaGirl = function(progress) {
       var page = this;
-      $(".progressmsg").html(page.attaGirlPhrases[Math.floor((progress) / page.attaGirlInterval) % page.attaGirlPhrases.length]);
+      var messages = $(".atta-boy-messages > div")
+      $(".progressmsg").html($(messages[Math.floor((progress) / page.attaGirlInterval) % messages.length]).html());
       if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= progress % page.attaGirlInterval)) {
         $(".lots-done").show();
         $(".skeleton").hide();

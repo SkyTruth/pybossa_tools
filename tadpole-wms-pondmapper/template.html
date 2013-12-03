@@ -3,3 +3,15 @@
 {% block row %}
   {% include "tadpole-wms-pondmapper/row.html" %}
 {% endblock %}
+
+{% block page_libraries %}
+  {{ block.super }}
+  <script>
+    TadpoleWmsPondmapperTemplatePage = Page = function () {
+      BaseTemplatePage.apply(this, arguments);
+    };
+    Page.prototype = new BaseTemplatePage();
+
+    Page.prototype.attaGirlInterval = 5;
+  </script>
+{% endblock %}
