@@ -37,7 +37,7 @@
   </div>
 
 
-  <div class="row lots-done">
+  <div class="row-fluid lots-done alert">
     {% block lots-done %}
       <div class="span12">
         <h1><i class="icon-thumbs-up"></i><span class="progressmsg">You're awesome!</span></h1>
@@ -100,7 +100,7 @@
     display: none;
   }
   @media (max-width: 979px) {
-    #map, .lots-done, .all-done, .done-for-now {
+    #map, .all-done, .done-for-now {
       top: 50px !important;
     }
   }
@@ -120,7 +120,7 @@
   footer {
     display: none;
   }
-  .alert-messages .alert {
+  .alert-messages .alert, .lots-done {
     position: absolute;
     z-index: 2;
     left: 50%;
@@ -132,7 +132,7 @@
     font-size: 14pt;
     line-height: 1.5em;
   }
-  .alert-messages .alert .btn {
+  .alert-messages .alert .btn, .lots-done .btn {
     display: block;
     margin-top: 10pt;
     float: right;
@@ -153,7 +153,7 @@
   .taskmanager {
     position: fixed;
   }
-  #map, .lots-done, .all-done, .done-for-now {
+  #map, .all-done, .done-for-now {
     width: 100%;
     position: fixed;
     bottom: 0;
@@ -197,8 +197,6 @@
       $(".progressmsg").html($(messages[Math.floor((progress) / page.attaGirlInterval) % messages.length]).html());
       if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= progress % page.attaGirlInterval)) {
         $(".lots-done").show();
-        $(".skeleton").hide();
-        $("#loading").hide();
       }
     };
     Page.prototype.doneForNow = function(evt) {
@@ -207,7 +205,6 @@
     };
     Page.prototype.lotsDoneContinue = function(evt) {
       $(".lots-done").hide();
-      $(".skeleton").show();
     };
     Page.prototype.taskLoaded = function(task, deferred) {
       deferred.resolve(task);
