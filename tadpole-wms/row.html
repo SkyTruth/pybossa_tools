@@ -1,8 +1,10 @@
 {% extends "base-openlayers/row.html" %}
 
 {% block buttons %}
-  {% block answers %}
-  {% endblock %}
+  <span class="btn-group">
+    {% block answers %}
+    {% endblock %}
+  </span>
 
   {{block.super}}
 {% endblock %}
