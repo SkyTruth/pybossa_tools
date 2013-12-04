@@ -78,7 +78,8 @@
           allFound = false;
         }
       });
-      if (!allFound) page.errs.push("<div>Your markers are too far off from the ponds.</div>")
+      // Don't show this if we have no positions, as a mark can't be too far off from nothing...
+      if (!allFound && info.positions.length > 0) page.errs.push("<div>Your markers are too far off from the ponds.</div>")
 
       if (page.errs.length == 0 && page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
          page.initializedSteps[page.step].task++;
