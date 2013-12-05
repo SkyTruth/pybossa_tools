@@ -68,15 +68,19 @@ for taskrun in taskruns:
 
     info = {}
     info.update(task)
-    info.update(taskrun)
-    info.pop('info')
+    taskrundata = dict(taskrun)
+    taskrundata.pop('info')
+    info.update(taskrundata)
+
+    if 'latitude' in info: info['old_latitude'] = info.pop('latitude')
+    if 'longitude' in info: info['old_longitude'] = info.pop('longitude')
 
     for pos in taskrun['info']['positions']:
         if not first:
             print ","
         
-        info['result_latitude'] = pos['lat']
-        info['result_longitude'] = pos['lon']
+        info['latitude'] = pos['lat']
+        info['longitude'] = pos['lon']
         print geojson.dumps(
             geojson.Feature(
                 geometry=geojson.Point(
