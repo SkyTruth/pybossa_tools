@@ -1,3 +1,28 @@
+LongtouchClick = function () {}
+LongtouchClick.prototype.longtouchTimeout = 750;
+LongtouchClick.prototype.init = function (events) {
+  var lt = this;
+  lt.events = events;
+
+  lt.events.register('touchstart', lt,
+    function(e) {
+      lt.e = e;
+      if (lt.e.touches.length > 1) return;
+      lt.longtouchTimeoutId = setTimeout(function() {
+        lt.events.triggerEvent("click", lt.e);
+      }, lt.longtouchTimeout);
+    },
+    true
+  );
+  lt.events.register('touchmove', lt, function(e) {
+    clearTimeout(lt.longtouchTimeoutId);
+  });
+  lt.events.register('touchend', lt, function(e) {
+    clearTimeout(lt.longtouchTimeoutId);
+  });
+}
+
+
 RanaArvalisApp = App = function() {
   BaseOpenlayersApp.apply(this, arguments);
 };
@@ -15,21 +40,33 @@ App.prototype.loadMapAddLayers = function() {
   var markers = new OpenLayers.Layer.Markers("Drill pads");
   markers.id = "drillpads";
   app.map.addLayers([markers]);
+}
 
-  app.map.events.register("click", app.map, function(e) {
-    var size = new OpenLayers.Size(33,33);
-    var offset = new OpenLayers.Pixel(-(size.w/2), -(size.h/2));
-    var marker = new OpenLayers.Marker(
-      app.map.getLonLatFromPixel(e.xy),
-      new OpenLayers.Icon('http://alerts.skytruth.org/markers/red-x.png', size, offset)
-    );
-    app.map.getLayer('drillpads').addMarker(marker);
+App.prototype.longtouchTimeout = 750;
+App.prototype.loadMapAddControls = function () {
+  BaseOpenlayersApp.prototype.loadMapAddControls.apply(this, arguments);
+  var app = this;
 
-    marker.events.register('click', {marker: marker}, function(evt) {
-        app.map.getLayer('drillpads').removeMarker(this.marker);
-      this.marker.destroy();
-    });
+  app.map.events.register("click", app, function (e) { return app.mapClick(e); });
+  new LongtouchClick().init(app.map.events);
+}
+
+App.prototype.mapClick = function(e) {
+  var app = this;
+
+  var size = new OpenLayers.Size(33,33);
+  var offset = new OpenLayers.Pixel(-(size.w/2), -(size.h/2));
+  var marker = new OpenLayers.Marker(
+    app.map.getLonLatFromPixel(e.xy),
+    new OpenLayers.Icon('http://alerts.skytruth.org/markers/red-x.png', size, offset)
+  );
+  app.map.getLayer('drillpads').addMarker(marker);
+
+  marker.events.register('click', {marker: marker}, function(evt) {
+    app.map.getLayer('drillpads').removeMarker(this.marker);
+    this.marker.destroy();
   });
+  new LongtouchClick().init(marker.events);
 }
 
 App.prototype.clearData = function() {
