@@ -1,27 +1,33 @@
-LongtouchClick = function () {}
-LongtouchClick.prototype.longtouchTimeout = 750;
-LongtouchClick.prototype.init = function (events) {
+TouchClick = function () {}
+TouchClick.prototype.maxdistance = 3;
+TouchClick.prototype.init = function (events) {
   var lt = this;
   lt.events = events;
+  lt.xy = null;
+  lt.distance = 0;
 
-  lt.events.register('touchstart', lt,
-    function(e) {
-      lt.e = e;
-      if (lt.e.touches.length > 1) return;
-      lt.longtouchTimeoutId = setTimeout(function() {
-        lt.events.triggerEvent("click", lt.e);
-      }, lt.longtouchTimeout);
-    },
-    true
-  );
+  lt.events.register('touchstart', lt, function(e) {
+    lt.e = e;
+    if (lt.e.touches.length > 1) return;
+    lt.xy = [lt.e.touches[0].clientX, lt.e.touches[0].clientY];
+  }, true);
   lt.events.register('touchmove', lt, function(e) {
-    clearTimeout(lt.longtouchTimeoutId);
+    var xy = [e.touches[0].clientX, e.touches[0].clientY];
+    lt.distance = Math.max(lt.distance, Math.abs(xy[0] - lt.xy[0]));
+    lt.distance = Math.max(lt.distance, Math.abs(xy[1] - lt.xy[1]));
   });
   lt.events.register('touchend', lt, function(e) {
-    clearTimeout(lt.longtouchTimeoutId);
+    if (e.touches.length > 0) {
+      var xy = [e.touches[0].clientX, e.touches[0].clientY];
+      lt.distance = Math.max(lt.distance, Math.abs(xy[0] - lt.xy[0]));
+      lt.distance = Math.max(lt.distance, Math.abs(xy[1] - lt.xy[1]));
+    }
+
+    if (lt.distance < lt.maxdistance) {
+      lt.events.triggerEvent("click", lt.e);
+    }
   });
 }
-
 
 RanaArvalisApp = App = function() {
   BaseOpenlayersApp.apply(this, arguments);
@@ -48,7 +54,7 @@ App.prototype.loadMapAddControls = function () {
   var app = this;
 
   app.map.events.register("click", app, function (e) { return app.mapClick(e); });
-  new LongtouchClick().init(app.map.events);
+  new TouchClick().init(app.map.events);
 }
 
 App.prototype.mapClick = function(e) {
@@ -66,7 +72,7 @@ App.prototype.mapClick = function(e) {
     app.map.getLayer('drillpads').removeMarker(this.marker);
     this.marker.destroy();
   });
-  new LongtouchClick().init(marker.events);
+  new TouchClick().init(marker.events);
 }
 
 App.prototype.clearData = function() {
