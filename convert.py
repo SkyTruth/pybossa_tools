@@ -2,6 +2,7 @@
 
 import json
 import geojson
+import shapely.geometry
 import csv
 import sys
 import optparse
@@ -17,6 +18,13 @@ colnames = {
     'lng': 'lon',
     'longitude': 'lon'
     }
+
+def get_geocols(info):
+    geocols = {}
+    for colname, usage in colnames.iteritems():
+        if colname in info:
+            geocols[usage] = colname
+    return geocols
 
 if len(sys.argv) != 3:
     print """Converts between various data list containers. Supported formats:
@@ -48,7 +56,17 @@ rows = []
 with open(infilename) as f:
     if infiletype == "geojson":
         for feature in geojson.load(f)['features']:
-            rows.append(feature['properties'])
+            info = feature['properties']
+            geocols = get_geocols(info)
+            geometry = shapely.geometry.asShape(feature['geometry'])
+            if 'bbox' in geocols:
+                info[geocols['bbox']] = ",".join("%s" % coord for coord in geometry.bounds)
+            elif 'lat' in geocols and 'lon' in geocols:
+                info[geocols['lon']] = geometry.centroid.x
+                info[geocols['lat']] = geometry.centroid.y
+            elif 'geom' in geocols:
+                info[geocols['geom']] = feature['geometry']
+            rows.append(info)
     elif infiletype == 'json':
         for row in json.load(f):
             rows.append(row)
@@ -91,10 +109,7 @@ with open(outfilename, "w") as f:
             if 'info' in info:
                 info = info['info']
 
-            geocols = {}
-            for colname, usage in colnames.iteritems():
-                if colname in info:
-                    geocols[usage] = colname
+            geocols = get_geocols(info)
 
             if 'bbox' in geocols:
                 left, top, right, bottom = [float(coord) for coord in info[geocols['bbox']].split(",")]
