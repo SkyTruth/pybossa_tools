@@ -57,6 +57,12 @@ with open(infilename) as f:
     if infiletype == "geojson":
         for feature in geojson.load(f)['features']:
             info = feature['properties']
+            for key in info.keys():
+                if isinstance(info[key], (str, unicode)):
+                    try:
+                        info[key] = json.loads(info[key])
+                    except:
+                        pass
             geocols = get_geocols(info)
             geometry = shapely.geometry.asShape(feature['geometry'])
             if 'bbox' in geocols:
