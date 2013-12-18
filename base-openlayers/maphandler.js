@@ -46,7 +46,7 @@ App.prototype.useMapUnderlayes = false;
 App.prototype.taskProjection = new OpenLayers.Projection("EPSG:4326");
 App.prototype.taskZoom = 1.2;
 App.prototype.taskMaxZoom = 10;
-App.prototype.defaultTaskSize = 200;
+App.prototype.defaultTaskSize = 2000;
 
 App.prototype.init = function () {
   var app = this;
