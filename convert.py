@@ -26,6 +26,21 @@ def get_geocols(info):
             geocols[usage] = colname
     return geocols
 
+def to_csv_value(value):
+    if isinstance(value, unicode):
+        return value.encode("utf-8")
+    elif isinstance(value, str):
+        return value
+    else:
+        return json.dumps(value)
+
+def from_csv_value(value):
+    value = value.decode("utf-8")
+    try:
+        return json.loads(value)
+    except:
+        return value
+
 if len(sys.argv) != 3:
     print """Converts between various data list containers. Supported formats:
 
@@ -59,6 +74,11 @@ with open(infilename) as f:
             info = feature['properties']
             for key in info.keys():
                 if isinstance(info[key], (str, unicode)):
+                    # Quantum GIS mangles GeoJSON properties by
+                    # json-dumping them (again, inside the json...) if
+                    # they contain json objects...
+                    # So work around that by trying to parse the value
+                    # as json...
                     try:
                         info[key] = json.loads(info[key])
                     except:
@@ -92,7 +112,7 @@ with open(infilename) as f:
         for row in csv.DictReader(f):
             dstrow = {}
             for key, value in row.iteritems():
-                addvalue(dstrow, key.split("__"), value)
+                addvalue(dstrow, key.split("__"), from_csv_value(value))
             rows.append(dstrow)
 
 with open(outfilename, "w") as f:
@@ -167,4 +187,4 @@ with open(outfilename, "w") as f:
         w = csv.writer(f)
         w.writerow(cols)
         for row in rows:
-            w.writerow([getvalue(row, col.split("__")) for col in cols])
+            w.writerow([to_csv_value(getvalue(row, col.split("__"))) for col in cols])
