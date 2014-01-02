@@ -221,12 +221,18 @@
     Page.prototype.taskLoaded = function(task, deferred) {
       deferred.resolve(task);
     };
+    Page.prototype.getData = function() {
+      return JSON.parse($.cookie('{{short_name}}_data')) || {done: {}, timings: {}, times: {}};
+    };
+    Page.prototype.setData = function(data) {
+      $.cookie('{{short_name}}_data', JSON.stringify(data));
+    };
     Page.prototype.loadUserProgress = function() {
       var page = this;
       pybossa.userProgress('{{short_name}}').done(function (data) {
-        var done = JSON.parse($.cookie('{{short_name}}_tasksdone')) || {};
-        for (key in done) {
-           $(".done-" + key + "-display").html(done[key]);
+        var data = page.getData();
+        for (key in data.done) {
+           $(".done-" + key + "-display").html(data.done[key]);
         }
         page.getAttaGirl(parseInt(data.done || 0));
         return page.app.setProgress(data);
@@ -238,12 +244,18 @@
       var answer = page.app.getAnswer();
       var answerdone = answer.done || {};
       answerdone.tasks = 1;
-      var done = JSON.parse($.cookie('{{short_name}}_tasksdone')) || {};
+      var data = page.getData();
       for (key in answerdone) {
-         if (done[key] == undefined) done[key] = 0;
-         done[key] += answerdone[key];
+         if (data.done[key] == undefined) data.done[key] = 0;
+         data.done[key] += answerdone[key];
       }
-      $.cookie('{{short_name}}_tasksdone', JSON.stringify(done));
+      var now = (new Date).getTime();
+      for (key in data.times) {
+        data.timings[key] = now - data.times[key];
+      }
+      data.times.reportAnswer = now;
+      page.setData(data);
+      answer.timings = data.timings;
 
       pybossa.saveTask(page.task.id, answer).done(function() {
         page.deferred.resolve();
@@ -259,6 +271,12 @@
       var page = this;
       page.task = task;
       page.deferred = deferred;
+
+      var data = page.getData();
+      var now = (new Date).getTime();
+      data.times.presentTask = now;
+      page.setData(data);
+
       if ( !$.isEmptyObject(task) ) {
         $('#task-id').html(task.id);
         page.loadUserProgress();
