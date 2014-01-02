@@ -1,4 +1,4 @@
-pytALL FILE NAMES AND LOCATIONS ARE SPECIFIC TO TITA'S WORK -- June 2013
+ALL FILE NAMES AND LOCATIONS ARE SPECIFIC TO TITA'S WORK -- June 2013
 
 TURN ON VIRTUAL ENVIRONMENT IN CYGWIN
 
@@ -9,56 +9,60 @@ RETRIEVE LATEST CODE CHANGES
 	$ cd pybossa_tools
 	$ git pull
 
-		(this will pull his new stuff)
-		IF there are local changes then...
+		(this will pull new stuff)
+		IF there are local changes that conflict, it will yell at you. Do...
 			$ git stash 
 			$ get pull 
 
-CREATING NEW CROWDCRAFTING APP
+CREATING/UPDATING CROWD SOURCING APP
 
-	$ python createTasks.py -s http://crowdcrafting.org -k "[API KEY]" -a frackfinder -r drillpadtestapp -c -v -n 10
+	$ python createTasks.py -s http://crowd.dev.skytruth.org -k "[API KEY]" -a [name of app in local directory] -r [name of app on server] -c -n 10
+		OR
+	$ ./createTasks.py ... 
 
-		(-c to create a new app, -u if updating existing app)
+		-s		server URL
+		-k		API KEY found on server. Find in "Edit Your Profile"
+		-a
+		-r
+		-c		to create a new app 
+		-n		to set redundancy (ie. 10)
+		-u		to update existing app
+		-t		to add tasks...ie. -t [taskdirectory]/[taskfilename.json]
 
-		(-a directory name, -r name on server)
-		[API KEY] is the key for your crowdcrafting account. Find it in "Edit Your Profile"
+RETRIEVE RESULTS
+
+	TADPOLE - OLD
+	
+	$ cd
+	$ cd pybossa_tools
+	$ python export_task_runs.py drillpadtestapp
+		Three CSVs will be produced in the C:\cygwin\home\Yolandita\pybossa_tools   : results.csv, full_results.csv, county_results.csv
+
+	POND-MAPPER
+	
+	$ python ranaarvalis/mangleresults.py [directory]/[taskfile.json] [directory]/[taskrunsfile.json] > [directory]/[mangledresultsfile.geojson]
+	
+
 
 
 	
-EDIT - CREATE APP FOR RANAARVALIS
-	in pybossa directory
-	$ python createTasks.py -s http://crowd.skytruth.org -k "d6648f59-5d3a-4874-84ea-c02bd8b11869" -a ranaarvalis -c
+			-------   OLD   ---------
 
 
 CREATING TASKS  
-Spuds from 2005-2010 were combined and broken into counties. they are located in C:\Users\Yolandita\Documents\Well Pad App\site info\sites-spuds_by_county
-Take desired spuds and put into Cygwin folder with chopper. Copy the corresponding county sid into the same folder. Edit chopper.py to reflect pieces in folder then run in Cygwin.
+
+	Spuds from 2005-2010 were combined and broken into counties. they are located in C:\Users\Yolandita\Documents\Well Pad App\site info\sites-spuds_by_county
+	Take desired spuds and put into Cygwin folder with chopper. Copy the corresponding county sid into the same folder. Edit chopper.py to reflect pieces in folder then run in Cygwin.
 	
 	$ cd newworkingfolder
 	$ python chopper.py
 
 		(one county at a time. for multiple counties, copy and past all the images_names.csv into a new csv before chopping next county and then paste 		them all back together.) 
+		
+UPLOADING TASKS TO S3 
 
-UPLOADING TASKS
-In S3 open drillpadcat/data/TitasTest/testimages and click upload in ACTIONS dropdown. In upload window click ADD FILES, add all of the PNGs ONLY that were created by chopper. Then click SET DETAILS and continue editing details. Set permissions to public and set metadata as follows: key: content-type. value: image/png.
-click START UPLOAD
-In S3 open drillpadcat/data/TitasTest/ and click upload. In upload window click ADD FILES, add images_names.csv, then click SET DETAILS and continue editing details. Set permissions to public and set metadata as follows: key: content-type. value: text/plain. 
-click START UPLOAD
-In crowdcrafting app, go to Import Tasks page. Now back in the S3 page, look at the images_names.csv properties. Copy the url displayed and paste it into the URL bar back in crowdcrafting app. Click IMPORT
-
-UPLOADING TASKS FOR PADMAPPER
-
-	$ while read task; do ./createTasks.py -s http://crowd.skytruth.org -k "[api key]" -a [app name in cygwin] -r [app name on server] -t "$task"; done < [taskdirectory]/[taskfilename.json]
-
-RETRIEVE RESULTS
-
-	$ cd
-	$ cd pybossa_tools
-	$ python export_task_runs.py drillpadtestapp
-Three csv's will be produced in the C:\cygwin\home\Yolandita\pybossa_tools   : results.csv, full_results.csv, county_results.csv
-
-GET RESULTS INTO PROGRESS MAP
-In google drive, create a new fusion table from the county_results.csv. Go to previously made fusion table with all county kmls and merge with county_results.csv
-set the map to show counties with no data a different color. (maybe remove counties that don't have any sites to begin with). and then set colors for percent complete (different color for 100%)
-
-	
+	In S3 open drillpadcat/data/TitasTest/testimages and click upload in ACTIONS dropdown. In upload window click ADD FILES, add all of the PNGs ONLY that were created by chopper. Then click SET DETAILS and continue editing details. Set permissions to public and set metadata as follows: key: content-type. value: image/png.
+	click START UPLOAD
+	In S3 open drillpadcat/data/TitasTest/ and click upload. In upload window click ADD FILES, add images_names.csv, then click SET DETAILS and continue editing details. Set permissions to public and set metadata as follows: key: content-type. value: text/plain. 
+	click START UPLOAD
+	In crowdcrafting app, go to Import Tasks page. Now back in the S3 page, look at the images_names.csv properties. Copy the url displayed and paste it into the URL bar back in crowdcrafting app. Click IMPORT
