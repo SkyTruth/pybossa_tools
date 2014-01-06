@@ -176,7 +176,7 @@ App.prototype.loadMapAddControls = function() {
 }
 
 App.prototype.setProgress = function(data) {
-  var pct = Math.round((data.done*100)/data.total);
+  var pct = Math.round((data.done.tasks*100)/data.total.tasks);
   $("#progress .bar").css("width", pct.toString() +"%");
   $("#progress .bar").attr("title", pct.toString() + "% completed!");
   $("#progress .bar").tooltip({'placement': 'left'});
@@ -187,8 +187,8 @@ App.prototype.setProgress = function(data) {
     $("#progress .bar").html("");
     $("#progress .progress-label").html(pct.toString() +"%");
   }
-  $("#total").text(data.total);
-  $("#done").text(data.done);
+  $("#total").text(data.total.tasks);
+  $("#done").text(data.done.tasks);
 }
 
 App.prototype.clearData = function() {

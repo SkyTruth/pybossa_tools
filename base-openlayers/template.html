@@ -222,15 +222,24 @@
       deferred.resolve(task);
     };
     Page.prototype.getData = function() {
-      return JSON.parse($.cookie('{{short_name}}_data')) || {done: {}, timings: {}, times: {}};
+      var res = JSON.parse($.cookie('{{short_name}}_data')) || {};
+      if (!res.done) res.done = {};
+      if (!res.timings) res.timings = {};
+      if (!res.times) res.times = {};
+      if (!res.total) res.total = {};
+      return res;
     };
     Page.prototype.setData = function(data) {
       $.cookie('{{short_name}}_data', JSON.stringify(data));
     };
     Page.prototype.loadUserProgress = function() {
       var page = this;
-      pybossa.userProgress('{{short_name}}').done(function (data) {
+      pybossa.userProgress('{{short_name}}').done(function (pybossadata) {
         var data = page.getData();
+        data.done.tasks = pybossadata.done;
+        data.total.tasks = pybossadata.total;
+        page.setData(data);
+
         for (key in data.done) {
            $(".done-" + key + "-display").html(data.done[key]);
         }
@@ -243,7 +252,7 @@
 
       var answer = page.app.getAnswer();
       var answerdone = answer.done || {};
-      answerdone.tasks = 1;
+      // answerdone.tasks = 1; Getting this from PyBossa nowdays...
       var data = page.getData();
       for (key in answerdone) {
          if (data.done[key] == undefined) data.done[key] = 0;
