@@ -1,0 +1,41 @@
+.mapbubble {
+  position: relative;
+}
+.mapbubble.left {
+  left: -160px;
+}
+.mapbubble.right {
+  left: 934px;
+  top: 296px;
+}
+.mapbubble .popover {
+  display: block;
+  width: 150px;
+}
+.navigation {
+ margin-top: 10px;
+}
+.mapcontainer {
+  position: relative;
+}
+.taskmanager {
+  position: absolute;
+}
+#map {
+  position: relative;
+  width: 100%;
+  height: 400px;
+}
+#maperrors {
+  color: #ff0000;
+  font-weight: bold;
+}
+#start {
+  display: none;
+}
+.step {
+  display: none;
+}
+.done-for-now-btn {
+  display: none;
+}

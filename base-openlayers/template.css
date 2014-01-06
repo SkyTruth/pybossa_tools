@@ -1,0 +1,77 @@
+.lots-done,
+.all-done,
+.done-for-now {
+  display: none;
+}
+@media (max-width: 979px) {
+  #map, .all-done, .done-for-now {
+    top: 50px !important;
+  }
+}
+.navbar {
+  z-index: 3;
+  position: absolute;
+}
+.navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
+  margin: 0;
+}
+body {
+  padding: 0;
+}
+footer, html {
+  background: white;
+}
+footer {
+  display: none;
+}
+.alert-messages .alert, .lots-done {
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  top: 50%;
+  height: 400px;
+  width: 400px;
+  margin-left: -200px;
+  margin-top: -200px;
+  font-size: 14pt;
+  line-height: 1.5em;
+}
+@media (max-width: 510px) {
+  .alert-messages .alert, .lots-done {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+    width: auto;
+    height: auto;
+  }
+}
+.alert-messages .alert .btn, .lots-done .btn {
+  display: block;
+  margin-top: 10pt;
+  float: right;
+}
+.container {
+  width: 100%;
+}
+.container h1 {
+  display: none;
+}
+.lots-done h1, .all-done h1, .done-for-now h1 {
+  display: block;
+}
+.container .row {
+  margin-left: 0pt;
+  margin-right: 0pt;
+}
+.taskmanager {
+  position: fixed;
+}
+#map, .all-done, .done-for-now {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  top: 81px;
+}
