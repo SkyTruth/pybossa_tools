@@ -85,12 +85,13 @@ with open(infilename) as f:
                         pass
             geocols = get_geocols(info)
             geometry = shapely.geometry.asShape(feature['geometry'])
-            if 'bbox' in geocols:
+            if 'bbox' in geocols and geometry.type != "Point":
+                # Exclude point type to not create infinitely small bboxes, which makes little sense...
                 info[geocols['bbox']] = ",".join("%s" % coord for coord in geometry.bounds)
-            elif 'lat' in geocols and 'lon' in geocols:
+            if 'lat' in geocols and 'lon' in geocols:
                 info[geocols['lon']] = geometry.centroid.x
                 info[geocols['lat']] = geometry.centroid.y
-            elif 'geom' in geocols:
+            if 'geom' in geocols:
                 info[geocols['geom']] = feature['geometry']
             rows.append(info)
     elif infiletype == 'json':
