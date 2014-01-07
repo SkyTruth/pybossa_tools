@@ -35,7 +35,7 @@ def getvalue(row, col):
         row = row[item]
     return row
 
-def selvalue(row, col, value):
+def setvalue(row, col, value):
     for item in col[:-1]:
         if item not in row or not isinstance(row[item], dict):
             row[item] = {}
