@@ -84,6 +84,13 @@ with open(infilename) as f:
                     except:
                         pass
             geocols = get_geocols(info)
+            # We'll set geo columns to the new geo data, if we can.
+            # But to make sure we won't end up with mixed new and old
+            # data, we clear them out first...
+            for geocol in geocols:
+                col = geocols[geocol]
+                if col in info:
+                    del info[geocols[geocol]]
             geometry = shapely.geometry.asShape(feature['geometry'])
             if 'bbox' in geocols and geometry.type != "Point":
                 # Exclude point type to not create infinitely small bboxes, which makes little sense...
