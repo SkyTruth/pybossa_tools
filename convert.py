@@ -19,12 +19,36 @@ colnames = {
     'longitude': 'lon'
     }
 
-def get_geocols(info):
+def get_geocols(info, prefix = []):
     geocols = {}
-    for colname, usage in colnames.iteritems():
-        if colname in info:
-            geocols[usage] = colname
+    for key, value in info.iteritems():
+        if key in colnames:
+            geocols[colnames[key]] = prefix + [key]
+        if isinstance(value, dict):
+            geocols.update(get_geocols(value, prefix = prefix + [key]))
     return geocols
+
+def getvalue(row, col):
+    for item in col:
+        if not isinstance(row, dict) or item not in row:
+            return None
+        row = row[item]
+    return row
+
+def selvalue(row, col, value):
+    for item in col[:-1]:
+        if item not in row or not isinstance(row[item], dict):
+            row[item] = {}
+        row = row[item]
+    row[col[-1]] = value
+
+def delvalue(row, col):
+    for item in col[:-1]:
+        if not isinstance(row, dict) or item not in row:
+            return
+        row = row[item]
+    if col[-1] in row:
+        del row[col[-1]]
 
 def to_csv_value(value):
     if isinstance(value, unicode):
@@ -87,19 +111,17 @@ with open(infilename) as f:
             # We'll set geo columns to the new geo data, if we can.
             # But to make sure we won't end up with mixed new and old
             # data, we clear them out first...
-            for geocol in geocols:
-                col = geocols[geocol]
-                if col in info:
-                    del info[geocols[geocol]]
+            for usage, col in geocols.iteritems():
+                delvalue(info, col)
             geometry = shapely.geometry.asShape(feature['geometry'])
             if 'bbox' in geocols and geometry.type != "Point":
                 # Exclude point type to not create infinitely small bboxes, which makes little sense...
-                info[geocols['bbox']] = ",".join("%s" % coord for coord in geometry.bounds)
+                setvalue(info, geocols['bbox'], ",".join("%s" % coord for coord in geometry.bounds))
             if 'lat' in geocols and 'lon' in geocols:
-                info[geocols['lon']] = geometry.centroid.x
-                info[geocols['lat']] = geometry.centroid.y
+                setvalue(info, geocols['lon'], geometry.centroid.x)
+                setvalue(info, geocols['lat'], geometry.centroid.y)
             if 'geom' in geocols:
-                info[geocols['geom']] = feature['geometry']
+                setvalue(info, geocols['geom'], feature['geometry'])
             rows.append(info)
     elif infiletype == 'json':
         for row in json.load(f):
@@ -139,21 +161,19 @@ with open(outfilename, "w") as f:
         first = True
 
         for row in rows:
-            info = row
-            if 'info' in info:
-                info = info['info']
-
-            geocols = get_geocols(info)
+            geocols = get_geocols(row)
+            if not geocols:
+                raise AttributeError("Unable to convert the following row to geojson as it does not contain any geometry columns:" + json.dumps(row))
 
             if 'bbox' in geocols:
-                left, top, right, bottom = [float(coord) for coord in info[geocols['bbox']].split(",")]
+                left, top, right, bottom = [float(coord) for coord in getvalue(row, geocols['bbox']).split(",")]
                 geom = geojson.Polygon(
                     coordinates=[[[left, top], [right, top], [right, bottom], [left, bottom], [left, top]]])
             elif 'lat' in geocols and 'lon' in geocols:
                 geom = geojson.Point(
-                    coordinates=[info[geocols['lon']], info[geocols['lat']]])
+                    coordinates=[getvalue(row, geocols['lon']), getvalue(row, geocols['lat'])])
             elif 'geom' in geocols:
-                geom = geojson.loads(info[geocols['geom']])
+                geom = geojson.loads(getvalue(row, geocols['geom']))
 
             if not first:
                 f.write(",")
@@ -179,12 +199,6 @@ with open(outfilename, "w") as f:
             addcols(row)
         cols = list(cols)
         cols.sort()
-        def getvalue(row, col):
-            for item in col:
-                if not isinstance(row, dict) or item not in row:
-                    return None
-                row = row[item]
-            return row
         def flattenvalue(value):
             if isinstance(value, str):
                 return value
@@ -195,4 +209,4 @@ with open(outfilename, "w") as f:
         w = csv.writer(f)
         w.writerow(cols)
         for row in rows:
-            w.writerow([to_csv_value(getvalue(row, col.split("__"))) for col in cols])
+            w.writerow([to_csv_value(getvalue(row, *col.split("__"))) for col in cols])
