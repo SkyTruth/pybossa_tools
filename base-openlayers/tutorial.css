@@ -6,7 +6,11 @@
 }
 .mapbubble.right {
   left: 934px;
-  top: 296px;
+  top: 306px;
+}
+.mapbubble.bottom {
+  top: 396px;
+  left: 300px;
 }
 .mapbubble .popover {
   display: block;

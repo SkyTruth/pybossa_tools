@@ -19,6 +19,7 @@
 import json
 from optparse import OptionParser
 import pbclient
+import requests
 import os.path
 import glob
 
@@ -138,6 +139,15 @@ class CreateTasks(object):
         self.app.info['tutorial'] = self.contents('tutorial.html')
 
         self.handle_result(pbclient.update_app(self.app))
+
+        staticroot = os.path.realpath(os.path.join(self.options.app_root, 'static'))
+        for path, dirs, files in os.walk(staticroot, topdown=False):
+            for filename in files:
+                filepath = os.path.join(path, filename)
+                with open(filepath) as file:
+                    # Remove the prefix and then remove any inherit-symlinks
+                    result = pbclient.add_file(self.app, file, file.name[len(staticroot):].replace("/inherit/", "/")[1:])
+                    assert result['status'] == 'ok'
 
     def load_tasks(self):
         with open(self.options.load_tasks) as f:

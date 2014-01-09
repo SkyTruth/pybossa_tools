@@ -209,4 +209,4 @@ with open(outfilename, "w") as f:
         w = csv.writer(f)
         w.writerow(cols)
         for row in rows:
-            w.writerow([to_csv_value(getvalue(row, *col.split("__"))) for col in cols])
+            w.writerow([to_csv_value(getvalue(row, col.split("__"))) for col in cols])
