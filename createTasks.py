@@ -145,12 +145,9 @@ class CreateTasks(object):
             for filename in files:
                 filepath = os.path.join(path, filename)
                 with open(filepath) as file:
-                    result = requests.post("%s/api/app/%s/addfile" % (self.options.api_url, self.app.id),
-                                           params={'api_key': self.options.api_key,
-                                                   # Remove the prefix and then remove any inherit-symlinks
-                                                   'filename':file.name[len(staticroot):].replace("/inherit/", "/")[1:]},
-                                           files = {'file': file})
-                    assert json.loads(result.text)['status'] == 'ok'
+                    # Remove the prefix and then remove any inherit-symlinks
+                    result = pbclient.add_file(self.app, file, file.name[len(staticroot):].replace("/inherit/", "/")[1:])
+                    assert result['status'] == 'ok'
 
     def load_tasks(self):
         with open(self.options.load_tasks) as f:
