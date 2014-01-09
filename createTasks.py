@@ -19,6 +19,7 @@
 import json
 from optparse import OptionParser
 import pbclient
+import requests
 import os.path
 import glob
 
@@ -138,6 +139,18 @@ class CreateTasks(object):
         self.app.info['tutorial'] = self.contents('tutorial.html')
 
         self.handle_result(pbclient.update_app(self.app))
+
+        staticroot = os.path.realpath(os.path.join(self.options.app_root, 'static'))
+        for path, dirs, files in os.walk(staticroot, topdown=False):
+            for filename in files:
+                filepath = os.path.join(path, filename)
+                with open(filepath) as file:
+                    result = requests.post("%s/api/app/%s/addfile" % (self.options.api_url, self.app.id),
+                                           params={'api_key': self.options.api_key,
+                                                   # Remove the prefix and then remove any inherit-symlinks
+                                                   'filename':file.name[len(staticroot):].replace("/inherit/", "/")[1:]},
+                                           files = {'file': file})
+                    assert json.loads(result.text)['status'] == 'ok'
 
     def load_tasks(self):
         with open(self.options.load_tasks) as f:
