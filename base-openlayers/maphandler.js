@@ -48,7 +48,7 @@ App.prototype.taskZoom = 1.2;
 App.prototype.taskMaxZoom = 10;
 App.prototype.defaultTaskSize = 200;
 
-App.prototype.init = function () {
+App.prototype.init = function (cb) {
   var app = this;
   $(".expander-control").click(function (ev) {
     var expanded = $.cookie('taskmanager_expander') == "expanded";
@@ -64,7 +64,7 @@ App.prototype.init = function () {
     app.clearData();
   });
 
-  return app;
+  if (cb) cb(null, app);
 }
 
 App.prototype.loadMap = function() {
@@ -441,12 +441,11 @@ $(document).ready(function () {
 
 GenericPage = Page = function () {
 };
-Page.prototype.init = function (app) {
+Page.prototype.init = function (app, cb) {
   var page = this;
   page.app = app;
   app.page = page;
-
-  return page;
+  if (cb) cb(null, page);
 };
 Page.prototype.reportAnswer = function () {
   // This should be overridden by a real page...

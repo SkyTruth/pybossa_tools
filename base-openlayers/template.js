@@ -4,27 +4,31 @@ BaseTemplatePage = Page = function () {
 
 Page.prototype.attaGirlInterval = 50;
 
-Page.prototype.init = function () {
-  GenericPage.prototype.init.apply(this, arguments);
-  var page = this;
+Page.prototype.init = function (app, cb) {
+  GenericPage.prototype.init.call(this, app, function(err, page) {
+    $.ajax({url: '/api/app?short_name={{short_name}}', success: function(data) {
+      page.app.pybossa = data[0];
 
-  pybossa.taskLoaded(function(task, deferred) {
-    return page.taskLoaded(task, deferred);
+      pybossa.taskLoaded(function(task, deferred) {
+        return page.taskLoaded(task, deferred);
+      });
+
+      pybossa.presentTask(function(task, deferred) {
+        return page.presentTask(task, deferred);
+      });
+
+      page.app.loadMap();
+
+      $(".done-for-now-btn").click(function (evt) { page.doneForNow(evt); });
+      $(".lots-done .continue").click(function (evt) { page.lotsDoneContinue(evt); });
+
+      $(".alert-messages .alert a:not(.close)").addClass("btn btn-success");
+
+      pybossa.run('{{short_name}}');
+
+      if (cb) cb(null, page);
+    }});
   });
-
-  pybossa.presentTask(function(task, deferred) {
-    return page.presentTask(task, deferred);
-  });
-
-  page.app.loadMap();
-  pybossa.run('{{short_name}}');
-
-  $(".done-for-now-btn").click(function (evt) { page.doneForNow(evt); });
-  $(".lots-done .continue").click(function (evt) { page.lotsDoneContinue(evt); });
-
-  $(".alert-messages .alert a:not(.close)").addClass("btn btn-success");
-
-  return page;
 };
 Page.prototype.getAttaGirl = function(progress) {
   var page = this;
@@ -120,4 +124,3 @@ Page.prototype.presentTask = function(task, deferred) {
     $("#loading").hide();
   }
 };
-

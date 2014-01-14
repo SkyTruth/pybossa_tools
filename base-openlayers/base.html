@@ -30,7 +30,12 @@
   {% endblock %}
   <script>
     $(document).ready(function () {
-      page = new Page().init(new App().init());
+      new App().init(function(err, app) {
+        new Page().init(app, function (err, ppage) {
+          // Set global variable - mostly for easy debugging
+          page = ppage;
+        });
+      })
     });
   </script>
 {% endblock %}
