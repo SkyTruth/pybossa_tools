@@ -96,7 +96,7 @@ App.prototype.loadGuide = function() {
   var app = this;
   var guide = app.map.getLayer('guide');
 
-  var bbox = OpenLayers.Bounds.fromString(app.task.info.bbox);
+  var bbox = OpenLayers.Bounds.fromString(app.task.data.info.bbox);
   var mapbbox = bbox.transform(
     app.taskProjection,
     app.map.getProjection());

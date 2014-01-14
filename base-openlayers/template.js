@@ -116,11 +116,35 @@ Page.prototype.presentTask = function(task, deferred) {
   if ( !$.isEmptyObject(task) ) {
     $('#task-id').html(task.id);
     page.loadUserProgress();
-    page.app.updateMap(task.info);
+    page.app.updateMap(task);
     $("#loading").hide();
   } else {
     $(".all-done").show();
     $(".skeleton").hide();
     $("#loading").hide();
   }
+};
+
+Page.prototype.storeData = function(data, cb) {
+  var page = this;
+
+  if (data.app_id == -1) {
+    data.app_id = page.app.pybossa.id;
+  }
+  if (data.task_id == -1) {
+    data.task_id = page.app.task.id;
+  }
+
+  $.ajax({type: "POST", url: "/api/rundata", data: JSON.stringify(data), contentType: 'application/json', dataType: "json", success: cb});
+};
+
+Page.prototype.queryData = function(filter, cb) {
+  if (filter.app_id == -1) {
+    filter.app_id = page.app.pybossa.id;
+  }
+  if (filter.task_id == -1) {
+    filter.task_id = page.app.task.id;
+  }
+
+  $.ajax({type: "GET", url: "/api/rundata", data: filter, contentType: 'application/json', dataType: "json", success: cb});
 };

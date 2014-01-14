@@ -43,7 +43,7 @@
     Page.prototype.validateMapStep = function() {
       var page = this;
 
-      var info = page.app.task.info;
+      var info = page.app.task.data.info;
       var positions = page.app.getAnswer().positions;
       if (positions.length != info.positions.length) {
         var template;

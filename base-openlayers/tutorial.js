@@ -33,7 +33,7 @@ Page.prototype.setMapTask = function () {
   page.app.setProgress({
     total: {tasks: page.initializedSteps[page.step].tasks.length},
     done: {tasks: page.initializedSteps[page.step].task}});
-  page.app.updateMap(page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task]);
+  page.app.updateMap({"info": page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task]});
   $("#mapcomment").html(page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task].comment || "");
   $("#maperrors").html("");
 };
