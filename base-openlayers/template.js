@@ -229,7 +229,6 @@ Page.prototype.storeData = function(data, cb) {
     data.task_id = page.app.task.id;
   }
 
-    console.log(["STORE", data]);
   $.ajax({
     type: "POST",
     url: "/api/rundata",
