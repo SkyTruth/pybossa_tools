@@ -48,6 +48,11 @@ App.prototype.taskZoom = 1.2;
 App.prototype.taskMaxZoom = 10;
 App.prototype.defaultTaskSize = 200;
 
+App.prototype.badgeWidth = '20pt';
+App.prototype.badgeWidthActive = '40pt';
+App.prototype.badgeAnimation = 500;
+App.prototype.badgePopup = 3000;
+
 App.prototype.init = function (cb) {
   var app = this;
   $(".expander-control").click(function (ev) {
@@ -435,8 +440,40 @@ App.prototype.getAnswer = function() {
   return this.answer;
 }
 
-$(document).ready(function () {
-});
+App.prototype.addBadge = function(badge, popup) {
+  var app = this;
+
+  var icon = $("<img class='pybossa-badge' />");
+  icon.attr("src", badge.icon);
+  icon.css({width: app.badgeWidth, height: 'auto'});
+  icon.popover({
+    animation: true,
+    html: true,
+    placement: 'left',
+    trigger: 'click',
+    content: badge.description,
+  });
+  $(".pybossa-badges").append(icon);
+  icon.load(function () {
+    var show = function () {
+      icon.animate({width: app.badgeWidthActive}, app.badgeAnimation, 'swing', function () {
+        icon.popover('show');
+      });
+    };
+    var hide = function () {
+      icon.animate({width: app.badgeWidth}, app.badgeAnimation, 'swing', function () {
+        icon.popover('hide');
+      });
+    };
+
+    icon.on("mouseover", show);
+    icon.on("mouseout", hide);
+    if (popup) {
+      show();
+      setTimeout(hide, app.badgePopup);
+    }
+  });
+};
 
 
 GenericPage = Page = function () {

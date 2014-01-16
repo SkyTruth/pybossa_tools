@@ -3,10 +3,6 @@ BaseTemplatePage = Page = function () {
 };
 
 Page.prototype.attaGirlInterval = 1;
-Page.prototype.badgeWidth = '20pt';
-Page.prototype.badgeWidthActive = '40pt';
-Page.prototype.badgeAnimation = 500;
-Page.prototype.badgePopup = 3000;
 
 Page.prototype.init = function (app, cb) {
   var page = this;
@@ -38,7 +34,7 @@ Page.prototype.init = function (app, cb) {
           },
           function (err, data) {
             data.map(function (row) {
-              page.addBadge(row.info);
+              page.app.addBadge(row.info);
             });
             cb();
           }
@@ -69,40 +65,6 @@ Page.prototype.init = function (app, cb) {
     }
   );
 };
-Page.prototype.addBadge = function(badge, popup) {
-  var page = this;
-
-  var icon = $("<img class='pybossa-badge' />");
-  icon.attr("src", badge.icon);
-  icon.css({width: page.badgeWidth, height: 'auto'});
-  icon.popover({
-    animation: true,
-    html: true,
-    placement: 'left',
-    trigger: 'click',
-    content: badge.description,
-  });
-  $(".pybossa-badges").append(icon);
-  icon.load(function () {
-    var show = function () {
-      icon.animate({width: page.badgeWidthActive}, page.badgeAnimation, 'swing', function () {
-        icon.popover('show');
-      });
-    };
-    var hide = function () {
-      icon.animate({width: page.badgeWidth}, page.badgeAnimation, 'swing', function () {
-        icon.popover('hide');
-      });
-    };
-
-    icon.on("mouseover", show);
-    icon.on("mouseout", hide);
-    if (popup) {
-      show();
-      setTimeout(hide, page.badgePopup);
-    }
-  });
-};
 Page.prototype.generateAttaGirl = function() {
   var page = this;
   if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= page.progress.done % page.attaGirlInterval)) {
@@ -117,7 +79,7 @@ Page.prototype.generateAttaGirl = function() {
         "info": badge
     });
 
-      page.addBadge(badge, true);
+    page.app.addBadge(badge, true);
   }
 };
 Page.prototype.doneForNow = function(evt) {
