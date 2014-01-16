@@ -86,9 +86,9 @@ footer {
 }
 .pybossa-badge {
   display: block;
+  float: right;
+  clear: both;
 
-  width: 15pt;
-  height: auto;
   padding-top: 5pt;
   padding-left: 10pt;
   padding-right: 5pt;

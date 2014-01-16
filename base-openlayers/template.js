@@ -3,6 +3,10 @@ BaseTemplatePage = Page = function () {
 };
 
 Page.prototype.attaGirlInterval = 1;
+Page.prototype.badgeWidth = '20pt';
+Page.prototype.badgeWidthActive = '40pt';
+Page.prototype.badgeAnimation = 500;
+Page.prototype.badgePopup = 3000;
 
 Page.prototype.init = function (app, cb) {
   var page = this;
@@ -25,24 +29,21 @@ Page.prototype.init = function (app, cb) {
           }
         });
       },
-/*
+
       function (cb) {
-        page.rundata = {current_user: {}};
         page.queryData(
           {
             user_id: -1,
-            group_by: "app_id,key"
+            key: 'badges'
           },
           function (err, data) {
             data.map(function (row) {
-              if (!page.rundata.current_user[row.app_id]) page.rundata.current_user[row.app_id] = {};
-              page.rundata.current_user[row.app_id][row.key] = row;
+              page.addBadge(row.info);
             });
             cb();
           }
         );
       },
-*/
 
       function (cb) {
         pybossa.taskLoaded(function(task, deferred) {
@@ -55,7 +56,6 @@ Page.prototype.init = function (app, cb) {
         page.app.loadMap();
 
         $(".done-for-now-btn").click(function (evt) { page.doneForNow(evt); });
-        $(".lots-done .continue").click(function (evt) { page.lotsDoneContinue(evt); });
 
         $(".alert-messages .alert a:not(.close)").addClass("btn btn-success");
 
@@ -69,9 +69,12 @@ Page.prototype.init = function (app, cb) {
     }
   );
 };
-Page.prototype.addBadge = function(badge) {
+Page.prototype.addBadge = function(badge, popup) {
+  var page = this;
+
   var icon = $("<img class='pybossa-badge' />");
   icon.attr("src", badge.icon);
+  icon.css({width: page.badgeWidth, height: 'auto'});
   icon.popover({
     animation: true,
     html: true,
@@ -81,19 +84,31 @@ Page.prototype.addBadge = function(badge) {
   });
   $(".pybossa-badges").append(icon);
   icon.load(function () {
-    icon.popover('show');
-    setTimeout(function () {
-      icon.popover('hide');
-    }, 4000);
+    var show = function () {
+      icon.animate({width: page.badgeWidthActive}, page.badgeAnimation, 'swing', function () {
+        icon.popover('show');
+      });
+    };
+    var hide = function () {
+      icon.animate({width: page.badgeWidth}, page.badgeAnimation, 'swing', function () {
+        icon.popover('hide');
+      });
+    };
+
+    icon.on("mouseover", show);
+    icon.on("mouseout", hide);
+    if (popup) {
+      show();
+      setTimeout(hide, page.badgePopup);
+    }
   });
 };
-Page.prototype.getAttaGirl = function(progress) {
+Page.prototype.generateAttaGirl = function() {
   var page = this;
-    console.log(["XXX", progress]);
-  if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= progress % page.attaGirlInterval)) {
+  if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= page.progress.done % page.attaGirlInterval)) {
     var messages = $(".atta-boy-messages > div")
-    var message = $(messages[Math.floor((progress) / page.attaGirlInterval) % messages.length]);
-    var badge = {type:'atta', description: message.html(), icon: 'https://openclipart.org//people/cohort/eared-shield-1.svg'};
+    var message = $(messages[Math.floor((page.progress.done) / page.attaGirlInterval) % messages.length]);
+    var badge = {type:'atta', description: message.find("div").html(), icon: message.find("img").attr("src")};
 
     page.storeData({
         "user_id": -1,
@@ -102,15 +117,12 @@ Page.prototype.getAttaGirl = function(progress) {
         "info": badge
     });
 
-    page.addBadge(badge);
+      page.addBadge(badge, true);
   }
 };
 Page.prototype.doneForNow = function(evt) {
   $(".done-for-now").show();
   $(".skeleton").hide();
-};
-Page.prototype.lotsDoneContinue = function(evt) {
-  $(".lots-done").hide();
 };
 Page.prototype.taskLoaded = function(task, deferred) {
   deferred.resolve(task);
@@ -129,6 +141,8 @@ Page.prototype.setData = function(data) {
 Page.prototype.loadUserProgress = function() {
   var page = this;
   pybossa.userProgress('{{short_name}}').done(function (pybossadata) {
+    page.progress = pybossadata;
+
     var data = {done: {}, total: {}};
     data.done.tasks = pybossadata.done;
     data.total.tasks = pybossadata.total;
@@ -136,7 +150,6 @@ Page.prototype.loadUserProgress = function() {
     for (key in data.done) {
        $(".done-" + key + "-display").html(data.done[key]);
     }
-    page.getAttaGirl(data.done.tasks);
     return page.app.setProgress(data);
   });
 };
@@ -164,6 +177,7 @@ Page.prototype.reportAnswer = function () {
       "amounts": answer.done
     },
     function(err) {
+      page.generateAttaGirl();
       pybossa.saveTask(page.task.id, answer).done(function() {
         page.deferred.resolve();
       });
