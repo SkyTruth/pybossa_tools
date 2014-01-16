@@ -181,6 +181,13 @@ App.prototype.loadMapAddControls = function() {
 }
 
 App.prototype.setProgress = function(data) {
+  var app = this;
+  app.progress = data;
+
+  for (key in data.done) {
+     $(".done-" + key + "-display").html(data.done[key]);
+  }
+
   var pct = Math.round((data.done.tasks*100)/data.total.tasks);
   $("#progress .bar").css("width", pct.toString() +"%");
   $("#progress .bar").attr("title", pct.toString() + "% completed!");

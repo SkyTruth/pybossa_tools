@@ -67,9 +67,9 @@ Page.prototype.init = function (app, cb) {
 };
 Page.prototype.generateAttaGirl = function() {
   var page = this;
-  if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= page.progress.done % page.attaGirlInterval)) {
+  if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= page.app.progress.done.tasks % page.attaGirlInterval)) {
     var messages = $(".atta-boy-messages > div")
-    var message = $(messages[Math.floor((page.progress.done) / page.attaGirlInterval) % messages.length]);
+    var message = $(messages[Math.floor((page.app.progress.done.tasks) / page.attaGirlInterval) % messages.length]);
     var badge = {type:'atta', description: message.find("div").html(), icon: message.find("img").attr("src")};
 
     page.storeData({
@@ -89,42 +89,40 @@ Page.prototype.doneForNow = function(evt) {
 Page.prototype.taskLoaded = function(task, deferred) {
   deferred.resolve(task);
 };
-Page.prototype.getData = function() {
+Page.prototype.getCookieData = function() {
   var res = JSON.parse($.cookie('{{short_name}}_data')) || {};
-  if (!res.done) res.done = {};
   if (!res.timings) res.timings = {};
   if (!res.times) res.times = {};
-  if (!res.total) res.total = {};
   return res;
 };
-Page.prototype.setData = function(data) {
+Page.prototype.setCookieData = function(data) {
   $.cookie('{{short_name}}_data', JSON.stringify(data));
 };
 Page.prototype.loadUserProgress = function() {
   var page = this;
-  pybossa.userProgress('{{short_name}}').done(function (pybossadata) {
-    page.progress = pybossadata;
+  pybossa.userProgress('{{short_name}}').done(function (data) {
+    var progress = {
+      done: {
+        tasks: data.done
+      },
+      total: {
+        tasks: data.total
+      }
+    };
 
-    var data = {done: {}, total: {}};
-    data.done.tasks = pybossadata.done;
-    data.total.tasks = pybossadata.total;
-
-    for (key in data.done) {
-       $(".done-" + key + "-display").html(data.done[key]);
-    }
-    return page.app.setProgress(data);
+    return page.app.setProgress(progress);
   });
 };
 Page.prototype.reportAnswer = function () {
   var page = this;
 
-  var data = page.getData();
+  var data = page.getCookieData();
   var now = (new Date).getTime();
   for (key in data.times) {
     data.timings[key] = now - data.times[key];
   }
   data.times.reportAnswer = now;
-  page.setData(data);
+  page.setCookieData(data);
 
   var answer = page.app.getAnswer();
   answer.timings = data.timings;
@@ -157,10 +155,10 @@ Page.prototype.presentTask = function(task, deferred) {
   page.task = task;
   page.deferred = deferred;
 
-  var data = page.getData();
+  var data = page.getCookieData();
   var now = (new Date).getTime();
   data.times.presentTask = now;
-  page.setData(data);
+  page.setCookieData(data);
 
   if ( !$.isEmptyObject(task) ) {
     $('#task-id').html(task.id);
