@@ -147,7 +147,9 @@ class CreateTasks(object):
                 with open(filepath) as file:
                     # Remove the prefix and then remove any inherit-symlinks
                     result = pbclient.add_file(self.app, file, file.name[len(staticroot):].replace("/inherit/", "/")[1:])
-                    assert result['status'] == 'ok'
+                    if result['status'] != 'ok' : 
+                        print result 
+                        assert False
 
     def load_tasks(self):
         with open(self.options.load_tasks) as f:
