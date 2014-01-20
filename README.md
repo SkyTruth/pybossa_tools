@@ -24,3 +24,7 @@ All templates are passed through the Django templating engine before uploading.
 Django template inheritance is used to share code between apps.
 The applion definition from app.json available as template variables.
 In particular, {{short_name}} is used for the application name to ensure that renaming apps on the fly during upload, using the -r flag will work.
+
+# Utilities
+
+Using these apps will require you to handle and transform/modify json files containing spatial data, some of them quite large. To help with that there is a toolchain called [swissarmykitchensink](https://github.com/redhog/swissarmykitchensink/blob/master/README.md) which gets installed when you install the dependencies for this project.
