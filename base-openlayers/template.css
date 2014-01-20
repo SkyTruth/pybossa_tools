@@ -75,3 +75,21 @@ footer {
   bottom: 0;
   top: 81px;
 }
+.pybossa-badges {
+  position: fixed;
+  top: 81px;
+  right: 0;
+  z-index: 50;
+}
+.pybossa-badges .popover .popover-title {
+  display: none;
+}
+.pybossa-badge {
+  display: block;
+  float: right;
+  clear: both;
+
+  padding-top: 5pt;
+  padding-left: 10pt;
+  padding-right: 5pt;
+}

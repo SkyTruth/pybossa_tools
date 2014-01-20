@@ -1,6 +1,6 @@
 TouchClick = function () {}
 TouchClick.prototype.maxdistance = 3;
-TouchClick.prototype.init = function (events) {
+TouchClick.prototype.init = function (events, cb) {
   var lt = this;
   lt.events = events;
   lt.xy = null;
@@ -27,16 +27,18 @@ TouchClick.prototype.init = function (events) {
       lt.events.triggerEvent("click", lt.e);
     }
   });
+  if (cb) cb(null, lt);
 }
 
 RanaArvalisApp = App = function() {
   BaseOpenlayersApp.apply(this, arguments);
 };
 App.prototype = new BaseOpenlayersApp();
-App.prototype.init = function () {
-  BaseOpenlayersApp.prototype.init.apply(this, arguments);
-  var app = this;
-  return app;
+App.prototype.init = function (cb) {
+  BaseOpenlayersApp.prototype.init.call(this, function (err, app) {
+
+    cb(err, app);
+  });
 }
 
 App.prototype.loadMapAddLayers = function() {
@@ -94,7 +96,7 @@ App.prototype.loadGuide = function() {
   var app = this;
   var guide = app.map.getLayer('guide');
 
-  var bbox = OpenLayers.Bounds.fromString(app.task.info.bbox);
+  var bbox = OpenLayers.Bounds.fromString(app.task.data.info.bbox);
   var mapbbox = bbox.transform(
     app.taskProjection,
     app.map.getProjection());

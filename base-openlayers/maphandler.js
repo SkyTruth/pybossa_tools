@@ -48,7 +48,12 @@ App.prototype.taskZoom = 1.2;
 App.prototype.taskMaxZoom = 10;
 App.prototype.defaultTaskSize = 200;
 
-App.prototype.init = function () {
+App.prototype.badgeWidth = '20pt';
+App.prototype.badgeWidthActive = '40pt';
+App.prototype.badgeAnimation = 500;
+App.prototype.badgePopup = 3000;
+
+App.prototype.init = function (cb) {
   var app = this;
   $(".expander-control").click(function (ev) {
     var expanded = $.cookie('taskmanager_expander') == "expanded";
@@ -64,7 +69,7 @@ App.prototype.init = function () {
     app.clearData();
   });
 
-  return app;
+  if (cb) cb(null, app);
 }
 
 App.prototype.loadMap = function() {
@@ -176,6 +181,13 @@ App.prototype.loadMapAddControls = function() {
 }
 
 App.prototype.setProgress = function(data) {
+  var app = this;
+  app.progress = data;
+
+  for (key in data.done) {
+     $(".done-" + key + "-display").html(data.done[key]);
+  }
+
   var pct = Math.round((data.done.tasks*100)/data.total.tasks);
   $("#progress .bar").css("width", pct.toString() +"%");
   $("#progress .bar").attr("title", pct.toString() + "% completed!");
@@ -202,19 +214,19 @@ App.prototype.clearData = function() {
 App.prototype.getTaskBounds = function() {
   var app = this;
   if (app.task.bounds != undefined) return app.task.bounds;
-  if (app.task.info.bbox) {
-    app.task.bounds = OpenLayers.Bounds.fromString(app.task.info.bbox);
+  if (app.task.data.info.bbox) {
+    app.task.bounds = OpenLayers.Bounds.fromString(app.task.data.info.bbox);
   } else {
     var size = app.defaultTaskSize;
-    if (app.task.info.size != undefined) {
-      size = app.task.info.size;
+    if (app.task.data.info.size != undefined) {
+      size = app.task.data.info.size;
     }
-    var oneMeter = app.getOneMeterForMapFromTask(app.task.info.longitude, app.task.info.latitude);
+    var oneMeter = app.getOneMeterForMapFromTask(app.task.data.info.longitude, app.task.data.info.latitude);
     app.task.bounds = new OpenLayers.Bounds();
-    [[app.task.info.longitude - size * oneMeter, app.task.info.latitude],
-     [app.task.info.longitude + size * oneMeter, app.task.info.latitude],
-     [app.task.info.longitude, app.task.info.latitude - size * oneMeter],
-     [app.task.info.longitude, app.task.info.latitude + size * oneMeter]].map(function (lonlat) {
+    [[app.task.data.info.longitude - size * oneMeter, app.task.data.info.latitude],
+     [app.task.data.info.longitude + size * oneMeter, app.task.data.info.latitude],
+     [app.task.data.info.longitude, app.task.data.info.latitude - size * oneMeter],
+     [app.task.data.info.longitude, app.task.data.info.latitude + size * oneMeter]].map(function (lonlat) {
       app.task.bounds.extend(new OpenLayers.LonLat(lonlat[0], lonlat[1]));
     });
   }
@@ -226,8 +238,8 @@ App.prototype.loadImageryWMS = function() {
   if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
   var imagery = new OpenLayers.Layer.WMS(
     "Imagery",
-    app.task.info.url,
-    app.task.info.options);
+    app.task.data.info.url,
+    app.task.data.info.options);
   imagery.id = 'imagery';
   app.map.addLayer(imagery);
   app.map.setLayerIndex(imagery, 0);
@@ -240,9 +252,9 @@ App.prototype.loadImageryIMG = function() {
   if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
   var imagery = new OpenLayers.Layer.Image(
     'imagery',
-    app.task.info.url,
-    OpenLayers.Bounds.fromString(app.task.info.bbox), // No transform here
-    new OpenLayers.Size(app.task.info.width, app.task.info.height),
+    app.task.data.info.url,
+    OpenLayers.Bounds.fromString(app.task.data.info.bbox), // No transform here
+    new OpenLayers.Size(app.task.data.info.width, app.task.data.info.height),
     {
       opacity: 1.0, 
       isBaseLayer: false,
@@ -289,10 +301,10 @@ App.prototype.getTaskPositions = function () {
   if (app.task.positions != undefined) return app.task.positions;
 
   app.task.positions = {};
-  app.task.positions.oneMeter = app.getOneMeterForMapFromTask(app.task.info.longitude, app.task.info.latitude);
+  app.task.positions.oneMeter = app.getOneMeterForMapFromTask(app.task.data.info.longitude, app.task.data.info.latitude);
   app.task.size = app.defaultTaskSize;
-  if (app.task.info.size != undefined) {
-    app.task.size = app.task.info.size;
+  if (app.task.data.info.size != undefined) {
+    app.task.size = app.task.data.info.size;
   }
   app.task.positions.unit = app.unitSize * app.task.size * app.task.positions.oneMeter / 100;
   app.task.positions.bounds = app.getTaskBounds();
@@ -310,10 +322,10 @@ App.prototype.loadGuideCrossHair = function() {
 
   guide.addFeatures([
     // The cross
-    [[app.task.info.longitude - p.unit, app.task.info.latitude],
-     [app.task.info.longitude + p.unit, app.task.info.latitude]],
-    [[app.task.info.longitude, app.task.info.latitude - p.unit],
-     [app.task.info.longitude, app.task.info.latitude + p.unit]],
+    [[app.task.data.info.longitude - p.unit, app.task.data.info.latitude],
+     [app.task.data.info.longitude + p.unit, app.task.data.info.latitude]],
+    [[app.task.data.info.longitude, app.task.data.info.latitude - p.unit],
+     [app.task.data.info.longitude, app.task.data.info.latitude + p.unit]],
 
     // Top left
     [[p.left, p.top],
@@ -353,33 +365,33 @@ App.prototype.loadGuideLargeCross = function() {
   // FIXME: handle projections
   var app = this;
   var guide = app.map.getLayer('guide');
-  var oneMeter = app.getOneMeterForMapFromTask(app.task.info.longitude, app.task.info.latitude);
+  var oneMeter = app.getOneMeterForMapFromTask(app.task.data.info.longitude, app.task.data.info.latitude);
   var size = app.defaultTaskSize;
-  if (app.task.info.size != undefined) {
-    size = app.task.info.size;
+  if (app.task.data.info.size != undefined) {
+    size = app.task.data.info.size;
   }
   guide.addFeatures([
     new OpenLayers.Feature.Vector(
       new OpenLayers.Geometry.LineString([
-        new OpenLayers.Geometry.Point(app.task.info.longitude - size * oneMeter, app.task.info.latitude),
-        new OpenLayers.Geometry.Point(app.task.info.longitude + size * oneMeter, app.task.info.latitude)]),
+        new OpenLayers.Geometry.Point(app.task.data.info.longitude - size * oneMeter, app.task.data.info.latitude),
+        new OpenLayers.Geometry.Point(app.task.data.info.longitude + size * oneMeter, app.task.data.info.latitude)]),
       null, app.guideStyle),
     new OpenLayers.Feature.Vector(
       new OpenLayers.Geometry.LineString([
-        new OpenLayers.Geometry.Point(app.task.info.longitude, app.task.info.latitude - size * oneMeter),
-        new OpenLayers.Geometry.Point(app.task.info.longitude, app.task.info.latitude + size * oneMeter)]),
+        new OpenLayers.Geometry.Point(app.task.data.info.longitude, app.task.data.info.latitude - size * oneMeter),
+        new OpenLayers.Geometry.Point(app.task.data.info.longitude, app.task.data.info.latitude + size * oneMeter)]),
       null, app.guideStyle)]);
 }
 App.prototype.loadGuideCircle = function() {
   // FIXME: handle projections
   var app = this;
   var size = app.defaultTaskSize;
-  if (app.task.info.size != undefined) {
-    size = app.task.info.size;
+  if (app.task.data.info.size != undefined) {
+    size = app.task.data.info.size;
   }
   var guide = app.map.getLayer('guide');
-  var center = new OpenLayers.Geometry.Point(app.task.info.longitude, app.task.info.latitude);
-  var oneMeter = app.getOneMeterForMapFromTask(app.task.info.longitude, app.task.info.latitude);
+  var center = new OpenLayers.Geometry.Point(app.task.data.info.longitude, app.task.data.info.latitude);
+  var oneMeter = app.getOneMeterForMapFromTask(app.task.data.info.longitude, app.task.data.info.latitude);
   var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(center, size * oneMeter, 40, 0);
   var circle = new OpenLayers.Feature.Vector(
     circleGeom,
@@ -396,25 +408,25 @@ App.prototype.loadGuide = function() {
   app.loadGuideCrossHair();
 }
 
-App.prototype.updateMap = function(info) {
+App.prototype.updateMap = function(data) {
   var app = this;
   app.answer = undefined;
-  app.task = {info: info};
+  app.task = {data: data};
 
   app.loadImagery();
   app.loadGuide();
   app.clearData();
 
-  $("#site_county").html(app.task.info.county || "");
-  $("#site_state").html(app.task.info.state || "");
-  $("#site_year").html(app.task.info.year || "");
-  $("#site_lat").html(app.task.info.latitude);
-  $("#site_lon").html(app.task.info.longitude);
+  $("#site_county").html(app.task.data.info.county || "");
+  $("#site_state").html(app.task.data.info.state || "");
+  $("#site_year").html(app.task.data.info.year || "");
+  $("#site_lat").html(app.task.data.info.latitude);
+  $("#site_lon").html(app.task.data.info.longitude);
 
-  var siteurl = "https://maps.google.com/maps?q=" + encodeURIComponent(app.task.info.SiteID) + "+%40" + app.task.info.latitude + "," + app.task.info.longitude;
+  var siteurl = "https://maps.google.com/maps?q=" + encodeURIComponent(app.task.data.info.SiteID) + "+%40" + app.task.data.info.latitude + "," + app.task.data.info.longitude;
 
   $(".latlonlink").attr("href", siteurl);
-  $(".siteid").html(app.task.info.SiteID);
+  $(".siteid").html(app.task.data.info.SiteID);
 }
 
 App.prototype.cookieToExpander = function() {
@@ -435,18 +447,49 @@ App.prototype.getAnswer = function() {
   return this.answer;
 }
 
-$(document).ready(function () {
-});
+App.prototype.addBadge = function(badge, popup) {
+  var app = this;
+
+  var icon = $("<img class='pybossa-badge' />");
+  icon.attr("src", badge.icon);
+  icon.css({width: app.badgeWidth, height: 'auto'});
+  icon.popover({
+    animation: true,
+    html: true,
+    placement: 'left',
+    trigger: 'click',
+    content: badge.description,
+  });
+  $(".pybossa-badges").append(icon);
+  icon.load(function () {
+    var show = function () {
+      icon.animate({width: app.badgeWidthActive}, app.badgeAnimation, 'swing', function () {
+        icon.popover('show');
+      });
+    };
+    var hide = function () {
+      icon.animate({width: app.badgeWidth}, app.badgeAnimation, 'swing', function () {
+        icon.popover('hide');
+      });
+    };
+
+    icon.on("mouseover", show);
+    icon.on("mouseout", hide);
+    if (popup) {
+      show();
+      setTimeout(hide, app.badgePopup);
+    }
+  });
+};
 
 
 GenericPage = Page = function () {
 };
-Page.prototype.init = function (app) {
+Page.prototype.init = function (app, cb) {
   var page = this;
   page.app = app;
   app.page = page;
-
-  return page;
+  if (cb) cb(null, page);
 };
 Page.prototype.reportAnswer = function () {
   // This should be overridden by a real page...

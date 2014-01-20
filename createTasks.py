@@ -141,12 +141,15 @@ class CreateTasks(object):
         self.handle_result(pbclient.update_app(self.app))
 
         staticroot = os.path.realpath(os.path.join(self.options.app_root, 'static'))
-        for path, dirs, files in os.walk(staticroot, topdown=False):
+        for path, dirs, files in os.walk(staticroot, topdown=False, followlinks=True):
             for filename in files:
                 filepath = os.path.join(path, filename)
                 with open(filepath) as file:
                     # Remove the prefix and then remove any inherit-symlinks
-                    result = pbclient.add_file(self.app, file, file.name[len(staticroot):].replace("/inherit/", "/")[1:])
+                    dst = file.name[len(staticroot):].replace("inherit/", "")[1:]
+                    print "Uploading %s" % (dst,)
+                    print "    from %s" % os.path.realpath(file.name)
+                    result = pbclient.add_file(self.app, file, dst)
                     if result['status'] != 'ok' : 
                         print result 
                         assert False

@@ -6,25 +6,24 @@ BaseTutorialPage = Page = function () {
   page.step = -1;
 };
 Page.prototype = new GenericPage();
-Page.prototype.init = function () {
-  GenericPage.prototype.init.apply(this, arguments);
-  var page = this;
+Page.prototype.init = function (app, cb) {
+  GenericPage.prototype.init.call(this, app, function (err, page) {
+    page.nrofsteps = $(".step").length;
 
-  page.nrofsteps = $(".step").length;
+    page.showStep('next');
+    $("#modal").modal('show');
 
-  page.showStep('next');
-  $("#modal").modal('show');
+    $(".step").each(function (idx, step) {
+      $(step).attr("id", idx)
+    });
 
-  $(".step").each(function (idx, step) {
-    $(step).attr("id", idx)
+    $($(".step")[0]).show();
+
+    $("#prevBtn").click(function (ev) { page.showStep('prev'); });
+    $("#nextBtn").click(function (ev) { page.showStep('next'); });
+
+    if (cb) cb(null, page);
   });
-
-  $($(".step")[0]).show();
-
-  $("#prevBtn").click(function (ev) { page.showStep('prev'); });
-  $("#nextBtn").click(function (ev) { page.showStep('next'); });
-
-  return page;
 };
 Page.prototype.reportAnswer = function () {
   this.showStep('next');
@@ -34,7 +33,7 @@ Page.prototype.setMapTask = function () {
   page.app.setProgress({
     total: {tasks: page.initializedSteps[page.step].tasks.length},
     done: {tasks: page.initializedSteps[page.step].task}});
-  page.app.updateMap(page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task]);
+  page.app.updateMap({"info": page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task]});
   $("#mapcomment").html(page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task].comment || "");
   $("#maperrors").html("");
 };

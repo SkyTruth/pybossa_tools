@@ -2,10 +2,10 @@ CricketFrogApp = App = function() {
   BaseOpenlayersApp.apply(this, arguments);
 };
 App.prototype = new BaseOpenlayersApp();
-App.prototype.init = function () {
-  BaseOpenlayersApp.prototype.init.apply(this, arguments);
-  var app = this;
-  return app;
+App.prototype.init = function (cb) {
+  BaseOpenlayersApp.prototype.init.call(this, function (err, app) {
+    if (cb) cb(err, app);
+  });
 }
 
 App.prototype.drawStyle = 'new';
