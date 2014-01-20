@@ -1,9 +1,12 @@
 {% extends "base-openlayers/template.html" %}
 
 {% block row %}
-  {% include "tadpole-wms/row.html" %}
+  {% include "finder/row.html" %}
 {% endblock %}
 
 {% block page_libraries %}
   {{block.super}}
+  <script>
+    {% include "finder/maphandler.js" %}
+  </script>
 {% endblock %}

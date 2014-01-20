@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block row %}
-  {% include "ranaarvalis/row.html" %}
+  {% include "finder/row.html" %}
 {% endblock %}
 
 {% block js-templates %}
@@ -34,7 +34,7 @@
 {% block page_libraries %}
   {{block.super}}
   <script>
-    {% include "ranaarvalis/maphandler.js" %}
+    {% include "finder/maphandler.js" %}
 
     CricketFrogTutorialPage = Page = function () {
       BaseTutorialPage.apply(this, arguments);

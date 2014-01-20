@@ -1,12 +1,12 @@
 {% extends "base-openlayers/template.html" %}
 
 {% block row %}
-  {% include "ranaarvalis/row.html" %}
+  {% include "digitizer/row.html" %}
 {% endblock %}
 
 {% block page_libraries %}
   {{block.super}}
   <script>
-    {% include "ranaarvalis/maphandler.js" %}
+    {% include "digitizer/maphandler.js" %}
   </script>
 {% endblock %}

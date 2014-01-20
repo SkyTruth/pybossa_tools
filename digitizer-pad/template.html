@@ -1,0 +1,8 @@
+{% extends "digitizer/template.html" %}
+
+{% block page_libraries %}
+  {{block.super}}
+  <script>
+    {% include "digitizer-pad/maphandler.js" %}
+  </script>
+{% endblock %}

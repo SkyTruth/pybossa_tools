@@ -6,13 +6,13 @@
 {% endblock %}
 
 {% block row %}
-  {% include "cricketfrog/row.html" %}
+  {% include "digitizer/row.html" %}
 {% endblock %}
 
 {% block page_libraries %}
   {{block.super}}
   <script>
-    {% include "cricketfrog/maphandler.js" %}
+    {% include "digitizer/maphandler.js" %}
 
     OpenLayers.Geometry.Polygon.prototype.contains = function(geometry) {
         var i, len;

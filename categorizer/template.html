@@ -1,12 +1,9 @@
 {% extends "base-openlayers/template.html" %}
 
 {% block row %}
-  {% include "cricketfrog/row.html" %}
+  {% include "categorizer/row.html" %}
 {% endblock %}
 
 {% block page_libraries %}
   {{block.super}}
-  <script>
-    {% include "cricketfrog/maphandler.js" %}
-  </script>
 {% endblock %}
