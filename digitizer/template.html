@@ -1,0 +1,12 @@
+{% extends "base-openlayers/template.html" %}
+
+{% block row %}
+  {% include "digitizer/row.html" %}
+{% endblock %}
+
+{% block page_libraries %}
+  {{block.super}}
+  <script>
+    {% include "digitizer/maphandler.js" %}
+  </script>
+{% endblock %}

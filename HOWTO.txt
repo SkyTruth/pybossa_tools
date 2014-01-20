@@ -40,7 +40,7 @@ RETRIEVE RESULTS
 
 	POND-MAPPER
 	
-	$ python ranaarvalis/mangleresults.py [directory]/[taskfile.json] [directory]/[taskrunsfile.json] > [directory]/[mangledresultsfile.geojson]
+	$ python finder/mangleresults.py [directory]/[taskfile.json] [directory]/[taskrunsfile.json] > [directory]/[mangledresultsfile.geojson]
 	
 
 

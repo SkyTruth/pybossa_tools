@@ -1,0 +1,14 @@
+{% extends "base-openlayers/tutorial.html" %}
+
+{% block testrun_description %}
+  <h2>Test run</h2>
+  <p>Pleasy try to mark any objects you see below. <span id="mapcomment"></span></p>
+{% endblock %}
+
+{% block row %}
+  {% include "categorizer/row.html" %}
+{% endblock %}
+
+{% block page_libraries %}
+  {{block.super}}
+{% endblock %}

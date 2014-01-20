@@ -1,0 +1,163 @@
+{% extends "finder/tutorial.html" %}
+
+{% block page_styles %}
+  {{block.super}}
+  .brand img {
+    display: none;
+  }
+  .navbar .brand {
+    padding: 0;
+    margin: 20px 20px 0 0;
+    display: block;
+    background: url('http://frack.skytruth.org/_/rsrc/1383772168979/frackfinder/logolandscape.cropped.jpg?height=50&width=320');
+    width: 105px;
+    height: 50px;
+  }
+{% endblock %}
+
+{% block nr-of-positions-marked %}
+  <div class="no-positions-marked">
+    You have marked no ponds,
+    but this example has <span class="example-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>.
+  </div>
+  <div class="too-few-positions-marked">
+    You have only marked <span class="marked-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>,
+    but this example has <span class="example-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>.
+  </div>
+  <div class="too-many-positions-marked">
+    You have marked <span class="marked-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>,
+    but this example only has <span class="example-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>.
+  </div>
+  <div class="no-positions-existing">
+    You have marked <span class="marked-positions"><span class="nr"></span> <span class="singular">pond</span><span class="plural">ponds</span></span>,
+    but this example has no ponds.
+  </div>
+{% endblock %}
+
+{% block steps %}
+  <div class="step">
+    <h2>FrackFinder PA - Project Moor Frog:</h2>
+
+    <p><a href="http://skytruth.org">SkyTruth</a> needs your help to locate ponds that might be associated with drilling and fracking in Pennsylvania.</p>
+
+    <p>We're going to show you aerial imagery of Marcellus Shale wellpads across Pennsylvania. Your mission (should you choose to accept it) is to mark the center of all the ponds you see around these wellpads.</p>
+
+    <p><b>First, let's show you what you are looking for...</b></p>
+  </div>
+
+  <div class="step">
+    <h2>Drilling ponds (Mark the center of the ponds that look like these examples.)</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Drilling.Pond.1.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Drilling.Pond.2.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Drilling.Pond.3.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h2>Dry drilling ponds (Mark the center of the ponds that look like these examples.)</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Dry.Pond.1.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Dry.Pond.2.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Dry.Pond.3.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h2>Odd examples of drilling ponds (Mark the center of the ponds that look like these examples.)</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Odd.Pond.1.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Odd.Pond.2.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Odd.Pond.3.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h2>Natural/Farm ponds (Mark the center of these as well.) </h2>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Natural.Pond.1.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Natural.Pond.2.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Natural.Pond.3.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+
+  <div class="step">
+    <h2>These are NOT ponds. Don't mark things that look like these examples.(Note: Steep slopes and tall trees create dark shadows)</h2>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Not.Pond.1.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Not.Pond.2.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Not.Pond.3.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h2>To review: Mark the center of everything that looks like these examples. </h2>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Recap.1.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Recap.2.jpg" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/Recap.3.jpg" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h2>How to select ponds</h2>
+    <p>Click on all ponds you see within the red rectangle. They will get marked with a red "X". Click "Done" once you have marked them all, or if you can't see any. You can zoom and pan the map to see more details.</p>
+    <p>Click again on the same spot to remove a marker you accidentally placed in the wrong place.</p>
+    <img src="/app/{{short_name}}/static/img/screenshots/screenshot-basic.png" class="img-polaroid">
+  </div>
+{% endblock %}
+
+{% block testrun_description %}
+  <h2>Test run</h2>
+  <p>Please try to mark ponds you see below. <span id="mapcomment"></span></p>
+{% endblock %}
+
+{% block row %}
+  {% include "finder/row.html" %}
+{% endblock %}
+
+{% block tasks %}
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -76.969928, "county": "Tioga", "state": "PA", "SiteID": "9745ac0d-a851-5a86-b094-022cb3774255", "bbox": "-76.9771331235,41.6672118494,-76.9627228765,41.6780161455", "year": "2010", "latitude": 41.672614, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-76.971196358494,"lat":41.670834091787}], "distance": 100},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.121018, "county": "Tioga", "state": "PA", "SiteID": "b90bfd9f-2755-5049-aafc-01b83a68276b", "bbox": "-77.1282254104,41.6877088688,-77.1138105896,41.6985131261", "year": "2010", "latitude": 41.693111, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.119634763931,"lat":41.694328356627}], "distance": 100},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.145002, "county": "Tioga", "state": "PA", "SiteID": "277ad7c2-1890-5ce9-a924-d5425ce42d79", "bbox": "-77.1522186994,41.7707459471,-77.1377853006,41.7815500478", "year": "2010", "latitude": 41.776148, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.145276994811,"lat":41.776827725659}], "distance": 100},
+  {"url": "https://mapsengine.google.com/06136759344167181854-06191489742681286724-4/wms/", "longitude": -78.331603, "county": "Cameron", "state": "PA", "SiteID": "5104cd14-72c8-5f70-bda7-d687462c3765", "bbox": "-78.3387995482,41.5901637768,-78.3244064518,41.6009682181", "year": "2010", "latitude": 41.595566, "options": {"layers": "06136759344167181854-10716759099739983250-4", "version": "1.3.0"}, "positions":[], "distance": 100},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.580592, "county": "Tioga", "state": "PA", "SiteID": "85547453-a86e-57a5-8b14-ccac8b61365b", "bbox": "-77.5877979163,41.6743198561,-77.5733860837,41.6851241388", "year": "2010", "latitude": 41.679722, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.580345462516,"lat":41.680579217363}], "distance": 100, "comment": "This one is quite small and nearly empty"},
+  {"url": "https://mapsengine.google.com/06136759344167181854-15360160187865123339-4/wms/", "longitude": -77.548494, "county": "Tioga", "state": "PA", "SiteID": "0bc3885b-17af-5063-a689-47155a02674f", "bbox": "-77.5557020853,41.6937538745,-77.5412859147,41.7045581204", "year": "2010", "latitude": 41.699156, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "positions":[{"lon":-77.547427345881,"lat":41.699269488817}], "distance": 100, "comment": "This one is quite small and nearly empty"},
+{% endblock %}

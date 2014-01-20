@@ -19,7 +19,7 @@ will give you the customary help on the command itself and its options.
 
 
 # Framework structure
-Each application is made up of a directory containing set of templates, e.g. tadpole-padmapper.
+Each application is made up of a directory containing set of templates, e.g. categorizer-pad.
 All templates are passed through the Django templating engine before uploading.
 Django template inheritance is used to share code between apps.
 The applion definition from app.json available as template variables.
@@ -27,10 +27,4 @@ In particular, {{short_name}} is used for the application name to ensure that re
 
 # Utilities
 
-## convert.py
-Converts between Pybossa tasks.json format and a geojson container format allowing you to sort through and filter the tasks visually in e.g. QGis, and then convert them back for import into Pybossa.
-
-Usages:
-
-    convert.py tasks.json > tasks.geojson
-    convert.py tasks.geojson > tasks.json
+Using these apps will require you to handle and transform/modify json files containing spatial data, some of them quite large. To help with that there is a toolchain called [swissarmykitchensink](https://github.com/redhog/swissarmykitchensink/blob/master/README.md) which gets installed when you install the dependencies for this project.

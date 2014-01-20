@@ -1,0 +1,16 @@
+{% extends "finder/template.html" %}
+
+{% block page_styles %}
+  {{block.super}}
+  .brand img {
+    display: none;
+  }
+  .navbar .brand {
+    padding: 0;
+    margin: 20px 20px 0 0;
+    display: block;
+    background: url('http://frack.skytruth.org/_/rsrc/1383772168979/frackfinder/logolandscape.cropped.jpg?height=50&width=320');
+    width: 105px;
+    height: 50px;
+  }
+{% endblock %}
