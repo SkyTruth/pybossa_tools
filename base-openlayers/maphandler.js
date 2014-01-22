@@ -477,7 +477,7 @@ App.prototype.addBadge = function(badge, popup) {
     };
 
     icon.on("mouseover", show);
-//    icon.on("mouseout", hide);
+    icon.on("mouseout", hide);
     if (popup) {
       show();
       setTimeout(hide, app.badgePopup);
