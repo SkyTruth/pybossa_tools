@@ -2,7 +2,8 @@ BaseTemplatePage = Page = function () {
   GenericPage.apply(this, arguments);
 };
 
-Page.prototype.attaGirlInterval = 1;
+Page.prototype.attaGirlInitialInterval = 10;
+Page.prototype.attaGirlIntervalMultiplier = 2;
 
 Page.prototype.publishToFacebook = true;
 
@@ -89,52 +90,67 @@ Page.prototype.init = function (app, cb) {
     }
   );
 };
+Page.prototype.attaGirlInterval = function() {
+  var page = this;
+  var lg = function (val, base) {
+    return Math.log(val)/Math.log(base);
+  }
+
+  var level = lg(page.app.progress.done.tasks / page.attaGirlInitialInterval, page.attaGirlIntervalMultiplier);
+  if (level >= 0 && Math.floor(level) == level) {
+    return level;
+  }
+  return undefined;
+};
 Page.prototype.generateAttaGirl = function() {
   var page = this;
-  if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= page.app.progress.done.tasks % page.attaGirlInterval)) {
-    var messages = $(".atta-boy-messages > div")
-    var message = $(messages[Math.floor((page.app.progress.done.tasks) / page.attaGirlInterval) % messages.length]);
-    var badge = {
-        type:'atta',
-        app: {
-          short_name: page.app.pybossa.short_name,
-          name: page.app.pybossa.name,
-          description: page.app.pybossa.description,
-          icon: page.app.pybossa.info.thumbnail,
-        },
-        description: message.find("div").html(),
-        icon: message.find("img").attr("src")
-    };
-
-    page.storeData({
-        "user_id": -1,
-        "app_id": -1,
-        "key": "badges",
-        "info": badge
+  var atta = page.attaGirlInterval();
+  var messages = $(".atta-boy-messages > div")
+  if (atta != undefined && atta < messages.length) {
+    var message = $(messages[atta]);
+    page.generateBadge({
+      type:'atta',
+      app: {
+        short_name: page.app.pybossa.short_name,
+        name: page.app.pybossa.name,
+        description: page.app.pybossa.description,
+        icon: page.app.pybossa.info.thumbnail,
+      },
+      description: message.find("div").html(),
+      icon: message.find("img").attr("src")
     });
-
-    if (page.publishToFacebook) {
-
-      FB.api(
-        "/me/feed",
-        "POST",
-        {
-          access_token: facebook_token,
-          link: page.app.url,
-          picture: badge.icon,
-          name: badge.description,
-          caption: badge.app.name,
-          description: badge.app.description,
-          actions: [{name: "Help out!", link: page.app.baseurl + "/app/" + page.app.pybossa.short_name + "/tutorial"}],
-        },
-        function (response) {
-          console.log(response);
-        }
-      );
-    }
-
-    page.app.addBadge(badge, true);
   }
+};
+Page.prototype.generateBadge = function(badge) {
+  var page = this;
+
+  page.storeData({
+      "user_id": -1,
+      "app_id": -1,
+      "key": "badges",
+      "info": badge
+  });
+
+  if (page.publishToFacebook) {
+    FB.api(
+      "/me/feed",
+      "POST",
+      {
+        access_token: facebook_token,
+        link: page.app.url,
+        picture: badge.icon,
+        name: badge.description,
+        caption: badge.app.name,
+        description: badge.app.description,
+        actions: [{name: "Help out!", link: page.app.baseurl + "/app/" + page.app.pybossa.short_name + "/tutorial"}],
+      },
+      function (response) {
+        console.log(response);
+      }
+    );
+  }
+
+  page.app.addBadge(badge, true);
 };
 Page.prototype.doneForNow = function(evt) {
   $(".done-for-now").show();
