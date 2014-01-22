@@ -150,7 +150,9 @@ class CreateTasks(object):
                     print "Uploading %s" % (dst,)
                     print "    from %s" % os.path.realpath(file.name)
                     result = pbclient.add_file(self.app, file, dst)
-                    assert result['status'] == 'ok'
+                    if result['status'] != 'ok' : 
+                        print result 
+                        assert False
 
     def load_tasks(self):
         with open(self.options.load_tasks) as f:
