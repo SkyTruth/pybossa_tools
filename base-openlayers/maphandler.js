@@ -69,6 +69,9 @@ App.prototype.init = function (cb) {
     app.clearData();
   });
 
+  app.baseurl = window.location.protocol + "//" + window.location.hostname
+  if (window.location.port) app.baseurl = app.baseurl + ":" + window.location.port
+
   if (cb) cb(null, app);
 }
 
@@ -458,7 +461,7 @@ App.prototype.addBadge = function(badge, popup) {
     html: true,
     placement: 'left',
     trigger: 'click',
-    content: badge.description,
+    content: '<img class="app-icon" src="' + badge.app.icon + '"> <div class="decsription">' + badge.description + '</div>',
   });
   $(".pybossa-badges").append(icon);
   icon.load(function () {
@@ -474,7 +477,7 @@ App.prototype.addBadge = function(badge, popup) {
     };
 
     icon.on("mouseover", show);
-    icon.on("mouseout", hide);
+//    icon.on("mouseout", hide);
     if (popup) {
       show();
       setTimeout(hide, app.badgePopup);

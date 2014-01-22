@@ -84,6 +84,19 @@ footer {
 .pybossa-badges .popover .popover-title {
   display: none;
 }
+.pybossa-badges .popover {
+  font-size: 12pt;
+}
+.pybossa-badges .popover .app-icon {
+  width: 40pt;
+  height: auto;
+  float: left;
+  margin-right: 5pt;
+  margin-bottom: 9px;
+}
+.pybossa-badges .popover .description {
+  padding-left: 45pt;
+}
 .pybossa-badge {
   display: block;
   float: right;

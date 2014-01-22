@@ -4,6 +4,8 @@ BaseTemplatePage = Page = function () {
 
 Page.prototype.attaGirlInterval = 1;
 
+Page.prototype.publishToFacebook = true;
+
 Page.prototype.init = function (app, cb) {
   var page = this;
 
@@ -15,7 +17,7 @@ Page.prototype.init = function (app, cb) {
 
       function (cb) {
         $.ajax({
-          url: '/api/app?short_name={{short_name}}',
+          url: '/api/app?short_name=' + app_short_name,
           success: function (data, textStatus, jqXHR) {
             page.app.pybossa = data[0];
             cb(null, data);
@@ -24,6 +26,28 @@ Page.prototype.init = function (app, cb) {
             cb(testStatus);
           }
         });
+      },
+
+      function (cb) {
+        if (!page.publishToFacebook) return cb();
+
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : facebook_id,
+            status     : true,
+            cookie     : true,
+            xfbml      : true
+          });
+          cb();
+        };
+
+        (function(d, s, id){
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {return;}
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/all.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
       },
 
       function (cb) {
@@ -55,7 +79,7 @@ Page.prototype.init = function (app, cb) {
 
         $(".alert-messages .alert a:not(.close)").addClass("btn btn-success");
 
-        pybossa.run('{{short_name}}');
+        pybossa.run(page.app.pybossa.short_name);
 
         cb();
       },
@@ -70,7 +94,17 @@ Page.prototype.generateAttaGirl = function() {
   if (page.attaGirlInterval && (page.attaGirlInterval - 1 <= page.app.progress.done.tasks % page.attaGirlInterval)) {
     var messages = $(".atta-boy-messages > div")
     var message = $(messages[Math.floor((page.app.progress.done.tasks) / page.attaGirlInterval) % messages.length]);
-    var badge = {type:'atta', description: message.find("div").html(), icon: message.find("img").attr("src")};
+    var badge = {
+        type:'atta',
+        app: {
+          short_name: page.app.pybossa.short_name,
+          name: page.app.pybossa.name,
+          description: page.app.pybossa.description,
+          icon: page.app.pybossa.info.thumbnail,
+        },
+        description: message.find("div").html(),
+        icon: message.find("img").attr("src")
+    };
 
     page.storeData({
         "user_id": -1,
@@ -78,6 +112,26 @@ Page.prototype.generateAttaGirl = function() {
         "key": "badges",
         "info": badge
     });
+
+    if (page.publishToFacebook) {
+
+      FB.api(
+        "/me/feed",
+        "POST",
+        {
+          access_token: facebook_token,
+          link: page.app.url,
+          picture: badge.icon,
+          name: badge.description,
+          caption: badge.app.name,
+          description: badge.app.description,
+          actions: [{name: "Help out!", link: page.app.baseurl + "/app/" + page.app.pybossa.short_name + "/tutorial"}],
+        },
+        function (response) {
+          console.log(response);
+        }
+      );
+    }
 
     page.app.addBadge(badge, true);
   }
@@ -90,17 +144,19 @@ Page.prototype.taskLoaded = function(task, deferred) {
   deferred.resolve(task);
 };
 Page.prototype.getCookieData = function() {
-  var res = JSON.parse($.cookie('{{short_name}}_data')) || {};
+  var page = this;
+  var res = JSON.parse($.cookie(page.app.pybossa.short_name + '_data')) || {};
   if (!res.timings) res.timings = {};
   if (!res.times) res.times = {};
   return res;
 };
 Page.prototype.setCookieData = function(data) {
-  $.cookie('{{short_name}}_data', JSON.stringify(data));
+  var page = this;
+  $.cookie(page.app.pybossa.short_name + '_data', JSON.stringify(data));
 };
 Page.prototype.loadUserProgress = function() {
   var page = this;
-  pybossa.userProgress('{{short_name}}').done(function (data) {
+  pybossa.userProgress(page.app.pybossa.short_name).done(function (data) {
     var progress = {
       done: {
         tasks: data.done
