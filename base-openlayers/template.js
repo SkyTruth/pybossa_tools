@@ -30,7 +30,7 @@ Page.prototype.init = function (app, cb) {
       },
 
       function (cb) {
-        if (!facebook_id || !facebook_token) page.publishToFacebook = false;
+        if (typeof(facebook_id) == "undefined" || !facebook_id || typeof(facebook_token) == "undefined" || !facebook_token) page.publishToFacebook = false;
         if (!page.publishToFacebook) return cb();
 
         window.fbAsyncInit = function() {
