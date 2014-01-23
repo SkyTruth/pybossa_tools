@@ -30,6 +30,7 @@ Page.prototype.init = function (app, cb) {
       },
 
       function (cb) {
+        if (!facebook_id || !facebook_token) page.publishToFacebook = false;
         if (!page.publishToFacebook) return cb();
 
         window.fbAsyncInit = function() {
