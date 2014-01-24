@@ -2,8 +2,8 @@ BaseTemplatePage = Page = function () {
   GenericPage.apply(this, arguments);
 };
 
-Page.prototype.attaGirlInitialInterval = 10;
-Page.prototype.attaGirlIntervalMultiplier = 2;
+Page.prototype.attaGirlInitialInterval = 0; // 10
+Page.prototype.attaGirlIntervalMultiplier = 0; // 2
 
 Page.prototype.publishToFacebook = true;
 
@@ -92,6 +92,7 @@ Page.prototype.init = function (app, cb) {
   );
 };
 Page.prototype.attaGirlInterval = function() {
+  if (!page.attaGirlInitialInterval || !page.attaGirlIntervalMultiplier) return;
   var page = this;
   var lg = function (val, base) {
     return Math.log(val)/Math.log(base);

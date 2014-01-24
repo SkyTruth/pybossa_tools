@@ -4,6 +4,17 @@
 .mapbubble.left {
   left: -160px;
 }
+.mapbubble.maperrors {
+  left: 934px;
+  color: #ff0000;
+  font-weight: bold;
+}
+.mapbubble.maperrors .popover {
+  border-color: #ff0000;
+}
+.mapbubble.maperrors .popover .arrow:after {
+  border-right-color: #ff0000;
+}
 .mapbubble.right {
   left: 934px;
   top: 306px;
@@ -29,10 +40,6 @@
   position: relative;
   width: 100%;
   height: 400px;
-}
-#maperrors {
-  color: #ff0000;
-  font-weight: bold;
 }
 #start {
   display: none;

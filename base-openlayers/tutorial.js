@@ -35,7 +35,8 @@ Page.prototype.setMapTask = function () {
     done: {tasks: page.initializedSteps[page.step].task}});
   page.app.updateMap({"info": page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task]});
   $("#mapcomment").html(page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task].comment || "");
-  $("#maperrors").html("");
+  $(".maperrors .popover-content").html("");
+  $(".maperrors").hide();
 };
 Page.prototype.initializeStep = function() {
   var page = this;
@@ -75,11 +76,14 @@ Page.prototype.validateStep = function() {
     page.validateMapStep();
   }
   if (page.stayOnStep) return false;
-  $("#maperrors").html("");
+  $(".maperrors .popover-content").html("");
 console.log(page.errs);
   page.errs.map(function (item) {
-    $("#maperrors").append(item)
+    $(".maperrors .popover-content").append(item)
   });
+  if (page.errs.length > 0) {
+    $(".maperrors").show();
+  }
   return page.errs.length == 0;
 }
 Page.prototype.showStep = function(action) {
