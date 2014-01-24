@@ -83,6 +83,8 @@ console.log(page.errs);
   });
   if (page.errs.length > 0) {
     $(".maperrors").show();
+  } else {
+    $(".maperrors").hide();
   }
   return page.errs.length == 0;
 }
