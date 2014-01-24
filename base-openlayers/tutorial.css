@@ -8,6 +8,7 @@
   left: 934px;
   color: #ff0000;
   font-weight: bold;
+  display: none;
 }
 .mapbubble.maperrors .popover {
   border-color: #ff0000;
