@@ -92,8 +92,8 @@ Page.prototype.init = function (app, cb) {
   );
 };
 Page.prototype.attaGirlInterval = function() {
-  if (!page.attaGirlInitialInterval || !page.attaGirlIntervalMultiplier) return;
   var page = this;
+  if (!page.attaGirlInitialInterval || !page.attaGirlIntervalMultiplier) return;
   var lg = function (val, base) {
     return Math.log(val)/Math.log(base);
   }
