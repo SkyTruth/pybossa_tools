@@ -51,3 +51,7 @@
 .done-for-now-btn {
   display: none;
 }
+.loading {
+  margin-left: 4pt;
+  display: none;
+}

@@ -218,7 +218,6 @@ Page.prototype.reportAnswer = function () {
     }
   );
 
-  $("#loading").fadeIn(500);
   if ($("#disqus_thread").is(":visible")) {
     $('#disqus_thread').toggle();
     $('.btn-disqus').toggle();
@@ -238,11 +237,9 @@ Page.prototype.presentTask = function(task, deferred) {
     $('#task-id').html(task.id);
     page.loadUserProgress();
     page.app.updateMap(task);
-    $("#loading").hide();
   } else {
     $(".all-done").show();
     $(".skeleton").hide();
-    $("#loading").hide();
   }
 };
 Page.prototype.storeDatas = function(data, cb) {

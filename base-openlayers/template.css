@@ -106,3 +106,8 @@ footer {
   padding-left: 10pt;
   padding-right: 5pt;
 }
+
+.loading {
+  margin-left: 4pt;
+  display: none;
+}

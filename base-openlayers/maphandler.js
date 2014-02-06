@@ -63,6 +63,8 @@ App.prototype.init = function (cb) {
   app.cookieToExpander();
   $('.btn-answer').on('click', function(evt) {
     app.answer = {"selection": evt.target.value};
+    $(".btn-answer").attr({disabled: true});
+    $(".loading").show();
     app.page.reportAnswer();
   });
   $('.btn-cancel').on('click', function(evt) {
@@ -430,6 +432,9 @@ App.prototype.updateMap = function(data) {
 
   $(".latlonlink").attr("href", siteurl);
   $(".siteid").html(app.task.data.info.SiteID);
+
+  $(".btn-answer").attr({disabled: false})
+  $(".loading").hide();
 }
 
 App.prototype.cookieToExpander = function() {
