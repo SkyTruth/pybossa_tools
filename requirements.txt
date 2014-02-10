@@ -3,7 +3,8 @@ Django==1.5.1
 fastkml==0.3dev
 geojson==1.0.1
 httplib2==0.8
-pybossa-client==0.4.1
+#pybossa-client==0.4.1
+git+https://github.com/SkyTruth/pybossa-client.git@appstatic
 pyproj==1.9.3
 Shapely==1.2.18
 swissarmykitchensink
