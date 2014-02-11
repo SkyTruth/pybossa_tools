@@ -238,6 +238,27 @@ App.prototype.getTaskBounds = function() {
   return app.task.bounds;
 }
 
+App.prototype.loadImageryKML = function() {
+  var app = this;
+  if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
+  var imagery = new OpenLayers.Layer.Vector(
+    "Imagery",
+    {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: app.task.data.info.url,
+        format: new OpenLayers.Format.KML($.extend({
+          extractStyles: true,
+          extractAttributes: true,
+          maxDepth: 2
+        }, app.task.data.info.options))
+      })
+    }
+  );
+  imagery.id = 'imagery';
+  app.map.addLayer(imagery);
+  app.map.setLayerIndex(imagery, 0);
+}
 App.prototype.loadImageryWMS = function() {
   var app = this;
   if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
@@ -247,7 +268,7 @@ App.prototype.loadImageryWMS = function() {
     app.task.data.info.options);
   imagery.id = 'imagery';
   app.map.addLayer(imagery);
-  app.map.setLayerIndex(imagery, 0);
+  app.map.setLayerIndex(imagery, 1);
   app.map.setBaseLayer(imagery);
 }
 App.prototype.loadImageryIMG = function() {
@@ -285,10 +306,10 @@ App.prototype.getOneMeter = function (projection, lonlat) {
 
 App.prototype.getOneMeterForMapFromTask = function(lon, lat) {
   var app = this;
-  return app.getOneMeter(app.map.getProjectionObject(), 
+  return app.getOneMeter(app.taskProjection, 
     new OpenLayers.LonLat(lon, lat).transform(
       app.taskProjection,
-      app.map.getProjectionObject()));
+      app.taskProjection));
 };
 
 App.prototype.guideStyle = {
