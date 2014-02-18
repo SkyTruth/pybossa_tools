@@ -268,7 +268,7 @@ App.prototype.loadImageryWMS = function() {
     app.task.data.info.options);
   imagery.id = 'imagery';
   app.map.addLayer(imagery);
-  app.map.setLayerIndex(imagery, 1);
+  app.map.setLayerIndex(imagery, 0);
   app.map.setBaseLayer(imagery);
 }
 App.prototype.loadImageryIMG = function() {
