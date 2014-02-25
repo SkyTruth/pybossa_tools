@@ -1,0 +1,3 @@
+[
+  {"longitude":-77.295721, "latitude": 41.83096, "size": 200, "url":"http://raster.nationalmap.gov/ArcGIS/services/Orthoimagery/USGS_EDC_Ortho_NAIP/ImageServer/WMSServer", "options":{"request":"getMap", "service":"WMS", "transparent": true}}
+]
