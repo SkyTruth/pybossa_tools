@@ -1,0 +1,224 @@
+
+Build and Test a Skytruth Pybossa Server
+
+The Skytruth Pybossa Server is a crowd-sourcing application system developed 
+to let volunteers help with our efforts to monitor and evaluate activities 
+that threaten the environment.  It initially focuses on hydraulic fracturing 
+drilling sites.  The larger monitoring program is broken into numerous steps
+such as identifying ponds, classifying them as fracking related or not, etc.  
+Each step is one application in the pybossa system.  For each application 
+there are a large set of input records, up to tens of thousands, which 
+typically consist of geolocations that must be inspected and evaluated by 
+some basic criteria such as whether or not there is a pond in the area.  The 
+inspection and evaluation of one location is a task for a web volunteer.  A 
+task may take less than a minute to complete and volunteers often complete 
+hundreds of them.  Collectively, the volunteers are the 'crowd' in 
+crowd-sourcing.  
+
+The objective of this exercise is to create a test environment for the 
+Skytruth Pybossa system consisting of an application server, and a number of 
+applications with their associated tasks.  This system can then be used as a 
+development and test platform for new applications or a debugging environment 
+for problems with the server or existing applications.
+
+The server is installed on a VirtualBox virtual machine (www.virtualbox.org) 
+which may be installed on Windows, Linux, or Mac.  The server environment is 
+created and configured using Vagrant (www.vagrantup.com) which loads the 
+virtual machine with Ubuntu 12.04, and installs all required software.  Once 
+the server is set up and running, the localhost HTTP interface us used to load 
+applications and tasks, and interact with the server in both administrative 
+and user roles.
+        
+Skytruth has a modified version of pybossa which comprises the web application 
+server for our system.  The repository is at:
+    https://github.com/SkyTruth/pybossa
+
+We also have several crowd-sourcing applications which each serve tasks 
+of a specific step in the fracking monotor program.  This repository is at:
+    https://github.com/SkyTruth/pybossa_tools
+
+In setting up the server we generally follow the instructions at
+http://docs.pybossa.com/en/latest/vagrant_pybossa.html with some particulars 
+for our branch of the pybossa repo and our applications.
+
+With that background in place, let us begin.  First select a host machine 
+with some spare disk space and a few gig of RAM.  On that machine open a 
+terminal and follow the steps laid out here.
+
+First:
+    1. create user pybossa with sudo power
+    2. create a development root folder (I use ~/Dev)
+The rest of this activity is performed as pybossa using sudo as required.
+
+Install VirtualBox and Vagrant.  This process is dependent on the type
+of your host machine.  Instructions for downloading and installing are
+available at the web sites here:
+
+    VirtualBox (min version 4.2.10)
+    https://www.virtualbox.org/wiki/Downloads
+
+    Vagrant (min version 1.2.1)
+    http://www.vagrantup.com/downloads.html
+
+Once those two foundation tools are in place, follow this pseudo-script in 
+the terminal you have opened.
+
+Clone the repos for the Skytruth pybossa code.  This creates the folders
+~/Dev/pybossa and ~/Dev/pybossa_tools
+
+    cd ~/Dev
+    git clone https://github.com/SkyTruth/pybossa
+    git clone https://github.com/SkyTruth/pybossa_tools
+
+Set up the pybossa source tree to reflect the code changes made by SkyTruth.
+Switch to the skytruth branch and then get the skytruth version of submodules.
+For 'edit' use your favorite text editor.
+
+    cd ~/Dev/pybossa
+    git checkout skytruth
+    edit .gitmodules  ### change occurance of 'PyBossa' to 'SkyTruth'
+    git submodules update --init
+    cd pybossa/themes/default
+    edit .gitmodules  ### change occurance of 'PyBossa' to 'SkyTruth'
+    git submodules update --init
+    # Aside: I think the changes to the .gitmodules files could be committed
+    #        and submodules could be loaded in one line:
+    #            git submodules update --init --recursive
+
+Create a folder for the server to store uploaded applications, etc.
+    cd ~/Dev/pybossa
+    mkdir uploads
+    chmod 777 uploads
+
+Now we need to get a settings file to configure Pybossa.  The easiest thing 
+to do is copy the existing settings for crowd.dev.skytruth.org and adapt 
+it to the VirtualBox environment.
+
+How you get it is up to you; WinSCP works if your on Windows.  At any rate,
+copy and edit this file into the pybossa repo at ~/Dev/pybossa
+
+    coyp //ewn4.skytruth.org/srv/pybossa/pybossa/settings_local.py
+
+    edit ~/Dev/pybossa/settings_local.py
+        ### change the following settings
+        SQLALCHEMY_DATABASE_URI = 'postgresql://tester:tester@localhost/pybossa'
+        UPLOADS_DEFAULT_DEST='/vagrant/uploads'
+
+We now will create the virtual machine, load unbutu 12.04, provision it with 
+all the software needed by the server, and configure that software, including 
+a configured and loaded postgres database.  This may take 20-30 minutes 
+depending on your internet connection.  Much credit to Vagrant here:
+
+    vagrant up
+
+Open a shell on the server over a secure HTTP connection from the host machine
+to the virtual server.  This opens a shell on the virtual machine where you 
+are logged in as user 'vagrant' with sudo privileges.  You will be in working 
+directory /home/vagrant.
+
+    vagrant ssh
+
+You are now logged into the virtual server as user 'vagrant'.  We need another
+user on the server named 'tester' to with password 'tester' to match the 
+configuration of the postgres database.
+
+    sudo adduser tester  ### set password 'tester'
+
+On the virual server is a special directory at /vagrant that is a synchronized 
+mapping of ~/Dev/pybossa on the host machine (ie, the folder where the 
+'vagrant up' was executed).  This is where all the pybossa server code is 
+located.  We change to that directory and start the server.
+
+    cd /vagrant
+    source vagrant_start.sh
+
+This command does not return until the server exits or is killed.  The server
+log is output to stdout, so we will just leave this terminal open to monitor
+server activity.
+
+Now open a browser on the host machine and go to 'localhost:5000'.  Notice 
+the output in the virtual box window where we left the server running.
+We create a user for the pybossa site.  Since this is the first user, it will
+be given admin capabilities automatically.  Any other admin users will get 
+their authority directly or indirectly from this user.
+
+    select 'Sign in' in the upper right corner
+    select 'Create a new account!' at the bottom of the page
+        Fill in a memorable dummy account.  I used 'jones' password 'jones'
+        with a fake email address (it doesn't check.)
+        Now at the top of the page where it had said 'Sign in' it now 
+        says 'jones'.
+    select 'jones'
+    select 'My Settings'
+        Copy the API key value to the clipboard.
+
+Open another terminal on the host machine and continue.
+In folder ~/Dev/pybossa_tools is a python file 'createTasks.py' which 
+performs bulk administrative tasks using the webapp api of the pybossa
+server.  There are also several folders containing our application 
+code.  We create and execute a script to upload the applications using the 
+createTasks.py program.
+
+    cd ~/Dev/pybossa_tools
+    edit createApps.sh
+        server='http://127.0.0.1:5000'
+        api_key='paste-value-from-clipboard'
+        python createTasks.py -s ${server} -k ${api_key} -c -a base-openlayers
+        python createTasks.py -s ${server} -k ${api_key} -c -a tadpole-img
+        python createTasks.py -s ${server} -k ${api_key} -c -a finder
+        python createTasks.py -s ${server} -k ${api_key} -c -a finder-pond
+        # and so forth for all the applications you want to upload.
+    bash createApps.sh
+
+Now back to your browser.  
+    select 'jones'  (in the top right corner)
+    select 'My Applications'
+
+You should see the loaded applications and be able to work with them.
+We want to upload some tasks now to exercise the Apps.
+To get the tasks, point your browser at crowd.dev.skytruth.org.  This 
+should look familiar since it is the same code that is running in our 
+virtual server.  We don't need to log into this server.
+
+    select 'Applications' from the top navigation bar
+    select Application for which you want tasks.
+        be sure to heck all the categories of apps -- Featured, Thinking, 
+        and Volunteer Sensing.  
+    select the application name (not the "Try it!" button)
+    select 'Tasks' on the left nav bar and then the 'Export' button.  
+        We want the JSON format, just 'Tasks', not 'Runs' or 'Both'
+    select 'Tasks' for JSON format
+        My Firefox browser puts the file in the browser window.  How 
+        interesting, but I really need a file so right click in the 
+        browser window and 
+    'Save Page As' ~/Dev/pybossa/moorfrog_tasks.json
+        Ditto for dartfrog, etc.
+
+Now we use these json files to load the same tasks into our virtual server.  
+As with applications, we create a script using createTasks.py to do the
+heavy work.
+
+    cd ~/Dev/pybossa_tools
+    edit createTasks.sh
+        server='http://127.0.0.1:5000'
+        api_key='paste-value-from-clipboard'
+        python createTasks.py -s ${server} -k ${api_key} -a finder-pond \
+                -t ./moorfrog_tasks.json
+        python createTasks.py -s ${server} -k ${api_key} -a classifier-pond \
+                -t ./dartfrog_tasks.json
+        # and so forth for all the task files you want to upload.
+    bash createApps.sh
+
+For the apps that you have assigned tasks to, you should be able to perform 
+the tasks in the browser.
+
+    select "Start Contributing"
+    select "Try It!" for one of the tasks
+    work through the tutorial
+    complete a few tasks
+
+Now check to see if things are working.  On the front page you should see 
+Jones listed as the "Most Active Volunteer" with a few tasks to his credit.
+If he is then congratulations, you have successfully built and configured 
+a Skytruth Pybossa server.
+
