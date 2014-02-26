@@ -24,7 +24,7 @@ Page.prototype.init = function (app, cb) {
             cb(null, data);
           },
           error: function (jqXHR, textStatus, errorThrown) {
-            cb(testStatus);
+            cb(textStatus);
           }
         });
       },
@@ -310,7 +310,7 @@ Page.prototype.storeData = function(data, cb) {
       if (cb) cb(null, data);
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      if (cb) cb(testStatus);
+      if (cb) cb(textStatus);
     }
   });
 };
@@ -332,7 +332,7 @@ Page.prototype.queryData = function(filter, cb) {
       cb(null, data);
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      cb(testStatus);
+      cb(textStatus);
     }
   });
 };
