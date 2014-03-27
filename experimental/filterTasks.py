@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-
+from __future__ import division
 import os
 import sys
 import json
@@ -112,8 +112,7 @@ def print_license():
     return 1
 
 
-def is_task_in_set(task_id, tasks_json_object, min_id=0, max_id=1000000,
-                   min_runs=0, max_runs=1000000):
+def is_task_in_set(task_id, tasks_json_object, min_id=0, max_id=1000000,):
 
     """
     Checks whether or not a task ID is in a set of tasks
@@ -125,20 +124,18 @@ def is_task_in_set(task_id, tasks_json_object, min_id=0, max_id=1000000,
 
     # Loop through set to see if the ID exists
     for task in tasks_json_object:
-        if task_id is task['id']:
 
-            # Cache some values
-            compare_id = task['id']
-            compare_num_runs = task['num_runs_nr']
+        # Get the task ID to compare to
+        compare_id = task['task_id']
+
+        # Filter
+        if task_id == compare_id:
+            debug("  DEBUG: is_task_in_set: ID match: %s" % task_id)
 
             # Make sure the found task doesn't violate the task ID filter
             if min_id <= task_id <= max_id:
-
-                # Make sure the found task doesn't violate the task runs filter
-                if min_runs <= compare_num_runs <= max_runs:
-
-                    # Passed filters
-                    return True
+                debug("  DEBUG: is_task_in_set: Passed ID filter")
+                return True
 
     # Input ID does not exist in the set
     else:
@@ -153,6 +150,10 @@ def main(args):
 
     # == Cache defaults and containers == #
 
+    # Explicitly reference global variables
+    global VERBOSE
+    global DEBUG
+
     # Input/output files
     infile = None
     outfile = None
@@ -161,8 +162,6 @@ def main(args):
     num_min_task_runs = 0
     num_max_task_runs = 1000000
     exclude_file = None
-    excl_num_min_task_runs = 0
-    excl_num_max_task_runs = 1000000
     min_task_id = 0
     max_task_id = 1000000
     excl_min_task_id = 0
@@ -170,6 +169,9 @@ def main(args):
 
     # Cache processing defaults
     null_task_id = False
+
+    # Cache additional options
+    write_final_file = True
 
     # == Argument Parser == #
 
@@ -252,44 +254,42 @@ def main(args):
                 vprint("ERROR: Arg '--excl-max-task-id=int' must be an integer")
                 arg_error = True
 
-        # Filter exclude file on task runs
-        elif '--excl-min-runs=' in arg:
-            i += 1
-            try:
-                excl_num_min_task_runs = int(arg.split('=')[1])
-            except (IndexError, TypeError):
-                vprint("ERROR: Arg '--excl-min-runs=int must be an integer")
-                arg_error = True
-        elif '--excl-max-runs=' in arg:
-            i += 1
-            try:
-                excl_num_max_task_runs = int(arg.split('=')[1])
-            except (IndexError, TypeError):
-                vprint("ERROR: Arg '--excl-max-runs=int must be an integer")
-                arg_error = True
-
         # Processing options
         elif arg in ('--null-task-id', '-null-task-id', '-nti'):
             i += 1
             null_task_id = True
 
+        # Additional parameters
+        elif arg in ('--quiet', '-q'):
+            i += 1
+            VERBOSE = False
+        elif arg in ('--debug', '-d'):
+            i += 1
+            DEBUG = True
+        elif arg == '--no-write':
+            i += 1
+            write_final_file = False
+
         # Ignore completely empty arguments
         elif arg == '':
-            pass
+            i += 1
 
         # Assume some things about the argument
         else:
             # If the infile file has not been defined, assume argument is the infile
             if infile is None:
                 infile = arg
+                i += 1
             # If the infile has been defined, assume argument is the outfile
             elif outfile is None:
                 outfile = arg
+                i += 1
             # If both infile and outfile have been defined, argument was not recognized by parser
             # and is assumed to be invalid
             else:
                 vprint("ERROR: Invalid argument: %s" % arg)
                 arg_error = True
+                i += 1
 
     # Check to see if any argument errors were encountered, if so, bail
     if arg_error:
@@ -301,7 +301,7 @@ def main(args):
     bail = False
 
     # Check infile
-    if infile is not None or not isfile(infile) or not os.access(infile, os.R_OK):
+    if infile is None or not isfile(infile) or not os.access(infile, os.R_OK):
         vprint("ERROR: Need a readable infile: %s" % str(infile))
         bail = True
 
@@ -332,12 +332,6 @@ def main(args):
         bail = True
 
     # Check exclude file number of task runs filter
-    if excl_num_min_task_runs > excl_num_max_task_runs or excl_num_min_task_runs < 0 or excl_num_max_task_runs < 0:
-        vprint("ERROR: Can't filter: --excl-min-task-id=%s and --excl-max-task-id=%s" %
-               (str(excl_num_min_task_runs), str(excl_num_max_task_runs)))
-        bail = True
-
-    # Check exclude file number of task runs filter
     if excl_min_task_id > excl_max_task_id or excl_min_task_id < 0 or excl_max_task_id < 0:
         vprint("ERROR: Can't filter: --excl-min-task-id=%s and --excl-max-task-id=%s" %
                (str(excl_min_task_id), str(excl_max_task_id)))
@@ -355,8 +349,6 @@ def main(args):
     debug("|  null_task_id = '%s'" % str(null_task_id))
     debug("|  num_min_task_runs = '%s'" % str(num_min_task_runs))
     debug("|  num_max_task_runs = '%s'" % str(num_max_task_runs))
-    debug("|  excl_num_min_task_runs = '%s'" % str(excl_num_min_task_runs))
-    debug("|  excl_num_max_task_runs = '%s'" % str(excl_num_max_task_runs))
     debug("|  Exclusion file = '%s'" % str(exclude_file))
     debug("")
 
@@ -370,7 +362,7 @@ def main(args):
     if exclude_file is not None:
         exclude_file_open = open(exclude_file, 'r')
         exclude_file_json = json.load(exclude_file_open)
-        exclude_file.close()
+        exclude_file_open.close()
 
     # Open infile and convert to JSON
     with open(infile, 'r') as open_input_tasks:
@@ -381,47 +373,63 @@ def main(args):
         i = 0
         for i_task in infile_json:
 
-            # Update user
+            # Update user and reset variables
+            write_task = True
             i += 1
-            vprint("")
             vprint("Processing %s of %s tasks" % (str(i), str(num_input_tasks)))
 
             # Cache some values
             i_task_runs = i_task['task_runs_nr']
             i_task_id = i_task['id']
 
+            # Debug point
+            debug("  DEBUG: i_task_runs = %s" % str(i_task_runs))
+            debug("  DEBUG: i_task_id = %s" % str(i_task_id))
+
             # Filter input file task on task ID
             if min_task_id <= i_task_id <= max_task_id:
+                debug("  DEBUG: Passed input file task ID filter")
 
                 # Filter input file task on task runs
                 if num_min_task_runs <= i_task_runs <= num_max_task_runs:
+                    debug("  DEBUG: Passed input file task run filter")
 
-                    # Filter input file task against exclusion file
-                    if is_task_in_set(i_task_id, exclude_file_json, min_id=excl_min_task_id, max_id=excl_max_task_id,
-                                      min_runs=excl_num_min_task_runs, max_runs=excl_num_max_task_runs):
+                # Filter input file task against exclusion file, if one was supplied
+                if exclude_file is not None:
+                    debug("  DEBUG: Exclude file: %s" % exclude_file)
+                    if is_task_in_set(i_task_id, exclude_file_json, min_id=excl_min_task_id,
+                                      max_id=excl_max_task_id):
+                        debug("  DEBUG: Passed exclude file filter")
+                    else:
+                        write_task = False
+                else:
+                    write_task = False
+            else:
+                write_task = False
 
-                        # Input file task passed all filters - Append to final task list after applying processing steps
-                        if null_task_id:
-                            i_task['id'] = None
-                        filtered_tasks.append(i_task)
-                        vprint("  Passed filters")
-
-        # Task failed a filter
-        else:
-            vprint("  Failed filters")
+            # If the task passed all filters, append to final task list after applying processing steps
+            if write_task:
+                if null_task_id:
+                    i_task['id'] = None
+                filtered_tasks.append(i_task)
+                vprint("  Passed filters")
 
     # == Write Final Task Set == #
 
-    with open(outfile, 'w') as open_outfile:
-        result = json.dump(filtered_tasks, open_outfile)
+    if write_final_file:
+        vprint("Writing final file...")
+        with open(outfile, 'w') as open_outfile:
+            result = json.dump(filtered_tasks, open_outfile)
 
-    # Check result
-    if not result:
-        vprint("WARNING: JSON dump may not have succeeded.")
+        # Check result
+        if result is not None:
+            vprint("WARNING: JSON dump may not have succeeded.")
 
     # == Cleanup == #
 
     # Update user
+    vprint("Found %s remaining tasks" % str(len(filtered_tasks)))
+    vprint("Kept %.2f%% of tasks" % (len(filtered_tasks) * 100 / num_input_tasks))
     vprint("Done.")
 
     # End main()
