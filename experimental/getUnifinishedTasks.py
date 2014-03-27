@@ -8,7 +8,6 @@ from os.path import isfile
 from os.path import dirname
 
 
-
 # Build information
 __author__ = 'Kevin Wurster'
 __version__ = '0.1'
@@ -111,6 +110,24 @@ def print_license():
     return 1
 
 
+def is_task_in_set(task_id, tasks_json_object, return_true='object'):
+    """
+    Checks whether or not a task ID is in a set of tasks
+
+    task_id: Unique task ID as an integer
+    tasks_json_object: Loaded JSON object
+    return_true: What to return if the task ID is found - defaults to returning the task object
+    """
+    for task in tasks_json_object:
+        if task_id is task['id']:
+            if return_true == 'object':
+                return task
+            else:
+                return return_true
+    else:
+        return False
+
+
 def main(args):
 
     """
@@ -119,22 +136,21 @@ def main(args):
 
     # == Cache defaults and containers == #
 
-
     # Input/output files
-    input_tasks = None
-    processed_tasks = None
+    infile = None
     outfile = None
 
     # Cache filtering defaults
     num_min_responses = 0
-    num_max_responses = 10
+    num_max_responses = 10000
+    exclude_file = None
+    excl_num_min_responses = 0
+    excl_num_max_responses = 10000
 
     # Cache processing defaults
     null_task_id = False
 
-
     # == Argument Parser == #
-
 
     # Loop through all arguments and configure
     debug("DEBUG: Parsing arguments...")
@@ -164,20 +180,40 @@ def main(args):
 
         # Filtering parameters
         elif '--min-responses=' in arg:
+            i += 1
             try:
                 num_min_responses = int(arg.split('=')[1])
-            except TypeError:
+            except (IndexError, TypeError):
                 vprint("ERROR: Arg '--min-responses=int' must be an integer")
                 arg_error = True
         elif '--max-responses=' in arg:
+            i += 1
             try:
                 num_max_responses = int(arg.split('=')[1])
-            except TypeError:
+            except (IndexError, TypeError):
                 vprint("ERROR: Arg '--max-responses=int' must be an integer")
                 arg_error = True
+        elif '--excl-min-responses=' in arg:
+            i += 1
+            try:
+                excl_num_min_responses = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--excl-min-responses=int must be an integer")
+                arg_error = True
+        elif '--excl-max-responses=' in arg:
+            i += 1
+            try:
+                excl_num_max_responses = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--excl-max-responses=int must be an integer")
+                arg_error = True
+        elif arg in ('--exclude', '-e'):
+            i += 2
+            exclude_file = args[i - 1]
 
         # Processing options
         elif arg in ('--null-task-id', '-null-task-id', '-nti'):
+            i += 1
             null_task_id = True
 
         # Ignore completely empty arguments
@@ -186,13 +222,10 @@ def main(args):
 
         # Assume some things about the argument
         else:
-            # If the input_tasks file has not been defined, assume argument is the infile
-            if input_tasks is None:
-                input_tasks = arg
-            # If the processed_tasks file file has not been defined, assume argument is the outfile
-            elif processed_tasks is None:
-                processed_tasks = arg
-            # If input_tasks and processed_tasks files have been defined, assume argument is the outfile
+            # If the infile file has not been defined, assume argument is the infile
+            if infile is None:
+                infile = arg
+            # If the infile has been defined, assume argument is the outfile
             elif outfile is None:
                 outfile = arg
             # If both infile and outfile have been defined, argument was not recognized by parser
@@ -209,40 +242,112 @@ def main(args):
     # Validate requirements before proceeding
     debug("DEBUG: Validating requirements before proceeding...")
     bail = False
-    if input_tasks is not None or not isfile(input_tasks):
-        vprint("ERROR: Can't find file containing input tasks: %s" % input_tasks)
+    # Check infile
+    if infile is not None or not isfile(infile) or not os.access(infile, os.R_OK):
+        vprint("ERROR: Need a readable infile: %s" % str(infile))
         bail = True
+    # Check exclude file
+    if exclude_file is not None:
+        if not isfile(exclude_file) or not os.access(exclude_file, os.R_OK):
+            vprint("ERROR: Exclude file is not readable or doesn't exist: %s" % str(exclude_file))
+            bail = True
+    # Check output file/directory
     if outfile is not None and isfile(outfile):
         vprint("ERROR: Output file exists: %s" % outfile)
         bail = True
-    if num_min_responses > num_max_responses:
-        vprint("ERROR: Can't filter: --min-responses > --max-responses")
-        bail = True
-    if not os.access(input_tasks, os.R_OK):
-        vprint("ERROR: Need read permission for tasks file: %s" % input_tasks)
-        bail = True
-    if not os.access(processed_tasks, os.R_OK):
-        vprint("ERROR: Need read permission for task runs file: %s" % processed_tasks)
-        bail = True
     if not os.access(dirname(outfile), os.W_OK):
-        vprint("ERROR: Need write permission on directory: %s" % outfile)
+        vprint("ERROR: Can't write to directory: %s" % dirname(outfile))
+        bail = True
+    # Check infile number of responses filter
+    if num_min_responses > num_max_responses or num_min_responses < 0 or num_max_responses < 0:
+        vprint("ERROR: Can't filter: --min-responses=%s and --max-responses=%s" %
+               (str(num_min_responses), str(num_max_responses)))
+        bail = True
+    # Check exclude file number of responses filter
+    if excl_num_min_responses > excl_num_max_responses or excl_num_min_responses < 0 or excl_num_max_responses < 0:
+        vprint("ERROR: Can't filter: --excl-min-responses=%s and --excl-max-responses=%s" %
+               (str(excl_num_min_responses), str(excl_num_max_responses)))
         bail = True
     if bail:
         return 1
 
     # Debug point - pertinent parameters
     debug("")
-    debug("+-- DEBUG ---")
-    debug("|  input_tasks = '%s'" % input_tasks)
-    debug("|  processed_tasks = '%s'" % processed_tasks)
+    debug("+----- DEBUG -----")
+    debug("|  infile = '%s'" % infile)
     debug("|  outfile = '%s'" % outfile)
     debug("|  null_task_id = '%s'" % str(null_task_id))
     debug("|  num_min_responses = '%s'" % str(num_min_responses))
     debug("|  num_max_responses = '%s'" % str(num_max_responses))
+    debug("|  excl_num_min_responses = '%s'" % str(excl_num_min_responses))
+    debug("|  excl_num_max_responses = '%s'" % str(excl_num_max_responses))
+    debug("|  Exclusion file = '%s'" % str(exclude_file))
     debug("")
 
-
     # == Compare Files == #
+
+    # Container for final JSON object
+    incomplete_tasks = {}
+
+    # Cache all exclude
+
+    # Open infile and convert to JSON
+    with open(infile, 'r') as open_input_tasks:
+        json_infile = json.load(open_input_tasks)
+        num_json_input_tasks = len(json_infile)
+
+        # Loop through all tasks in the input file and filter
+        for i_task in json_
+
+        # Filter on number of responses
+        if num_min_responses <=
+
+
+
+
+
+
+
+
+
+        # Open processed tasks file and convert to JSON
+        with open(, 'r') as open_processed_Tasks:
+            json_processed_tasks = json.load(open_processed_Tasks)
+            num_json_processed_tasks = len(json_processed_tasks)
+
+            # Loop through input tasks JSON objects and do some comparisons
+            i = 0
+            for i_task in json_input_tasks:
+
+                # Cache some values
+                i_task_id = i_task['id']
+                i
+
+                # Check to see if the input task ID
+
+                # Update user
+                vprint("Processing task %s of %s" % (str(i), str(num_json_input_tasks)))
+
+                # Cache the input task id
+                task_id = task['id']
+
+                # Loop through the processed tasks to see if the input task has been processed
+                for p_task in json_processed_tasks:
+
+                    # Cache the process task
+                    p_task_id = p_task['id']
+                    p_task_runs_nr = p_task['task_runs_nr']
+                    if task_id is p_task_id:
+                        if num_min_responses <= p_task_runs_nr <= num_max_responses:
+                            if null_task_id:
+                                p_task['id'] = None
+                            incomplete_tasks.append(p_task)
+                    else:
+                        incomplete_tasks.append(p_task)
+
+
+
+
 
 
     # == Write File == #
@@ -254,6 +359,48 @@ def main(args):
 
 
 
+
+
+
+
+
+
+
+'''
+{u'app_id': 37,
+ u'calibration': 0,
+ u'created': u'2014-03-18T10:01:09.876911',
+ u'id': 81953,
+ u'info': {u'SiteID': u'8d1fd06d-c3ef-5315-9da6-b8ccfd0b3f82',
+  u'app_id': 18,
+  u'calibratio': None,
+  u'county': u'Butler',
+  u'created': u'2013-12-03T03:55:56.391466',
+  u'finish_tim': u'2013-12-03T03:55:56.391490',
+  u'id': 0,
+  u'latitude': 41.113308451114094,
+  u'longitude': -79.73987267325234,
+  u'n_answers': 0,
+  u'old_latitu': 41.113621,
+  u'old_longit': -79.740299,
+  u'options': {u'layers': u'06136759344167181854-09877175765652212076-4',
+   u'version': u'1.3.0'},
+  u'priority_0': 0.0,
+  u'quorum': 0,
+  u'state': u'PA',
+  u'task_id': 16914,
+  u'taskrun_id': 23539,
+  u'timeout': None,
+  u'url': u'https://mapsengine.google.com/06136759344167181854-00219351362547715467-4/wms/?version=1.3.0',
+  u'user_id': 74,
+  u'user_ip': None,
+  u'year': 2008},
+ u'n_answers': 3,
+ u'priority_0': 0.0,
+ u'quorum': 0,
+ u'state': u'completed',
+ u'task_runs_nr': 3}
+'''
 
 
 
