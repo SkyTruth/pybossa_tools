@@ -6,6 +6,7 @@ import sys
 import json
 from os.path import isfile
 from os.path import dirname
+from os.path import basename
 
 
 # Build information
@@ -15,6 +16,7 @@ __copyright__ = 'SkyTruth 2014'
 __license__ = 'See LICENSE.txt'
 __website__ = 'SkyTruth.org'
 __email__ = 'labs@skytruth.org'
+__docname__ = basename(__file__)
 __doc__ = '''
 Utility for extracting incomplete tasks from PyBOSSA
 '''
@@ -69,7 +71,7 @@ def print_usage():
     """
 
     print("")
-    print("Usage: tasks.json task_runs.json outfile.json [options]")
+    print("Usage %s: infile.json outfile.json [options]" % __docname__)
     print("")
     print("Options:")
     print("  --")
@@ -93,7 +95,7 @@ def print_version():
     """
 
     print("")
-    print("getUnfinishedTasks.py version %s" % str(__version__))
+    print("%s version %s" % (__docname__, str(__version__)))
     print("Author: %s" % __author__)
     print("Copyright %s" % __copyright__)
     print(__email__)
@@ -110,20 +112,35 @@ def print_license():
     return 1
 
 
-def is_task_in_set(task_id, tasks_json_object, return_true='object'):
+def is_task_in_set(task_id, tasks_json_object, min_id=0, max_id=1000000,
+                   min_runs=0, max_runs=1000000):
+
     """
     Checks whether or not a task ID is in a set of tasks
 
     task_id: Unique task ID as an integer
     tasks_json_object: Loaded JSON object
-    return_true: What to return if the task ID is found - defaults to returning the task object
+    return_true: What to return if the task ID is found - defaults to True - set to 'object' to return the actual task
     """
+
+    # Loop through set to see if the ID exists
     for task in tasks_json_object:
         if task_id is task['id']:
-            if return_true == 'object':
-                return task
-            else:
-                return return_true
+
+            # Cache some values
+            compare_id = task['id']
+            compare_num_runs = task['num_runs_nr']
+
+            # Make sure the found task doesn't violate the task ID filter
+            if min_id <= task_id <= max_id:
+
+                # Make sure the found task doesn't violate the task runs filter
+                if min_runs <= compare_num_runs <= max_runs:
+
+                    # Passed filters
+                    return True
+
+    # Input ID does not exist in the set
     else:
         return False
 
@@ -141,11 +158,15 @@ def main(args):
     outfile = None
 
     # Cache filtering defaults
-    num_min_responses = 0
-    num_max_responses = 10000
+    num_min_task_runs = 0
+    num_max_task_runs = 1000000
     exclude_file = None
-    excl_num_min_responses = 0
-    excl_num_max_responses = 10000
+    excl_num_min_task_runs = 0
+    excl_num_max_task_runs = 1000000
+    min_task_id = 0
+    max_task_id = 1000000
+    excl_min_task_id = 0
+    excl_max_task_id = 1000000
 
     # Cache processing defaults
     null_task_id = False
@@ -178,38 +199,74 @@ def main(args):
         elif arg in ('--license', '-license'):
             return print_license()
 
-        # Filtering parameters
-        elif '--min-responses=' in arg:
-            i += 1
-            try:
-                num_min_responses = int(arg.split('=')[1])
-            except (IndexError, TypeError):
-                vprint("ERROR: Arg '--min-responses=int' must be an integer")
-                arg_error = True
-        elif '--max-responses=' in arg:
-            i += 1
-            try:
-                num_max_responses = int(arg.split('=')[1])
-            except (IndexError, TypeError):
-                vprint("ERROR: Arg '--max-responses=int' must be an integer")
-                arg_error = True
-        elif '--excl-min-responses=' in arg:
-            i += 1
-            try:
-                excl_num_min_responses = int(arg.split('=')[1])
-            except (IndexError, TypeError):
-                vprint("ERROR: Arg '--excl-min-responses=int must be an integer")
-                arg_error = True
-        elif '--excl-max-responses=' in arg:
-            i += 1
-            try:
-                excl_num_max_responses = int(arg.split('=')[1])
-            except (IndexError, TypeError):
-                vprint("ERROR: Arg '--excl-max-responses=int must be an integer")
-                arg_error = True
+        # Define an exclude file to filter against
         elif arg in ('--exclude', '-e'):
             i += 2
             exclude_file = args[i - 1]
+
+        # Filter infile on task ID
+        elif '--min-task-id=' in arg:
+            i += 1
+            try:
+                min_task_id = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--min-task-id=int' must be an integer")
+                arg_error = True
+        elif '--max-task-id=' in arg:
+            i += 1
+            try:
+                max_task_id = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--max-task-id=int' must be an integer")
+                arg_error = True
+
+        # Filter infile on task runs
+        elif '--min-runs=' in arg:
+            i += 1
+            try:
+                num_min_task_runs = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--min-runs=int' must be an integer")
+                arg_error = True
+        elif '--max-runs=' in arg:
+            i += 1
+            try:
+                num_max_task_runs = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--max-runs=int' must be an integer")
+                arg_error = True
+
+        # Filter exclude file on task ID
+        elif '--excl-min-task-id=' in arg:
+            i += 1
+            try:
+                excl_min_task_id = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--excl-min-task-id=int' must be an integer")
+                arg_error = True
+        elif '--excl-min-task-id=' in arg:
+            i += 1
+            try:
+                excl_min_task_id = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--excl-max-task-id=int' must be an integer")
+                arg_error = True
+
+        # Filter exclude file on task runs
+        elif '--excl-min-runs=' in arg:
+            i += 1
+            try:
+                excl_num_min_task_runs = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--excl-min-runs=int must be an integer")
+                arg_error = True
+        elif '--excl-max-runs=' in arg:
+            i += 1
+            try:
+                excl_num_max_task_runs = int(arg.split('=')[1])
+            except (IndexError, TypeError):
+                vprint("ERROR: Arg '--excl-max-runs=int must be an integer")
+                arg_error = True
 
         # Processing options
         elif arg in ('--null-task-id', '-null-task-id', '-nti'):
@@ -239,18 +296,21 @@ def main(args):
         vprint("ERROR: Encountered a problem parsing arguments")
         return 1
 
-    # Validate requirements before proceeding
+    # == Validate requirements before proceeding == #
     debug("DEBUG: Validating requirements before proceeding...")
     bail = False
+
     # Check infile
     if infile is not None or not isfile(infile) or not os.access(infile, os.R_OK):
         vprint("ERROR: Need a readable infile: %s" % str(infile))
         bail = True
+
     # Check exclude file
     if exclude_file is not None:
         if not isfile(exclude_file) or not os.access(exclude_file, os.R_OK):
             vprint("ERROR: Exclude file is not readable or doesn't exist: %s" % str(exclude_file))
             bail = True
+
     # Check output file/directory
     if outfile is not None and isfile(outfile):
         vprint("ERROR: Output file exists: %s" % outfile)
@@ -258,16 +318,32 @@ def main(args):
     if not os.access(dirname(outfile), os.W_OK):
         vprint("ERROR: Can't write to directory: %s" % dirname(outfile))
         bail = True
-    # Check infile number of responses filter
-    if num_min_responses > num_max_responses or num_min_responses < 0 or num_max_responses < 0:
-        vprint("ERROR: Can't filter: --min-responses=%s and --max-responses=%s" %
-               (str(num_min_responses), str(num_max_responses)))
+
+    # Check infile number of task runs filter
+    if num_min_task_runs > num_max_task_runs or num_min_task_runs < 0 or num_max_task_runs < 0:
+        vprint("ERROR: Can't filter: --min-runs=%s and --max-runs=%s" %
+               (str(num_min_task_runs), str(num_max_task_runs)))
         bail = True
-    # Check exclude file number of responses filter
-    if excl_num_min_responses > excl_num_max_responses or excl_num_min_responses < 0 or excl_num_max_responses < 0:
-        vprint("ERROR: Can't filter: --excl-min-responses=%s and --excl-max-responses=%s" %
-               (str(excl_num_min_responses), str(excl_num_max_responses)))
+
+    # Check infile task ID filter
+    if min_task_id > max_task_id or min_task_id < 0 or max_task_id < 0:
+        vprint("ERROR: Can't filter: --min-task-id=%s and --max-task-id=%s" %
+               (str(min_task_id), str(max_task_id)))
         bail = True
+
+    # Check exclude file number of task runs filter
+    if excl_num_min_task_runs > excl_num_max_task_runs or excl_num_min_task_runs < 0 or excl_num_max_task_runs < 0:
+        vprint("ERROR: Can't filter: --excl-min-task-id=%s and --excl-max-task-id=%s" %
+               (str(excl_num_min_task_runs), str(excl_num_max_task_runs)))
+        bail = True
+
+    # Check exclude file number of task runs filter
+    if excl_min_task_id > excl_max_task_id or excl_min_task_id < 0 or excl_max_task_id < 0:
+        vprint("ERROR: Can't filter: --excl-min-task-id=%s and --excl-max-task-id=%s" %
+               (str(excl_min_task_id), str(excl_max_task_id)))
+        bail = True
+
+    # If a validation failed, bail
     if bail:
         return 1
 
@@ -277,133 +353,78 @@ def main(args):
     debug("|  infile = '%s'" % infile)
     debug("|  outfile = '%s'" % outfile)
     debug("|  null_task_id = '%s'" % str(null_task_id))
-    debug("|  num_min_responses = '%s'" % str(num_min_responses))
-    debug("|  num_max_responses = '%s'" % str(num_max_responses))
-    debug("|  excl_num_min_responses = '%s'" % str(excl_num_min_responses))
-    debug("|  excl_num_max_responses = '%s'" % str(excl_num_max_responses))
+    debug("|  num_min_task_runs = '%s'" % str(num_min_task_runs))
+    debug("|  num_max_task_runs = '%s'" % str(num_max_task_runs))
+    debug("|  excl_num_min_task_runs = '%s'" % str(excl_num_min_task_runs))
+    debug("|  excl_num_max_task_runs = '%s'" % str(excl_num_max_task_runs))
     debug("|  Exclusion file = '%s'" % str(exclude_file))
     debug("")
 
     # == Compare Files == #
 
     # Container for final JSON object
-    incomplete_tasks = {}
-
-    # Cache all exclude
+    filtered_tasks = []
+    
+    # Cache exclusion file JSON object
+    exclude_file_json = None
+    if exclude_file is not None:
+        exclude_file_open = open(exclude_file, 'r')
+        exclude_file_json = json.load(exclude_file_open)
+        exclude_file.close()
 
     # Open infile and convert to JSON
     with open(infile, 'r') as open_input_tasks:
-        json_infile = json.load(open_input_tasks)
-        num_json_input_tasks = len(json_infile)
+        infile_json = json.load(open_input_tasks)
+        num_input_tasks = len(infile_json)
 
         # Loop through all tasks in the input file and filter
-        for i_task in json_
+        i = 0
+        for i_task in infile_json:
 
-        # Filter on number of responses
-        if num_min_responses <=
+            # Update user
+            i += 1
+            vprint("")
+            vprint("Processing %s of %s tasks" % (str(i), str(num_input_tasks)))
 
+            # Cache some values
+            i_task_runs = i_task['task_runs_nr']
+            i_task_id = i_task['id']
 
+            # Filter input file task on task ID
+            if min_task_id <= i_task_id <= max_task_id:
 
+                # Filter input file task on task runs
+                if num_min_task_runs <= i_task_runs <= num_max_task_runs:
 
+                    # Filter input file task against exclusion file
+                    if is_task_in_set(i_task_id, exclude_file_json, min_id=excl_min_task_id, max_id=excl_max_task_id,
+                                      min_runs=excl_num_min_task_runs, max_runs=excl_num_max_task_runs):
 
+                        # Input file task passed all filters - Append to final task list after applying processing steps
+                        if null_task_id:
+                            i_task['id'] = None
+                        filtered_tasks.append(i_task)
+                        vprint("  Passed filters")
 
+        # Task failed a filter
+        else:
+            vprint("  Failed filters")
 
+    # == Write Final Task Set == #
 
+    with open(outfile, 'w') as open_outfile:
+        result = json.dump(filtered_tasks, open_outfile)
 
-        # Open processed tasks file and convert to JSON
-        with open(, 'r') as open_processed_Tasks:
-            json_processed_tasks = json.load(open_processed_Tasks)
-            num_json_processed_tasks = len(json_processed_tasks)
-
-            # Loop through input tasks JSON objects and do some comparisons
-            i = 0
-            for i_task in json_input_tasks:
-
-                # Cache some values
-                i_task_id = i_task['id']
-                i
-
-                # Check to see if the input task ID
-
-                # Update user
-                vprint("Processing task %s of %s" % (str(i), str(num_json_input_tasks)))
-
-                # Cache the input task id
-                task_id = task['id']
-
-                # Loop through the processed tasks to see if the input task has been processed
-                for p_task in json_processed_tasks:
-
-                    # Cache the process task
-                    p_task_id = p_task['id']
-                    p_task_runs_nr = p_task['task_runs_nr']
-                    if task_id is p_task_id:
-                        if num_min_responses <= p_task_runs_nr <= num_max_responses:
-                            if null_task_id:
-                                p_task['id'] = None
-                            incomplete_tasks.append(p_task)
-                    else:
-                        incomplete_tasks.append(p_task)
-
-
-
-
-
-
-    # == Write File == #
-
+    # Check result
+    if not result:
+        vprint("WARNING: JSON dump may not have succeeded.")
 
     # == Cleanup == #
 
+    # Update user
+    vprint("Done.")
 
-
-
-
-
-
-
-
-
-
-
-'''
-{u'app_id': 37,
- u'calibration': 0,
- u'created': u'2014-03-18T10:01:09.876911',
- u'id': 81953,
- u'info': {u'SiteID': u'8d1fd06d-c3ef-5315-9da6-b8ccfd0b3f82',
-  u'app_id': 18,
-  u'calibratio': None,
-  u'county': u'Butler',
-  u'created': u'2013-12-03T03:55:56.391466',
-  u'finish_tim': u'2013-12-03T03:55:56.391490',
-  u'id': 0,
-  u'latitude': 41.113308451114094,
-  u'longitude': -79.73987267325234,
-  u'n_answers': 0,
-  u'old_latitu': 41.113621,
-  u'old_longit': -79.740299,
-  u'options': {u'layers': u'06136759344167181854-09877175765652212076-4',
-   u'version': u'1.3.0'},
-  u'priority_0': 0.0,
-  u'quorum': 0,
-  u'state': u'PA',
-  u'task_id': 16914,
-  u'taskrun_id': 23539,
-  u'timeout': None,
-  u'url': u'https://mapsengine.google.com/06136759344167181854-00219351362547715467-4/wms/?version=1.3.0',
-  u'user_id': 74,
-  u'user_ip': None,
-  u'year': 2008},
- u'n_answers': 3,
- u'priority_0': 0.0,
- u'quorum': 0,
- u'state': u'completed',
- u'task_runs_nr': 3}
-'''
-
-
-
+    # End main()
     return 0
 
 
@@ -411,4 +432,4 @@ if __name__ == '__main__':
     if len(sys.argv) is 1:
         sys.exit(print_usage())
     else:
-        sys.exit(main(sys.argv[1:])
+        sys.exit(main(sys.argv[1:]))
