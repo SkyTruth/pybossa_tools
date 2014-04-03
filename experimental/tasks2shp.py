@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 
-import ogr
-import osr
-import sys
-import json
-from os.path import isfile
-from os.path import basename
 
 __author__ ='Kevin Wurster'
 __organization__ = 'SkyTruth'
@@ -14,6 +8,14 @@ Convert a FracFinder JSON export to a shapefile
 containing 1 point per pond and aggregated response
 metrics.
 """
+
+
+import ogr
+import osr
+import sys
+import json
+from os.path import isfile
+from os.path import basename
 
 
 def print_usage():
