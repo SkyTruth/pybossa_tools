@@ -4,7 +4,7 @@
 __author__ ='Kevin Wurster'
 __organization__ = 'SkyTruth'
 __doc__ = """
-Convert a FracFinder JSON export to a shapefile
+Convert a FrackFinder JSON export to a shapefile
 containing 1 point per pond and aggregated response
 metrics.
 """
@@ -19,7 +19,9 @@ from os.path import basename
 
 
 def print_usage():
-    print("Usage: infile.json outfile.shp")
+    print("")
+    print("Usage: combined.json outfile.shp")
+    print("")
     return 1
 
 
@@ -82,6 +84,9 @@ def main(args):
         layer.CreateField(field_name)
         field_name = ogr.FieldDefn('n_tot_res', ogr.OFTInteger)
         field_name.SetWidth(10)
+        layer.CreateField(field_name)
+        field_name = ogr.FieldDefn('crowd_sel', ogr.OFTString)
+        field_name.SetWidth(254)
         layer.CreateField(field_name)
         field_name = ogr.FieldDefn('qaqc', ogr.OFTString)
         field_name.SetWidth(254)
@@ -148,9 +153,26 @@ def main(args):
                         n_frk_res = 0
                         n_oth_res = 0
 
-
             # Compute the total number of responses
             n_tot_res = n_unk_res + n_frk_res + n_oth_res
+
+            # == Get Crowd Selection == #
+
+            # Create an easy way to reference list elements to what is contained in the list
+            response_map = {0: 'unknown',
+                            1: 'fracking',
+                            2: 'other'}
+
+            # Get the largest number of responses
+            crowd_selection = None
+            num_responses = [n_unk_res, n_frk_res, n_oth_res]
+            maximum_num_responses = max(num_responses)
+            for i in num_responses:
+                if i is maximum_num_responses:
+                    if crowd_selection is not None:
+                        crowd_selection = crowd_selection + '|' + response_map[i]
+                    else:
+                        crowd_selection = response_map[i]
 
             # Handle some 'NoneType' weirdness - no idea why this happens
             if wms_url is None:
@@ -162,7 +184,8 @@ def main(args):
             print("  n_unk_res = %s" % str(n_unk_res))
             print("  n_frk_res = %s" % str(n_frk_res))
             print("  n_oth_res = %s" % str(n_oth_res))
-            print("  n_tot_res = %s" % n_tot_res)
+            print("  n_tot_res = %s" % str(n_tot_res))
+            print("  crowd_sel = %s" % crowd_selection)
             print("  latitude  = %s" % str(latitude))
             print("  longitude = %s" % str(longitude))
             print("  county    = %s" % county)
