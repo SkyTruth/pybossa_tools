@@ -47,7 +47,7 @@ def pdebug(message):
         print(message)
 
 
-def get_crowd_selection(selection_count):
+def get_crowd_selection(selection_count, selection_map):
     """
     Figure out what the crowd actually selected
     """
@@ -60,10 +60,11 @@ def get_crowd_selection(selection_count):
 
     # Build the crowd_selection
     for selection, count in selection_count.iteritems():
-        if crowd_selection == 'NONE':
-            crowd_selection = selection
-        else:
-            crowd_selection += '|' + selection
+        if count is max_selection:
+            if crowd_selection == 'NONE':
+                crowd_selection = selection_map[selection]
+            else:
+                crowd_selection += '|' + selection
 
     # Return to user
     return crowd_selection
@@ -91,11 +92,37 @@ def get_crowd_selection_counts(input_id, task_runs_json_object):
     return counts
 
 
+def get_percent_crowd_agreement(crowd_selection, selection_counts, total_responses, map_selection_field):
+    """
+    Figure out how well the crowd agreed
+
+    If two answers tied, figure out the agreement for both
+    """
+
+    # Compute crowd agreement
+    per_crowd_agreement = None
+    split_per_crowd_agreement = None
+    if '|' not in crowd_selection:
+        per_crowd_agreement = int(selection_counts[map_selection_field[crowd_selection]] * 100 / total_responses)
+    else:
+        for selection in crowd_selection.split('|'):
+            field_name = map_selection_field[selection]
+            selection_count = selection_counts[field_name]
+            per_crowd_agreement = int(selection_count * 100 / total_responses)
+            if split_per_crowd_agreement is None:
+                split_per_crowd_agreement = str(per_crowd_agreement)
+            else:
+                split_per_crowd_agreement += '|' + str(per_crowd_agreement)
+    return {'p_crd_a': per_crowd_agreement, 'p_s_crd_a': split_per_crowd_agreement}
+
+
 def main(args):
 
     """
     Main routine
     """
+
+    global DEBUG
 
     # Set defaults and cache containers
     tasks_file = None
@@ -103,6 +130,18 @@ def main(args):
     outfile = None
     outfile_driver = 'ESRI Shapefile'
     outfile_epsg_code = 4326
+
+    # Map field names to selections
+    map_field_to_selection = {'n_frk_res': 'fracking',
+                              'n_oth_res': 'other',
+                              'n_unk_res': 'unknown',
+                              'UNKNOWN': 'UNKNOWN'}
+
+    # Map selections to field names
+    map_selection_to_field = {'fracking': 'n_frk_res',
+                              'other': 'n_oth_res',
+                              'unknown': 'n_unk_res',
+                              'UNKNOWN': 'UNKNOWN'}
 
     # Parse arguments
     arg_error = False
@@ -113,6 +152,10 @@ def main(args):
             outfile_driver = arg.split('=', 1)[1]
         elif '--epsg=' in arg:
             outfile_epsg_code = int(arg.split('=', 1)[1])
+
+        # Additional options
+        elif arg == '--debug':
+            DEBUG = True
 
         # These are positional arguments
         else:
@@ -182,25 +225,30 @@ def main(args):
 
     # Create layer
     print("Creating layer...")
-    layer_name = basename(outfile).replace(' ', '_').replace('.shp', '')
+    layer_name = basename(outfile).split('.')
+    layer_name = ''.join(layer_name[:len(layer_name) - 1])
     layer = data_source.CreateLayer(layer_name, srs, ogr.wkbPoint)
 
     # Define fields
     print("Defining fields...")
-    string_field = ['location', 'crowd_sel', 'qaqc', 'county', 'wms_url']
-    int_fields = ['site_id', 'n_unk_res', 'n_frk_res', 'n_oth_res', 'n_tot_res', 'year']
-    real_fields = ['p_crd_a', 'p_s_crd_a']
-    for str_f in string_field:
-        field_name = ogr.FieldDefn(str_f, ogr.OFTString)
-        field_name.SetWidth(254)
-        layer.CreateField(field_name)
-    for int_f in int_fields:
-        field_name = ogr.FieldDefn(int_f, ogr.OFTInteger)
-        field_name.SetWidth(10)
-        layer.CreateField(field_name)
-    for real_f in real_fields:
-        field_name = ogr.FieldDefn(real_f, ogr.OFTReal)
-        field_name.SetWidth(10)
+    fields_definitions = {'id': (10, ogr.OFTInteger),
+                          'location': (254, ogr.OFTString),
+                          'crowd_sel': (254, ogr.OFTString),
+                          'qaqc': (254, ogr.OFTString),
+                          'county': (254, ogr.OFTString),
+                          'wms_url': (254, ogr.OFTString),
+                          'site_id': (10, ogr.OFTInteger),
+                          'n_unk_res': (10, ogr.OFTInteger),
+                          'n_frk_res': (10, ogr.OFTInteger),
+                          'n_oth_res': (10, ogr.OFTInteger),
+                          'n_tot_res': (10, ogr.OFTInteger),
+                          'year': (10, ogr.OFTInteger),
+                          'p_crd_a': (10, ogr.OFTReal),
+                          'p_s_crd_a': (10, ogr.OFTReal)}
+    for field_name, definition in fields_definitions.iteritems():
+        print("  " + field_name)
+        field_name = ogr.FieldDefn(field_name, definition[1])
+        field_name.SetWidth(definition[0])
         layer.CreateField(field_name)
 
     # == Examine Task.json File == #
@@ -208,6 +256,7 @@ def main(args):
     # Loop through all task.json tasks
     len_tasks_json = len(tasks_json)
     i = 0
+    print("Analyzing tasks...")
     for task in tasks_json:
 
         # Print some debug stuff
@@ -220,12 +269,12 @@ def main(args):
                                  '---', str(task['info']['year'])])
 
         # Get initial set of attributes from task body
-        task_attributes = {'id': task['id'],
-                           'latitude': task['info']['latitude'],
-                           'longitude': task['info']['longitude'],
-                           'year': task['info']['year'],
-                           'wms_url': task['info']['url'],
-                           'county': task['info']['county'],
+        task_attributes = {'id': str(task['id']),
+                           'latitude': str(task['info']['latitude']),
+                           'longitude': str(task['info']['longitude']),
+                           'year': int(task['info']['year']),
+                           'wms_url': str(task['info']['url']),  # Force to field width
+                           'county': str(task['info']['county']),
                            'location': task_location}
 
         # Get the crowd selection counts
@@ -233,27 +282,16 @@ def main(args):
         task_attributes = dict(task_attributes.items() + crowd_selection_counts.items())
 
         # Figure out what the crowd actually selected and the total number of responses
-        n_tot_res = sum(crowd_selection_counts.values())
+        n_tot_res = int(sum(crowd_selection_counts.values()))
         task_attributes['n_tot_res'] = n_tot_res
-        crowd_selection = get_crowd_selection(crowd_selection_counts)
+        crowd_selection = get_crowd_selection(crowd_selection_counts, map_field_to_selection)
         task_attributes['crowd_sel'] = crowd_selection
 
-        # Compute crowd agreement
-        percent_crowd_agreement = None
-        split_percent_crowd_agreement = None
-        task_attributes['p_crd_a'] = percent_crowd_agreement
-        task_attributes['p_s_crd_a'] = split_percent_crowd_agreement
-        if '|' not in crowd_selection:
-            percent_crowd_agreement = int(crowd_selection_counts[crowd_selection] * 100 / n_tot_res)
-            task_attributes['p_crd_a'] = percent_crowd_agreement
-        else:
-            for selection in crowd_selection.split('|'):
-                selection_percent_crowd_agreement = str(int(crowd_selection_counts[selection] * 100 / n_tot_res))
-                if split_percent_crowd_agreement is None:
-                    split_percent_crowd_agreement = selection_percent_crowd_agreement
-                else:
-                    split_percent_crowd_agreement += '|' + selection_percent_crowd_agreement
-            task_attributes['p_s_crd_a'] = split_percent_crowd_agreement
+        # Get crowd agreement levels
+        task_attributes = dict(task_attributes.items()
+                               + get_percent_crowd_agreement(task_attributes['crowd_sel'], crowd_selection_counts,
+                                                             task_attributes['n_tot_res'],
+                                                             map_selection_to_field).items())
 
         # Update user
         pdebug("  wms_url   = %s" % task_attributes['wms_url'][:40] + ' ...(truncated...)')
@@ -269,31 +307,47 @@ def main(args):
         pdebug("  longitude = %s" % str(task_attributes['longitude']))
         pdebug("  county    = %s" % task_attributes['county'])
         pdebug("  year      = %s" % str(task_attributes['year']))
-        pdebug("  ")
+        pdebug("")
 
         # Create the feature
         feature = ogr.Feature(layer.GetLayerDefn())
+        pdebug("Defined feature")
         feature.SetField('wms_url', task_attributes['wms_url'])
+        pdebug("Set wms_url")
         feature.SetField('id', task_attributes['id'])
+        pdebug("Set id")
         feature.SetField('n_unk_res', task_attributes['n_unk_res'])
+        pdebug("Set n_unk_res")
         feature.SetField('n_frk_res', task_attributes['n_frk_res'])
+        pdebug("Set n_frk_res")
         feature.SetField('n_oth_res', task_attributes['n_oth_res'])
+        pdebug("Set n_oth_res")
         feature.SetField('n_tot_res', task_attributes['n_tot_res'])
+        pdebug("Set n_tot_res")
         feature.SetField('crowd_sel', task_attributes['crowd_sel'])
+        pdebug("Set crowd_sel")
         feature.SetField('p_crd_a', task_attributes['p_crd_a'])
+        pdebug("Set p_crd_a")
         feature.SetField('p_s_crd_a', task_attributes['p_s_crd_a'])
+        pdebug("Set p_s_crd_a")
         feature.SetField('county', task_attributes['county'])
+        pdebug("Set county")
         feature.SetField('year', task_attributes['year'])
+        pdebug("Set year")
         wkt = "POINT(%f %f)" % (float(task_attributes['longitude']), float(task_attributes['latitude']))
         point = ogr.CreateGeometryFromWkt(wkt)
+        pdebug("Created geometry")
         feature.SetGeometry(point)
+        pdebug("Set geometry")
         layer.CreateFeature(feature)
+        pdebug("Created feature")
 
         # Cleanup
         feature.Destroy()
+        pdebug("Destroyed feature")
 
-        # Cleanup shapefile
-        data_source.Destroy()
+    # Cleanup shapefile
+    data_source.Destroy()
 
     # Update user
     print("Done.")
