@@ -379,7 +379,7 @@ def main(args):
             vprint("Processing %s of %s tasks" % (str(i), str(num_input_tasks)))
 
             # Cache some values
-            i_task_runs = i_task['task_runs_nr']
+            i_task_runs = i_task['n_answers']
             i_task_id = i_task['id']
 
             # Debug point
