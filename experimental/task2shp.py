@@ -59,12 +59,15 @@ def get_crowd_selection(selection_count, selection_map):
     max_selection = max(selection_count.values())
 
     # Build the crowd_selection
-    for selection, count in selection_count.iteritems():
-        if count is max_selection:
-            if crowd_selection == 'NONE':
-                crowd_selection = selection_map[selection]
-            else:
-                crowd_selection += '|' + selection_map[selection]
+    if max_selection is 0:
+        crowd_selection = None
+    else:
+        for selection, count in selection_count.iteritems():
+            if count is max_selection:
+                if crowd_selection == 'NONE':
+                    crowd_selection = selection_map[selection]
+                else:
+                    crowd_selection += '|' + selection_map[selection]
 
     # Return to user
     return crowd_selection
@@ -77,10 +80,13 @@ def get_crowd_selection_counts(input_id, task_runs_json_object):
     counts = {'n_frk_res': 0,
               'n_unk_res': 0,
               'n_oth_res': 0,
-              'UNKNOWN': 0}
+              'ERROR': 0}
     for task_run in task_runs_json_object:
         if input_id == task_run['task_id']:
-            selection = task_run['info']['selection']
+            try:
+                selection = task_run['info']['selection']
+            except KeyError:
+                selection = 'ERROR'
             if selection == 'fracking':
                 counts['n_frk_res'] += 1
             elif selection == 'unknown':
@@ -88,12 +94,12 @@ def get_crowd_selection_counts(input_id, task_runs_json_object):
             elif selection == 'other':
                 counts['n_oth_res'] += 1
             else:
-                counts['UNKNOWN'] += 1
+                counts['ERROR'] += 1
     return counts
 
 
 def get_percent_crowd_agreement(crowd_selection, selection_counts, total_responses, map_selection_field,
-                                pca_val_when_split=-1):
+                                error_val=-1):
     """
     Figure out how well the crowd agreed
 
@@ -101,24 +107,37 @@ def get_percent_crowd_agreement(crowd_selection, selection_counts, total_respons
     """
 
     # Compute crowd agreement
+    # The try/except blocks are for situations where tasks have never been viewed, which yields zero total_responses
     per_crowd_agreement = None
     split_per_crowd_agreement = None
-    if '|' not in crowd_selection:
-        per_crowd_agreement = int(selection_counts[map_selection_field[crowd_selection]] * 100 / total_responses)
+
+    # Make sure the crowd actually made a selection
+    if crowd_selection is None:
+        per_crowd_agreement = None
+        split_per_crowd_agreement = None
     else:
+        if '|' not in crowd_selection:
+            try:
+                per_crowd_agreement = int(selection_counts[map_selection_field[crowd_selection]] * 100 / total_responses)
+            except ZeroDivisionError:
+                per_crowd_agreement = error_val
+        else:
 
-        # Compute percent agreement for each split response
-        for selection in crowd_selection.split('|'):
-            field_name = map_selection_field[selection]
-            selection_count = selection_counts[field_name]
-            per_crowd_agreement = int(selection_count * 100 / total_responses)
-            if split_per_crowd_agreement is None:
-                split_per_crowd_agreement = str(per_crowd_agreement)
-            else:
-                split_per_crowd_agreement += '|' + str(per_crowd_agreement)
+            # Compute percent agreement for each split response
+            for selection in crowd_selection.split('|'):
+                field_name = map_selection_field[selection]
+                selection_count = selection_counts[field_name]
+                try:
+                    per_crowd_agreement = int(selection_count * 100 / total_responses)
+                except ZeroDivisionError:
+                    per_crowd_agreement = error_val
+                if split_per_crowd_agreement is None:
+                    split_per_crowd_agreement = str(per_crowd_agreement)
+                else:
+                    split_per_crowd_agreement += '|' + str(per_crowd_agreement)
 
-        # Make sure the percent crowd agreement field is None when there is a split response
-        per_crowd_agreement = pca_val_when_split
+            # Make sure the percent crowd agreement field is None when there is a split response
+            per_crowd_agreement = error_val
 
     return {'p_crd_a': per_crowd_agreement, 'p_s_crd_a': split_per_crowd_agreement}
 
@@ -142,13 +161,13 @@ def main(args):
     map_field_to_selection = {'n_frk_res': 'fracking',
                               'n_oth_res': 'other',
                               'n_unk_res': 'unknown',
-                              'UNKNOWN': 'UNKNOWN'}
+                              'ERROR': 'ERROR'}
 
     # Map selections to field names
     map_selection_to_field = {'fracking': 'n_frk_res',
                               'other': 'n_oth_res',
                               'unknown': 'n_unk_res',
-                              'UNKNOWN': 'UNKNOWN'}
+                              'ERROR': 'ERROR'}
 
     # Parse arguments
     arg_error = False
@@ -281,14 +300,24 @@ def main(args):
                                  '---', str(task['info']['year'])])
 
         # Get initial set of attributes from task body
-        task_attributes = {'id': str(task['id']),
-                           'latitude': str(task['info']['latitude']),
-                           'longitude': str(task['info']['longitude']),
-                           'year': int(task['info']['year']),
-                           'wms_url': str(task['info']['url']),  # Force to field width
-                           'county': str(task['info']['county']),
-                           'location': task_location,
-                           'site_id': str(task['info']['SiteID'])}
+        # First value in the tuple goes into task_attributes, and second references the info block within the task
+        # The third value in the tuple is the type object to be used
+        task_attributes = {'location': task_location}
+        initial_task_grab = [('id', 'id', str),
+                             ('latitude', 'latitude', str),
+                             ('longitude', 'longitude', str),
+                             ('wms_url', 'url', str),
+                             ('county', 'county', str),
+                             ('site_id', 'SiteID', str),
+                             ('year', 'year', int)]
+        for attributes in initial_task_grab:
+            attribute_name = attributes[0]
+            info_reference = attributes[1]
+            type_caster = attributes[2]
+            try:
+                task_attributes[attribute_name] = type_caster(task['info'][info_reference])
+            except TypeError:
+                task_attributes[attributes[0]] = None
 
         # Get the crowd selection counts
         crowd_selection_counts = get_crowd_selection_counts(input_task_id, task_runs_json)
