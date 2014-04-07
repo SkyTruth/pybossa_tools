@@ -64,7 +64,7 @@ def get_crowd_selection(selection_count, selection_map):
             if crowd_selection == 'NONE':
                 crowd_selection = selection_map[selection]
             else:
-                crowd_selection += '|' + selection
+                crowd_selection += '|' + selection_map[selection]
 
     # Return to user
     return crowd_selection
@@ -92,7 +92,8 @@ def get_crowd_selection_counts(input_id, task_runs_json_object):
     return counts
 
 
-def get_percent_crowd_agreement(crowd_selection, selection_counts, total_responses, map_selection_field):
+def get_percent_crowd_agreement(crowd_selection, selection_counts, total_responses, map_selection_field,
+                                pca_val_when_split=-1):
     """
     Figure out how well the crowd agreed
 
@@ -105,6 +106,8 @@ def get_percent_crowd_agreement(crowd_selection, selection_counts, total_respons
     if '|' not in crowd_selection:
         per_crowd_agreement = int(selection_counts[map_selection_field[crowd_selection]] * 100 / total_responses)
     else:
+
+        # Compute percent agreement for each split response
         for selection in crowd_selection.split('|'):
             field_name = map_selection_field[selection]
             selection_count = selection_counts[field_name]
@@ -113,6 +116,10 @@ def get_percent_crowd_agreement(crowd_selection, selection_counts, total_respons
                 split_per_crowd_agreement = str(per_crowd_agreement)
             else:
                 split_per_crowd_agreement += '|' + str(per_crowd_agreement)
+
+        # Make sure the percent crowd agreement field is None when there is a split response
+        per_crowd_agreement = pca_val_when_split
+
     return {'p_crd_a': per_crowd_agreement, 'p_s_crd_a': split_per_crowd_agreement}
 
 
@@ -231,25 +238,30 @@ def main(args):
 
     # Define fields
     print("Defining fields...")
-    fields_definitions = {'id': (10, ogr.OFTInteger),
-                          'location': (254, ogr.OFTString),
-                          'crowd_sel': (254, ogr.OFTString),
-                          'qaqc': (254, ogr.OFTString),
-                          'county': (254, ogr.OFTString),
-                          'wms_url': (254, ogr.OFTString),
-                          'site_id': (10, ogr.OFTInteger),
-                          'n_unk_res': (10, ogr.OFTInteger),
-                          'n_frk_res': (10, ogr.OFTInteger),
-                          'n_oth_res': (10, ogr.OFTInteger),
-                          'n_tot_res': (10, ogr.OFTInteger),
-                          'year': (10, ogr.OFTInteger),
-                          'p_crd_a': (10, ogr.OFTReal),
-                          'p_s_crd_a': (10, ogr.OFTReal)}
-    for field_name, definition in fields_definitions.iteritems():
+    fields_definitions = [('id', 10, ogr.OFTInteger),
+                          ('site_id', 254, ogr.OFTString),
+                          ('wms_url', 254, ogr.OFTString),
+                          ('county', 254, ogr.OFTString),
+                          ('year', 10, ogr.OFTInteger),
+                          ('location', 254, ogr.OFTString),
+                          ('n_unk_res', 10, ogr.OFTInteger),
+                          ('n_frk_res', 10, ogr.OFTInteger),
+                          ('n_oth_res', 10, ogr.OFTInteger),
+                          ('n_tot_res', 10, ogr.OFTInteger),
+                          ('crowd_sel', 254, ogr.OFTString),
+                          ('qaqc', 254, ogr.OFTString),
+                          ('p_crd_a', 10, ogr.OFTReal),
+                          ('p_s_crd_a', 254, ogr.OFTString)]
+
+    # Create fields
+    for field in fields_definitions:
+        field_name = field[0]
+        field_width = field[1]
+        field_type = field[2]
         print("  " + field_name)
-        field_name = ogr.FieldDefn(field_name, definition[1])
-        field_name.SetWidth(definition[0])
-        layer.CreateField(field_name)
+        field_object = ogr.FieldDefn(field_name, field_type)
+        field_object.SetWidth(field_width)
+        layer.CreateField(field_object)
 
     # == Examine Task.json File == #
 
@@ -275,7 +287,8 @@ def main(args):
                            'year': int(task['info']['year']),
                            'wms_url': str(task['info']['url']),  # Force to field width
                            'county': str(task['info']['county']),
-                           'location': task_location}
+                           'location': task_location,
+                           'site_id': str(task['info']['SiteID'])}
 
         # Get the crowd selection counts
         crowd_selection_counts = get_crowd_selection_counts(input_task_id, task_runs_json)
@@ -295,27 +308,38 @@ def main(args):
 
         # Update user
         pdebug("  wms_url   = %s" % task_attributes['wms_url'][:40] + ' ...(truncated...)')
+        pdebug("  latitude  = %s" % str(task_attributes['latitude']))
+        pdebug("  longitude = %s" % str(task_attributes['longitude']))
         pdebug("  id        = %s" % task_attributes['id'])
+        pdebug("  site_id   = %s" % task_attributes['site_id'])
+        pdebug("  county    = %s" % task_attributes['county'])
+        pdebug("  year      = %s" % str(task_attributes['year']))
+        pdebug("  location  = %s" % task_attributes['location'])
         pdebug("  n_unk_res = %s" % str(task_attributes['n_unk_res']))
         pdebug("  n_frk_res = %s" % str(task_attributes['n_frk_res']))
         pdebug("  n_oth_res = %s" % str(task_attributes['n_oth_res']))
         pdebug("  n_tot_res = %s" % str(task_attributes['n_tot_res']))
         pdebug("  crowd_sel = %s" % task_attributes['crowd_sel'])
+        #pdebug("  qaqc      = %s" % task_attributes['qaqc'])  # Currently a manual process so it has no key to populate
         pdebug("  p_crd_a   = %s" % str(task_attributes['p_crd_a']))
         pdebug("  p_s_crd_a = %s" % str(task_attributes['p_s_crd_a']))
-        pdebug("  latitude  = %s" % str(task_attributes['latitude']))
-        pdebug("  longitude = %s" % str(task_attributes['longitude']))
-        pdebug("  county    = %s" % task_attributes['county'])
-        pdebug("  year      = %s" % str(task_attributes['year']))
         pdebug("")
 
         # Create the feature
         feature = ogr.Feature(layer.GetLayerDefn())
         pdebug("Defined feature")
-        feature.SetField('wms_url', task_attributes['wms_url'])
-        pdebug("Set wms_url")
         feature.SetField('id', task_attributes['id'])
         pdebug("Set id")
+        feature.SetField('site_id', task_attributes['site_id'])
+        pdebug("Set site_id")
+        feature.SetField('wms_url', task_attributes['wms_url'])
+        pdebug("Set wms_url")
+        feature.SetField('county', task_attributes['county'])
+        pdebug("Set county")
+        feature.SetField('year', task_attributes['year'])
+        pdebug("Set year")
+        feature.SetField('location', task_attributes['location'])
+        pdebug("Set location")
         feature.SetField('n_unk_res', task_attributes['n_unk_res'])
         pdebug("Set n_unk_res")
         feature.SetField('n_frk_res', task_attributes['n_frk_res'])
@@ -326,14 +350,13 @@ def main(args):
         pdebug("Set n_tot_res")
         feature.SetField('crowd_sel', task_attributes['crowd_sel'])
         pdebug("Set crowd_sel")
+        # This is currently a manual process, thus there is no qaqc key in task_attributes
+        #feature.SetFID('qaqc', task_attributes['qaqc'])
+        #pdebug("Set qaqc")
         feature.SetField('p_crd_a', task_attributes['p_crd_a'])
         pdebug("Set p_crd_a")
         feature.SetField('p_s_crd_a', task_attributes['p_s_crd_a'])
         pdebug("Set p_s_crd_a")
-        feature.SetField('county', task_attributes['county'])
-        pdebug("Set county")
-        feature.SetField('year', task_attributes['year'])
-        pdebug("Set year")
         wkt = "POINT(%f %f)" % (float(task_attributes['longitude']), float(task_attributes['latitude']))
         point = ogr.CreateGeometryFromWkt(wkt)
         pdebug("Created geometry")
