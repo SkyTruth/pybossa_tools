@@ -16,3 +16,4 @@ data
 reports/*
 .DS_Store
 *.csv
+.idea

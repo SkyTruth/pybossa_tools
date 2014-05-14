@@ -1,53 +1,81 @@
 {% extends "categorizer/tutorial.html" %}
 
-{% block steps %}
-   <div class="step">
-     <h2>Drill pad identification</h2>
-     <p><strong>Hi!</strong> This is an application to help classify drill pads into different categories for <a href="http://skytruth.org">SkyTruth</a>.</p>
-     <p>The application is really simple. It loads a map with satelite imagery and asks you to select what type of drill pad you see in the image.</p>
-   </div>
-
-   <div class="step">
-     <h2>What the different drill pad types look like</h2>
-     <div class="row">
-       <div class="span4">
-         <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/well+pad+examples/empty+well+pads/2010tioga_spudbuffer21.png" class="img-polaroid">
-         <button class="btn btn-success">Grass</button>
-       </div>
-       <div class="span4">
-         <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/well+pad+examples/empty+well+pads/2010tioga_spudbuffer16.png" class="img-polaroid">
-         <button class="btn">Gravel</button>
-       </div>
-       <div class="span4">
-         <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/well+pad+examples/well+pads+w_equipment/2010tioga_spudbuffer34.png" class="img-polaroid">
-         <button class="btn btn-inverse">Drill rigg</button>
-       </div>
-     </div>
-
-     <br />
-
-     <div class="row">
-       <div class="span4">
-         <img src="http://images.nationalgeographic.com/wpf/media-live/photos/000/036/cache/drill-pads-ludwig_3684_990x742.jpg" class="img-polaroid">
-         <button class="btn btn-info">Frack tank</button>
-       </div>
-       <div class="span4">
-         <img src="https://s3-us-west-2.amazonaws.com/drillpadcat/data/Tioga/well+pad+examples/no+pad+visible/2010tioga_spudbuffer136.png" class="img-polaroid">
-         <button class="btn btn-danger">No pad visible</button>
-       </div>
-     </div>
-   </div>
-
-   <div class="step">
-     <h2>How to select drill pad type</h2>
-     <p>Click on the buttons in the bottom right of the image corresponding to what you see in the image. You can zoom and pan the map to see more details.</p>
-     <img src="http://farm8.staticflickr.com/7285/8737303873_ac0bd171b8_b_d.jpg" class="img-polaroid">
-   </div>
+{% block page_styles %}
+  {{block.super}}
+  {% include "categorizer-pad/tutorial.css" %}
 {% endblock %}
 
+{% block steps %}
+
+   <div class="step">
+     <h2>Finding Well Pads</h2>
+
+     <p><strong>Hi!</strong> This is an application to help <a href="http://skytruth.org" target="_blank">SkyTruth</a> observe images of sites where drilling and fracking has occured or will occur in the future.</p>
+     
+     <p>The application is really simple. It loads a map with aerial imagery and asks you to select a category that best describes what you see in the image.</p>
+     
+     <p> <a  href="/app/{{short_name}}/newtask">No thanks, I've done this before. I'm ready to start.</a></p>
+   </div>
+
+
+
+  <div class="step">
+    <h2>No Pad Visible</h2>
+    <p>This is a site where a drilling permit has been issued but no preparation for drilling has taken place yet.  Sometimes you may see a clearing in the forest which might look like a drilling area, also known as a well pad, but if you don't see an access road, then it is not a well pad.</p>
+    <p>For images like this, please indicate that there is <button class="btn btn-success btn-small">No Pad</button></p>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/no-pad-visible-1.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/no-pad-visible-2.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/no-pad-visible-3.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h2>Bare Pad</h2>
+    <p>This is a site where a well pad has been prepared for drilling, but there was no drilling equipment on site at the time the image was captured. A bare pad will be roughly rectangular and appear close to the center of the image, with an access road visible and partially or completely clear of vegetation. Usually they are covered in bare dirt or gravel. You may also see an artificial water storage pond.</p>
+    <p>For images like this, mark it as a <button class="btn btn-inverse btn-small">Well Pad</button></p>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/bare-pad-1.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/bare-pad-2.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/bare-pad-3.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h2>Pad with Equipment</h2>
+    <p>This is a site where drilling equipment is present, indicating that drilling activity was taking place at the time the image was captured.</p>
+    <p>For images like these, mark <button class="btn btn-inverse btn-small">Well Pad</button></p>
+    <div class="row">
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/pad-equipment-1.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/pad-equipment-2.png" class="img-polaroid">
+      </div>
+      <div class="span4">
+        <img src="/app/{{short_name}}/static/img/examples/pad-equipment-3.png" class="img-polaroid">
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
+   
 {% block testrun_description %}
   <h2>Test run</h2>
-  <p>Pleasy try to mark any drill pads you see below. <span id="mapcomment"></span></p>
+  <p>Select the option that best describes the site identified by the crosshairs.<br/>If you see a wellpad near the site you are looking at, but the crosshairs aren't really on it, just mark the site "Not Sure". <span id="mapcomment"></span></p>
 {% endblock %}
 
 {% block row %}
@@ -55,5 +83,10 @@
 {% endblock %}
 
 {% block tasks %}
-  {"longitude":-77.295721, "latitude": 41.83096, "size": 200, "url":"http://raster.nationalmap.gov/ArcGIS/services/Orthoimagery/USGS_EDC_Ortho_NAIP/ImageServer/WMSServer", "options":{"request":"getMap", "service":"WMS", "transparent": true}, "answer": "grass"}
+  {"url": "https://mapsengine.google.com/06136759344167181854-06191489742681286724-4/wms/", "longitude": -76.9252, "county": "Tioga", "state": "PA", "siteID": "def69ddd-d528-53f3-aa69-60ee4e4fe1a8", "year": 2010, "latitude": 41.9063, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "size": 200, "answer": "pad"},
+  {"url": "https://mapsengine.google.com/06136759344167181854-06191489742681286724-4/wms/", "longitude": -77.2906, "county": "Tioga", "state": "PA", "siteID": "f0137364-26ef-5ff7-960d-69f92d7b45cc", "year": 2010, "latitude": 41.6453, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "size": 200, "answer": "nopad"},
+  {"url": "https://mapsengine.google.com/06136759344167181854-06191489742681286724-4/wms/", "longitude": -77.1201, "county": "Tioga", "state": "PA", "siteID": "cf151868-e99b-5b54-849c-fcf59a354462", "year": 2010, "latitude": 41.6894, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "size": 200, "answer": "pad"},
+  {"url": "https://mapsengine.google.com/06136759344167181854-00219351362547715467-4/wms/", "longitude": -77.4097, "county": "Tioga", "state": "PA", "siteID": "f258d929-b41b-53f7-8f53-8b3f2524e255", "year": 2008, "latitude": 41.7708, "options": {"layers": "06136759344167181854-03760408159960746743-4", "version": "1.3.0"}, "size": 200, "answer": "nopad"},
+  {"url": "https://mapsengine.google.com/06136759344167181854-06191489742681286724-4/wms/", "longitude": -77.5275, "county": "Tioga", "state": "PA", "siteID": "a14c83a0-0986-552a-bc33-8520d640871e", "year": 2010, "latitude": 41.6886, "options": {"layers": "06136759344167181854-16779344390631852423-4", "version": "1.3.0"}, "size": 200, "answer": "pad"},
+  {"url": "https://mapsengine.google.com/06136759344167181854-00219351362547715467-4/wms/", "longitude": -76.332, "county": "Columbia", "state": "PA", "siteID": "c5ee0173-5c21-5932-9f33-af891bf2c0e0", "year": 2008, "latitude": 41.2842, "options": {"layers": "06136759344167181854-01260649250125878906-4", "version": "1.3.0"}, "size": 200, "answer": "nopad"}
 {% endblock %}
