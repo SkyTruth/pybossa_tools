@@ -66,6 +66,9 @@ Page.prototype.validateMapStep = function() {
     page.initializedSteps[page.step].task++;
     page.setMapTask(page.step);
     page.stayOnStep = true;
+  } else {
+    $(".btn-answer").attr({disabled: false})
+    $(".loading").hide();
   }
 }
 Page.prototype.validateStep = function() {
