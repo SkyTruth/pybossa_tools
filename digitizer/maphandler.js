@@ -77,7 +77,9 @@ App.prototype.getAnswer = function(isDone) {
   if ((isDone || app.answer.selection == "done") && drillpads.features.length > 0) {
     var geojson = new OpenLayers.Format.GeoJSON();
     drillpads.mod.deactivate();
-    app.answer.shape = JSON.parse(geojson.write(drillpads.features[0].geometry));
+    app.answer.shapes = drillpads.features.map(function(feature) {
+      return JSON.parse(geojson.write(feature.geometry));
+    });
     drillpads.mod.activate();
   }
   return app.answer;
