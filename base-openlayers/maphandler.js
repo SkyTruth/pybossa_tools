@@ -62,7 +62,7 @@ App.prototype.init = function (cb) {
   });
   app.cookieToExpander();
   $('.btn-answer').on('click', function(evt) {
-    app.answer = {"selection": evt.target.value};
+    app.answer = {"selection": evt.currentTarget.value};
     $(".btn-answer").attr({disabled: true});
     $(".loading").show();
     app.page.reportAnswer();
