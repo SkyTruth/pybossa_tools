@@ -1,0 +1,12 @@
+{% extends "categorizer/tutorial.html" %}
+
+{% block row %}
+  {% include "categorizer-tracksection/row.html" %}
+{% endblock %}
+
+{% block page_libraries %}
+  {{block.super}}
+  <script>
+    {% include "categorizer-tracksection/maphandler.js" %}
+  </script>
+{% endblock %}
