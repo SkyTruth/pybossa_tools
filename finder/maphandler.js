@@ -111,14 +111,14 @@ App.prototype.loadGuide = function() {
   ]);
 }
 
-App.prototype.getAnswer = function() {
+App.prototype.getAnswer = function(cb) {
   var app = this;
-  return {
+  cb({
     "positions": app.map.getLayer('drillpads').markers.map(function (marker) {
       return marker.lonlat;
     }),
     "done": {
       "positions": app.map.getLayer('drillpads').markers.length
     }
-  };
+  });
 }

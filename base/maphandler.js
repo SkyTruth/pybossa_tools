@@ -97,8 +97,8 @@ App.prototype.cookieToExpander = function() {
   }
 }
 
-App.prototype.getAnswer = function() {
-  return this.answer;
+App.prototype.getAnswer = function(cb) {
+  cb(this.answer);
 }
 
 App.prototype.addBadge = function(badge, popup) {
@@ -147,5 +147,7 @@ Page.prototype.init = function (app, cb) {
 };
 Page.prototype.reportAnswer = function () {
   // This should be overridden by a real page...
-  console.log(page.app.getAnswer());
+  page.app.getAnswer(function (answer) {
+    console.log(answer);
+  });
 };

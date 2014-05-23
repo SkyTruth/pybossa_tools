@@ -1,0 +1,12 @@
+{% extends "base/tutorial.html" %}
+
+{% block base_libraries %}
+  {{ block.super }}
+  <script>
+    {% include "base-vectorvisual/maphandler.js" %}
+  </script>
+{% endblock %}
+
+{% block row %}
+  {% include "base-vectorvisual/row.html" %}
+{% endblock %}

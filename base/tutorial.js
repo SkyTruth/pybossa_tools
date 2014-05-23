@@ -53,60 +53,86 @@ Page.prototype.initializeStep = function() {
     }
   }
 }
-Page.prototype.validateMapStep = function() {
+Page.prototype.validateMapStep = function(cb) {
   var info = page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task];
-  var answer = page.app.getAnswer();
-  if (answer == undefined || answer.selection == undefined) {
-    page.errs.push("Please use one of the buttons at the bottom of the image to indicate the type of drill pad your see.");
-  } else if (answer.selection != info.answer) {
-    page.errs.push("You selected " + answer.selection + " while the correct answer was " + info.answer);
-  }
+  page.app.getAnswer(function (answer) {
+    if (answer == undefined || answer.selection == undefined) {
+      page.errs.push("Please use one of the buttons at the bottom of the image to indicate the type of drill pad your see.");
+    } else if (answer.selection != info.answer) {
+      page.errs.push("You selected " + answer.selection + " while the correct answer was " + info.answer);
+    }
 
-  if (page.errs.length == 0 && page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
-    page.initializedSteps[page.step].task++;
-    page.setMapTask(page.step);
-    page.stayOnStep = true;
-  } else {
-    $(".btn-answer").attr({disabled: false})
-    $(".loading").hide();
+    if (page.errs.length == 0 && page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
+      page.initializedSteps[page.step].task++;
+      page.setMapTask(page.step);
+      page.stayOnStep = true;
+    } else {
+      $(".btn-answer").attr({disabled: false})
+      $(".loading").hide();
+    }
+    cb();
   }
 }
-Page.prototype.validateStep = function() {
+Page.prototype.validateStep = function(cb) {
   var page = this;
   page.errs = [];
   page.stayOnStep = false;
-  if ($("#" + page.step).hasClass("mapstep")) {
-    page.validateMapStep();
-  }
-  if (page.stayOnStep) return false;
-  $(".maperrors .popover-content").html("");
-console.log(page.errs);
-  page.errs.map(function (item) {
-    $(".maperrors .popover-content").append(item)
+
+  async.series([
+    function (cb) {
+      if ($("#" + page.step).hasClass("mapstep")) {
+        page.validateMapStep(cb);
+      } else {
+        cb();
+      }
+    },
+    function (cb) {
+      if (page.stayOnStep) return cb(null, false);
+      $(".maperrors .popover-content").html("");
+      console.log(page.errs);
+      page.errs.map(function (item) {
+        $(".maperrors .popover-content").append(item)
+      });
+      if (page.errs.length > 0) {
+        $(".maperrors").show();
+      } else {
+        $(".maperrors").hide();
+      }
+      cb(null, page.errs.length == 0);
+    }
+  ],
+  function (err, res) {
+    cb(res);
   });
-  if (page.errs.length > 0) {
-    $(".maperrors").show();
-  } else {
-    $(".maperrors").hide();
-  }
-  return page.errs.length == 0;
 }
 Page.prototype.showStep = function(action) {
   var page = this;
   var oldstep = page.step;
+  async.series([
+    function (cb) {
+      if (action == 'next') {
+        page.validateStep(function (valid) {
+          if (valid) cb();
+        });
+      } else {
+        cb();
+      }
+    },
+    function (cb) {
+      if (action == 'next') {
+        page.step = page.step + 1;
+      }
+      if (action == 'prev') {
+        page.step = page.step - 1;
+      }
 
-  if (action == 'next') {
-    if (!page.validateStep()) return;
-    page.step = page.step + 1;
-  }
-  if (action == 'prev') {
-    page.step = page.step - 1;
-  }
-
-  $("#" + oldstep).hide();
-  $("#prevBtn").toggle(page.step != 0);
-  $("#nextBtn").toggle(page.step != page.nrofsteps - 1);
-  $("#startContrib").toggle(page.step == page.nrofsteps - 1);
-  $("#" + page.step).show();
-  page.initializeStep();
+      $("#" + oldstep).hide();
+      $("#prevBtn").toggle(page.step != 0);
+      $("#nextBtn").toggle(page.step != page.nrofsteps - 1);
+      $("#startContrib").toggle(page.step == page.nrofsteps - 1);
+      $("#" + page.step).show();
+      page.initializeStep();
+      cb();
+    }
+  ]);
 }

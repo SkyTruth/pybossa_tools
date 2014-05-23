@@ -1,0 +1,6 @@
+{
+    "name": "GPS/AIS track classification",
+    "thumbnail": "http://upload.wikimedia.org/wikipedia/commons/d/d4/AIS_Manche_Est.png",
+    "description": "GPS/AIS track classification",
+    "question": "Please identify the type of activity depicted in this image"
+}

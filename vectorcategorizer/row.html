@@ -1,0 +1,10 @@
+{% extends "base-vectorvisual/row.html" %}
+
+{% block buttons %}
+  <span class="btn-group">
+    {% block answers %}
+    {% endblock %}
+  </span>
+
+  {{block.super}}
+{% endblock %}
