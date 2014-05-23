@@ -10,5 +10,5 @@ App.prototype.loadGuide = function() {
   var guide = app.map.getLayer('guide');
   guide.removeAllFeatures();
 
-  app.loadGuideCircle();
+  app.loadGuideCrossHair();
 }
