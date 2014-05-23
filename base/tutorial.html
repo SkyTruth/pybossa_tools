@@ -1,0 +1,83 @@
+{% extends "base/base.html" %}
+
+{% block page_styles %}
+  {% include "base/tutorial.css" %}
+{% endblock %}
+
+{% block page_libraries %}
+  <script>
+    var maptasks = [
+      {% block tasks %}
+      {% endblock %}
+    ];
+    {% include "base/tutorial.js" %}
+  </script>    
+{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="span12">
+      {% block steps %}
+      {% endblock %}
+
+      <div class="step mapstep">
+        {% block testrun_description %}
+          <h2>Test run</h2>
+          <p><span id="mapcomment"></span></p>
+        {% endblock %}
+
+        <div class="mapbubble left">
+          <div class="popover left">
+            <div class="arrow"></div>
+            <h3 class="popover-title">Moving around</h3>
+            <div class="popover-content">
+              <p>You can use the mouse wheel and the + and - keys to zoom, as well as click/drag and arrow keys to pan the map.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mapbubble maperrors">
+          <div class="popover right">
+            <div class="arrow"></div>
+            <div class="popover-content">
+            </div>
+          </div>
+        </div>
+
+        <div class="mapbubble right">
+          <div class="popover right">
+            <div class="arrow"></div>
+            <h3 class="popover-title">The task box</h3>
+            <div class="popover-content">
+              <p>Click <i class="icon-plus-sign"></i> to maximize the task box to see more information on this site.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mapbubble bottom">
+          <div class="popover bottom">
+            <div class="arrow"></div>
+            <div class="popover-content">
+              <p>You can revisit the tutorial at any time.</p>
+            </div>
+          </div>
+        </div>
+
+        {% block row %}
+          {% include "base/row.html" %}
+        {% endblock %}
+      </div>
+
+      <div class="step">
+        <h2>On your mark, get set, go!</h2>
+        Thank you, you are now ready to begin helping out!
+      </div>
+
+      <div class="navigation">
+        <a id="prevBtn" href="#" onclick="javascript:void(0);" class="btn">Previous</a>
+        <a id="nextBtn" href="#" onclick="javascript:void(0);" class="btn btn-success">Next</a>
+        <a id="startContrib" href="../{{short_name}}/newtask" class="btn btn-primary"><i class="icon-thumbs-up"></i> Start helping out</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

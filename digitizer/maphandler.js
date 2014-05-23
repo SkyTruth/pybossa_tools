@@ -70,7 +70,7 @@ App.prototype.loadGuide = function() {
   }
 }
 
-App.prototype.getAnswer = function(isDone) {
+App.prototype.getAnswer = function(cb, isDone) {
   var app = this;
   var drillpads = app.map.getLayer('drillpads');
   if (!app.answer) app.answer = {};
@@ -82,7 +82,7 @@ App.prototype.getAnswer = function(isDone) {
     });
     drillpads.mod.activate();
   }
-  return app.answer;
+  cb(app.answer);
 }
 
 App.prototype.updateMap = function(info) {

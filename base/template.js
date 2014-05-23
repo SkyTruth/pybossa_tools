@@ -198,30 +198,31 @@ Page.prototype.reportAnswer = function () {
   data.times.reportAnswer = now;
   page.setCookieData(data);
 
-  var answer = page.app.getAnswer();
-  answer.timings = data.timings;
-  if (answer.done == undefined) answer.done = {};
-  if (answer.done.tasks == undefined) answer.done.tasks = 1;
+  page.app.getAnswer(function (answer) {
+    answer.timings = data.timings;
+    if (answer.done == undefined) answer.done = {};
+    if (answer.done.tasks == undefined) answer.done.tasks = 1;
 
-  page.storeDatas(
-    {
-      "user_id": -1,
-      "app_id": -1,
-      "task_id": -1,
-      "amounts": answer.done
-    },
-    function(err) {
-      page.generateAttaGirl();
-      pybossa.saveTask(page.task.id, answer).done(function() {
-        page.deferred.resolve();
-      });
+    page.storeDatas(
+      {
+        "user_id": -1,
+        "app_id": -1,
+        "task_id": -1,
+        "amounts": answer.done
+      },
+      function(err) {
+        page.generateAttaGirl();
+        pybossa.saveTask(page.task.id, answer).done(function() {
+          page.deferred.resolve();
+        });
+      }
+    );
+
+    if ($("#disqus_thread").is(":visible")) {
+      $('#disqus_thread').toggle();
+      $('.btn-disqus').toggle();
     }
-  );
-
-  if ($("#disqus_thread").is(":visible")) {
-    $('#disqus_thread').toggle();
-    $('.btn-disqus').toggle();
-  }
+  });
 };
 Page.prototype.presentTask = function(task, deferred) {
   var page = this;

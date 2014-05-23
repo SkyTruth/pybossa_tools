@@ -1,0 +1,14 @@
+{% extends "base/template.html" %}
+
+{% block base_libraries %}
+  <script src="/app/{{short_name}}/static/easyXDM.min.js"></script>
+  <script src="/app/{{short_name}}/static/remote.js"></script>
+  {{ block.super }}
+  <script>
+    {% include "base-vectorvisual/maphandler.js" %}
+  </script>
+{% endblock %}
+
+{% block row %}
+  {% include "base-vectorvisual/row.html" %}
+{% endblock %}

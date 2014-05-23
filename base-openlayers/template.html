@@ -1,89 +1,14 @@
-{% extends "base-openlayers/base.html" %}
+{% extends "base/template.html" %}
 
-{% block page_styles %}
-  {% include "base-openlayers/template.css" %}
-{% endblock %}
-
-{% block page_libraries %}
+{% block base_libraries %}
+  {{ block.super }}
+  <script src="http://openlayers.org/api/OpenLayers.js"></script>
+  <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
   <script>
-    {% include "base-openlayers/template.js" %}
+    {% include "base-openlayers/maphandler.js" %}
   </script>
 {% endblock %}
 
-{% block js-templates %}
-  {{ block.super }}
-  <div class="atta-boy-messages">
-    {% block atta-boy-messages %}
-      {% include "base-openlayers/atta-boy.html" %}
-    {% endblock %}
-  </div>
+{% block row %}
+  {% include "base-openlayers/row.html" %}
 {% endblock %}
-
-{% block body %}
-  <div class="row">
-      <div class="span6 offset2">
-          <div id="success" class="alert alert-success" style="display:none;">
-              <a class="close">×</a>
-              <strong>Well done!</strong> Your answer has been saved
-          </div>
-          <div id="taskcompleted" class="alert alert-info" style="display:none;">
-              <strong>The task has been completed!</strong> Thanks a lot!
-          </div>
-          <div id="error" class="alert alert-error" style="display:none;">
-              <a class="close">×</a>
-              <strong>Error!</strong> Something went wrong, please contact the site administrators
-          </div>
-      </div>
-  </div>
-
-  <div class="row skeleton">
-    {% block row %}
-      {% include "base-openlayers/row.html" %}
-    {% endblock %}
-  </div>
-
-  <div class="all-done">
-    {% block all-done %}
-      {% block all-done-header %}
-        <div class="row">
-          <div class="span12">
-            <h1><i class="icon-thumbs-up"></i>Good Job! You finished them all!</h1>
-
-            <p>You did <span class="done-tasks-display">0</span> tasks!
-
-            <p>Please come back again to do more <a target="_blank" href="http://skytruth.org/issues/skytruthing/">skytruthing</a>. To learn more and share this project with your friends, visit the project homepage:</p>
-
-            <p> <a target="_blank" href="http://frack.skytruth.org/frackfinder">http://frack.skytruth.org/frackfinder</a></p>
-          </div>
-        </div>
-      {% endblock %}
-
-      {% block all-done-next-tasks %}
-        {% include "base-openlayers/next-tasks.html" %}
-      {% endblock %}
-    {% endblock %}
-  </div>
-
-
-  <div class="done-for-now">
-    {% block done-for-now %}
-      {% block done-for-now-header %}
-        <div class="row">
-          <div class="span12">
-            <h1><i class="icon-thumbs-up"></i>Thank you for your contribution!</h1>
-
-            <p>You did <span class="done-tasks-display">0</span> tasks!
-
-            <p>Please come back again to do more <a target="_blank" href="http://skytruth.org/issues/skytruthing/">skytruthing</a>. To learn more and share this project with your friends, visit the project homepage:</p>
-
-            <p><a target="_blank" href="http://frack.skytruth.org/frackfinder">http://frack.skytruth.org/frackfinder</a></p>
-          </div>
-        </div>
-      {% endblock %}
-
-      {% block done-for-now-next-tasks %}
-        {% include "base-openlayers/next-tasks.html" %}
-      {% endblock %}
-    {% endblock %}
-  </div>
-{% endblock%}
