@@ -1,5 +1,10 @@
 {% extends "vectorcategorizer/row.html" %}
 
+{% block task-contents %}
+  <div class="sidebar"></div>
+  {{block.super}}
+{% endblock %}
+
 {% block answers %}
   <button class="btn btn-danger btn-answer" value="normal">Non-fishing</button>
   <button class="btn btn-success btn-answer" value="fishing">Fishing</button>
