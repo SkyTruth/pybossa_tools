@@ -8,20 +8,20 @@
 {% block steps %}
 
    <div class="step">
-     <h2>Finding Well Pads</h2>
+     <h2>TUTORIAL - Finding Well Pads</h2>
 
-     <p><strong>Hi!</strong> This is an application to help <a href="http://skytruth.org" target="_blank">SkyTruth</a> observe images of sites where drilling and fracking has occured or will occur in the future.</p>
+     <p><strong>Hi!</strong> This tutorial will teach you how to help <a href="http://skytruth.org" target="_blank">SkyTruth</a> analyze sites where drilling and fracking is permitted or has already happened.</p>
      
      <p>The application is really simple. It loads a map with aerial imagery and asks you to select a category that best describes what you see in the image.</p>
      
-     <p> <a  href="/app/{{short_name}}/newtask">No thanks, I've done this before. I'm ready to start.</a></p>
+     <p> No thanks, I've already passed the tutorial. <a  href="/app/{{short_name}}/newtask">I'm ready to start.</a></p>
    </div>
 
 
 
   <div class="step">
-    <h2>No Pad Visible</h2>
-    <p>This is a site where a drilling permit has been issued but no preparation for drilling has taken place yet.  Sometimes you may see a clearing in the forest which might look like a drilling area, also known as a well pad, but if you don't see an access road, then it is not a well pad.</p>
+    <h2>TUTORIAL - No Pad Visible</h2>
+    <p>This is a site where a drilling permit has been issued, but there is no well pad and drilling hasn't happened yet.  Sometimes you may see an empty clearing in the forest, but if you don't see an access road and a big, flat gravel parking lot, then it is not a well pad. Yet.</p>
     <p>For images like this, please indicate that there is <button class="btn btn-success btn-small">No Pad</button></p>
     <div class="row">
       <div class="span4">
@@ -37,8 +37,8 @@
   </div>
   
   <div class="step">
-    <h2>Bare Pad</h2>
-    <p>This is a site where a well pad has been prepared for drilling, but there was no drilling equipment on site at the time the image was captured. A bare pad will be roughly rectangular and appear close to the center of the image, with an access road visible and partially or completely clear of vegetation. Usually they are covered in bare dirt or gravel. You may also see an artificial water storage pond.</p>
+    <h2>TUTORIAL - Well Pad (Part I)</h2>
+    <p>A well pad is a site that has been cleared, leveled-off, and covered in gravel to allow drilling and fracking to occur. Most well pads you will see will be roughly rectangular and appear close to the center of the image, have a visible access road and be and partially or completely clear of vegetation.</p>
     <p>For images like this, mark it as a <button class="btn btn-inverse btn-small">Well Pad</button></p>
     <div class="row">
       <div class="span4">
@@ -54,8 +54,8 @@
   </div>
   
   <div class="step">
-    <h2>Pad with Equipment</h2>
-    <p>This is a site where drilling equipment is present, indicating that drilling activity was taking place at the time the image was captured.</p>
+    <h2>TUTORIAL - Well Pad (Part II)</h2>
+    <p>Sometimes you get lucky and find a wellpad right in the middle of a drilling or fracking operation. There will be trucks and equipment everywhere, so just imagine living next to all that noise, dust, and traffic for weeks at a time. But for the purpose of our study, these sites are simply "well pads," just like the empty ones.</p>
     <p>For images like these, mark <button class="btn btn-inverse btn-small">Well Pad</button></p>
     <div class="row">
       <div class="span4">
@@ -74,8 +74,8 @@
 {% endblock %}
    
 {% block testrun_description %}
-  <h2>Test run</h2>
-  <p>Select the option that best describes the site identified by the crosshairs.<br/>If you see a wellpad near the site you are looking at, but the crosshairs aren't really on it, just mark the site "Not Sure". <span id="mapcomment"></span></p>
+  <h2>TUTORIAL - Practice run</h2>
+  <p>Select the option that best describes the site contained in the circle.<br/>If we show you a task with a well pad that isn't anywhere near the center or just looks really weird, just mark the site "Not Sure". <span id="mapcomment"></span></p>
 {% endblock %}
 
 {% block row %}
