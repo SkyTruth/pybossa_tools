@@ -71,8 +71,8 @@ Page.prototype.validateMapStep = function(cb) {
       $(".loading").hide();
     }
     cb();
-  }
-}
+  });
+};
 Page.prototype.validateStep = function(cb) {
   var page = this;
   page.errs = [];
