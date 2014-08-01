@@ -190,6 +190,10 @@ Page.prototype.loadUserProgress = function() {
 Page.prototype.reportAnswer = function () {
   var page = this;
 
+  if (typeof _gaq != 'undefined') {
+    _gaq.push(['_trackEvent', 'PyBossa', 'TutorialTask', page.app.pybossa.id + ':' + page.task.id]);
+  }
+
   var data = page.getCookieData();
   var now = (new Date).getTime();
   for (key in data.times) {

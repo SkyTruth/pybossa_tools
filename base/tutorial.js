@@ -26,6 +26,9 @@ Page.prototype.init = function (app, cb) {
   });
 };
 Page.prototype.reportAnswer = function () {
+  if (typeof _gaq != 'undefined') {
+    _gaq.push(['_trackEvent', 'PyBossa', 'TutorialTask', page.app.pybossa.id + ':tutorial:' + page.initializedSteps[page.step].task]);
+  }
   this.showStep('next');
 };
 Page.prototype.setMapTask = function () {
