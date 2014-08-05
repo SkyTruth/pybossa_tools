@@ -48,6 +48,21 @@ Page.prototype.initializeStep = function() {
       page.initializedSteps[page.step].tasks = maptasks;
       page.app.loadMap();
       page.setMapTask();
+
+      $('.expander-control').popover({html: true, content: 'Click <i class="icon-plus-sign"></i> to maximize the task box to see more information on this site.', title: 'The task box', trigger: "manual", placement: 'top'});
+      $('.expander-control').popover('show');
+      $(".btn").attr({disabled: "disabled"});
+
+      $(".latlonlink").click(function () {
+        $('.latlonlink').popover('hide');
+        $(".btn").removeAttr("disabled");
+      });
+      $(".expander-control").click(function () {
+        $('.expander-control').popover('hide');
+
+        $('.latlonlink').popover({content: 'Click this link to open the site in Google Maps.', title: 'Google Maps', trigger: "manual", placement: 'left'});
+        $('.latlonlink').popover('show');
+      });
     } else {
       page.initializedSteps[page.step] = true;
     }
