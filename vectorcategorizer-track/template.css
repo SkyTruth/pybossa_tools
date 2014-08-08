@@ -1,0 +1,15 @@
+.sidebar {
+  position: absolute;
+  left: 0;
+  top: 81px;
+  bottom: 0;
+  width: 160px;
+  padding: 20px;
+  background: white;
+}
+
+#map, .all-done, .done-for-now {
+  left: 200px;
+  right: 0;
+  width: auto;
+}

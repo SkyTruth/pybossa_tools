@@ -1,5 +1,17 @@
 {% extends "vectorcategorizer/template.html" %}
 
+{% block page_styles %}
+  {{block.super}}
+  {% include "vectorcategorizer-track/template.css" %}
+{% endblock %}
+
+{% block page_libraries %}
+  {{block.super}}
+  <script>
+    {% include "vectorcategorizer-track/maphandler.js" %}
+  </script>
+{% endblock %}
+
 {% block row %}
   {% include "vectorcategorizer-track/row.html" %}
 {% endblock %}
