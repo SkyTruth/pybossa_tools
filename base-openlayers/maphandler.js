@@ -53,6 +53,7 @@ App.prototype.defaultTaskSize = 200;
 App.prototype.init = function (cb) {
   var app = this;
 
+  app.imageryLayers = [];
   BaseApp.prototype.init.call(this, function (err, app) {
     if (cb) cb(null, app);
   });
@@ -159,11 +160,9 @@ App.prototype.loadMapAddControls = function() {
     new OpenLayers.Control.PanZoomBar(),
     new AppKeyboardDefaults()
   ]);
-  if (app.useMapUnderlayes) {
-    app.map.addControls([
-      new OpenLayers.Control.LayerSwitcher()
-    ]);
-  }
+  app.map.addControls([
+    new OpenLayers.Control.LayerSwitcher()
+  ]);
 }
 
 App.prototype.clearData = function() {
@@ -196,49 +195,51 @@ App.prototype.getTaskBounds = function() {
   return app.task.bounds;
 }
 
-App.prototype.loadImageryKML = function() {
+App.prototype.loadImagery_KML = function(info) {
   var app = this;
-  if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
   var imagery = new OpenLayers.Layer.Vector(
-    "Imagery",
+    info.title || "Imagery",
     {
       strategies: [new OpenLayers.Strategy.Fixed()],
       protocol: new OpenLayers.Protocol.HTTP({
-        url: app.task.data.info.url,
+        url: info.url,
         format: new OpenLayers.Format.KML($.extend({
           extractStyles: true,
           extractAttributes: true,
           maxDepth: 2
-        }, app.task.data.info.options))
+        }, info.options || {}))
       })
     }
   );
-  imagery.id = 'imagery';
+  if (info.id) imagery.id = info.id;
   app.map.addLayer(imagery);
   app.map.setLayerIndex(imagery, 0);
+  app.imageryLayers.push(imagery);
 }
-App.prototype.loadImageryWMS = function() {
+
+App.prototype.loadImagery_WMS = function(info) {
   var app = this;
-  if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
   var imagery = new OpenLayers.Layer.WMS(
-    "Imagery",
-    app.task.data.info.url,
-    app.task.data.info.options);
-  imagery.id = 'imagery';
+    info.title || "Imagery",
+    info.url,
+    info.options || {});
+  if (info.id) imagery.id = info.id;
   app.map.addLayer(imagery);
+  imagery.setIsBaseLayer(true);
   app.map.setLayerIndex(imagery, 0);
   app.map.setBaseLayer(imagery);
+  app.imageryLayers.push(imagery);
 }
-App.prototype.loadImageryIMG = function() {
+
+App.prototype.loadImagery_image = function(info) {
   // Note: This function only works if
   // app.map.getProjectionObject() == app.taskProjection
   var app = this;
-  if (app.map.getLayer('imagery')) app.map.removeLayer(app.map.getLayer('imagery'));
   var imagery = new OpenLayers.Layer.Image(
-    'imagery',
-    app.task.data.info.url,
-    OpenLayers.Bounds.fromString(app.task.data.info.bbox), // No transform here
-    new OpenLayers.Size(app.task.data.info.width, app.task.data.info.height),
+    info.title || 'Imagery',
+    info.url,
+    OpenLayers.Bounds.fromString(info.bbox), // No transform here
+    new OpenLayers.Size(info.width, info.height),
     {
       opacity: 1.0, 
       isBaseLayer: false,
@@ -246,10 +247,39 @@ App.prototype.loadImageryIMG = function() {
       alwaysInRange: true
     }
   );
+  if (info.id) imagery.id = info.id;
   app.map.addLayer(imagery);
   app.map.setLayerIndex(imagery, 1);
+  app.imageryLayers.push(imagery);
 }
-App.prototype.loadImagery = App.prototype.loadImageryWMS;
+
+App.prototype.clearImagery = function () {
+  var app = this;
+  app.imageryLayers.map(function (layer) {
+    app.map.removeLayer(layers);
+  });
+  app.imageryLayers = [];
+}
+
+App.prototype.loadImagery = function () {
+  var app = this;
+  app.clearImagery();
+
+  if (app.task.data.info.imagery) {
+    app.task.data.info.imagery.map(function (imagery) {
+      app['loadImagery_' + imagery.type](imagery);
+    });
+  }
+
+  // Backwards compatibility
+  if (app.task.data.info.url) {
+    if (app.task.data.info.width) {
+      app.loadImagery_image(app.task.data.info);
+    } else {
+      app.loadImagery_WMS(app.task.data.info);
+    }
+  }
+}
 
 App.prototype.getOneMeter = function (projection, lonlat) {
   var wgs84 = new OpenLayers.Projection("EPSG:4326");
