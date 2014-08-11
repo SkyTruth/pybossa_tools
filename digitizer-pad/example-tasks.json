@@ -1,34 +1,31 @@
-[
-  {
-    "imagery": [
-      {
-        "title": "2013",
-        "type": "WMS",
-        "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
-        "options": {"layers": "06136759344167181854-11275828430006462017-4"}
-      },
-      {
-        "title": "2010",
-        "type": "WMS",
-        "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
-        "options": {"layers": "06136759344167181854-04770958895915995837-4"}
-      },
-      {
-        "title": "2011",
-        "type": "WMS",
-        "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
-        "options": {"layers": "06136759344167181854-08224624193234342065-4"}
-      }
-    ],
+{"info":
+    {
+      "imagery": [
+        {
+          "title": "2013",
+          "type": "WMS",
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
+          "options": {"layers": "06136759344167181854-11275828430006462017-4"}
+        },
+        {
+          "title": "2010",
+          "type": "WMS",
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
+          "options": {"layers": "06136759344167181854-04770958895915995837-4"}
+        },
+        {
+          "title": "2011",
+          "type": "WMS",
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
+          "options": {"layers": "06136759344167181854-08224624193234342065-4"}
+        }
+      ],
 
-    "longitude": -81.0261239,
-    "latitude": 39.6771291,
+      "longitude": -81.0261239,
+      "latitude": 39.6771291,
 
-    "county":"Belmont",
-    "state":"OH",
-    "size":200
+      "county":"Belmont",
+      "state":"OH",
+      "size":200
   }
-]
-
-
-
+}
