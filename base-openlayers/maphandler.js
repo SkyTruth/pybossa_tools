@@ -44,7 +44,6 @@ BaseOpenlayersApp = App = function() {
 }
 App.prototype = new BaseApp();
 
-App.prototype.useMapUnderlayes = false;
 App.prototype.taskProjection = new OpenLayers.Projection("EPSG:4326");
 App.prototype.taskZoom = 1.2;
 App.prototype.taskMaxZoom = 10;
@@ -67,8 +66,6 @@ App.prototype.loadMap = function() {
   app.layers = {};
   app.loadMapAddLayers();
   app.loadMapAddControls();
-
-  app.map.zoomToMaxExtent();
 
   app.map.events.register("moveend", app, app.mapMoveEnd);
   app.mapIsLoaded = true;
@@ -101,14 +98,11 @@ App.prototype.loadMapCreateMapOptions = function () {
   var app = this;
   var options = {
     div: "map",
-    controls: []
+    controls: [],
+    fractionalZoom: true,
+    minScale: 442943842,
+    maxScale: 135
   };
-  if (!app.useMapUnderlayes) {
-    options.allOverlays = true;
-    options.fractionalZoom =  true;
-    options.minScale = 442943842;
-    options.maxScale = 135;
-  }
   return options;
 }
 
@@ -118,14 +112,6 @@ App.prototype.loadMapCreateMap = function() {
 }
 App.prototype.loadMapAddLayers = function() {
   var app = this;
-
-  if (app.useMapUnderlayes) {
-    app.layers.osm = new OpenLayers.Layer.OSM();
-    app.map.addLayer(app.layers.osm);
-
-    app.layers.gmap = new OpenLayers.Layer.Google("Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22});
-    app.map.addLayer(app.layers.gmap);
-  }
 
   app.layers.guide = new OpenLayers.Layer.Vector("Guide");
   app.layers.guide.id = "guide";
@@ -195,6 +181,20 @@ App.prototype.getTaskBounds = function() {
   return app.task.bounds;
 }
 
+App.prototype.loadImagery_underlay = function(info) {
+  var app = this;
+
+  app.layers.osm = new OpenLayers.Layer.OSM();
+  app.layers.gmap = new OpenLayers.Layer.Google("Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22});
+
+  app.map.addLayer(app.layers.osm);
+  app.map.addLayer(app.layers.gmap);
+
+  app.imageryLayers.push(app.layers.osm);
+  app.imageryLayers.push(app.layers.gmap);
+
+}
+
 App.prototype.loadImagery_KML = function(info) {
   var app = this;
   var imagery = new OpenLayers.Layer.Vector(
@@ -219,15 +219,15 @@ App.prototype.loadImagery_KML = function(info) {
 
 App.prototype.loadImagery_WMS = function(info) {
   var app = this;
+    console.log([info.title || "Imagery",
+    info.url,
+                 info.options || {}]);
   var imagery = new OpenLayers.Layer.WMS(
     info.title || "Imagery",
     info.url,
     info.options || {});
   if (info.id) imagery.id = info.id;
   app.map.addLayer(imagery);
-  imagery.setIsBaseLayer(true);
-  app.map.setLayerIndex(imagery, 0);
-  app.map.setBaseLayer(imagery);
   app.imageryLayers.push(imagery);
 }
 
