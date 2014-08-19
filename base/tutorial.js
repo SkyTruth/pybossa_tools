@@ -75,8 +75,12 @@ Page.prototype.validateMapStep = function(cb) {
   var info = page.initializedSteps[page.step].tasks[page.initializedSteps[page.step].task];
   page.app.getAnswer(function (answer) {
     if (answer == undefined || answer.selection == undefined) {
-      page.errs.push("Please use one of the buttons at the bottom of the image to indicate the type of drill pad your see.");
-    } else if (answer.selection != info.answer) {
+      page.errs.push("Please use one of the buttons at the bottom of the image to indicate the type of well pad you see.");
+    } else if (answer.selection == info.answer) {
+      //do nothing here
+    } else if (answer.selection == "unknown"){
+      page.errs.push("The correct answer is " + info.answer);
+    } else{
       page.errs.push("You selected " + answer.selection + " while the correct answer was " + info.answer);
     }
 
