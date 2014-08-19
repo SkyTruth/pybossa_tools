@@ -243,6 +243,7 @@ App.prototype.loadImagery_KML = function(info) {
   if (info.id) imagery.id = info.id;
   app.map.addLayer(imagery);
   app.map.setLayerIndex(imagery, 0);
+  if (info.active) app.map.setBaseLayer(imagery);
   app.imageryLayers.push(imagery);
 }
 
@@ -257,6 +258,7 @@ App.prototype.loadImagery_WMS = function(info) {
     info.options || {});
   if (info.id) imagery.id = info.id;
   app.map.addLayer(imagery);
+  if (info.active) app.map.setBaseLayer(imagery);
   app.imageryLayers.push(imagery);
 }
 

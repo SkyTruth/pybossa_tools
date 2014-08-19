@@ -1,31 +1,352 @@
-{"info":
-    {
+[
+  {
+    "info": {
+      "n_answers": 10, 
+      "apis": "[\"34013206570100\", \"34013206570100\", \"34013206890000\", \"34013206880000\", \"34013207060000\"]", 
+      "county": "Belmont", 
+      "year": "2013", 
+      "size": 200, 
       "imagery": [
         {
-          "title": "2013",
-          "type": "WMS",
-          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
-          "options": {"layers": "06136759344167181854-11275828430006462017-4"}
-        },
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-11275828430006462017-4"
+          },
+          "active": true,
+          "title": "2013"
+        }, 
         {
-          "title": "2010",
-          "type": "WMS",
-          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
-          "options": {"layers": "06136759344167181854-04770958895915995837-4"}
-        },
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-04770958895915995837-4"
+          }, 
+          "title": "2010"
+        }, 
         {
-          "title": "2011",
-          "type": "WMS",
-          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/",
-          "options": {"layers": "06136759344167181854-08224624193234342065-4"}
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-08224624193234342065-4"
+          }, 
+          "title": "2011"
         }
-      ],
-
-      "longitude": -81.0261239,
-      "latitude": 39.6771291,
-
-      "county":"Belmont",
-      "state":"OH",
-      "size":200
+      ], 
+      "question": "Please drag on the edges of the shape to make it fit the drill pad you see in the satellite image", 
+      "longitude": -81.12318557998131, 
+      "state": "OH", 
+      "siteID": "cd6e9f974ac443688f03ab85d36f2423", 
+      "latitude": 40.04310042000283
+    }, 
+    "state": "0", 
+    "n_answers": 30, 
+    "priority_0": 0.0, 
+    "quorum": 0, 
+    "calibration": 0, 
+    "created": "2014-08-14T15:00:02.646431", 
+    "task_runs_nr": 1, 
+    "app_id": 117, 
+    "id": 164797
+  }, 
+  {
+    "info": {
+      "n_answers": 10, 
+      "apis": "[\"34013207070000\", \"34013207070000\", \"34013207100000\", \"34013207080000\", \"34013207090000\"]", 
+      "county": "Belmont", 
+      "year": "2010", 
+      "size": 200, 
+      "imagery": [
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-11275828430006462017-4"
+          }, 
+          "title": "2013"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-04770958895915995837-4"
+          }, 
+          "active": true,
+          "title": "2010"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-08224624193234342065-4"
+          }, 
+          "title": "2011"
+        }
+      ], 
+      "question": "Please drag on the edges of the shape to make it fit the drill pad you see in the satellite image", 
+      "longitude": -81.10391526001307, 
+      "state": "OH", 
+      "siteID": "edadb19694d745c2ba5662846008df2d", 
+      "latitude": 40.05665732001031
+    }, 
+    "state": "0", 
+    "n_answers": 30, 
+    "priority_0": 0.0, 
+    "quorum": 0, 
+    "calibration": 0, 
+    "created": "2014-08-14T15:00:04.312528", 
+    "task_runs_nr": 0, 
+    "app_id": 117, 
+    "id": 164801
+  }, 
+  {
+    "info": {
+      "n_answers": 10, 
+      "apis": "[\"34013206620000\", \"34013206620000\", \"34013207870000\"]", 
+      "county": "Belmont", 
+      "year": "2010", 
+      "size": 200, 
+      "imagery": [
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-11275828430006462017-4"
+          }, 
+          "title": "2013"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-04770958895915995837-4"
+          }, 
+          "active": true,
+          "title": "2010"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-08224624193234342065-4"
+          }, 
+          "title": "2011"
+        }
+      ], 
+      "question": "Please drag on the edges of the shape to make it fit the drill pad you see in the satellite image", 
+      "longitude": -80.89066953333271, 
+      "state": "OH", 
+      "siteID": "11f1261a29504e2484f9737d8f9d9f82", 
+      "latitude": 40.00030160000098
+    }, 
+    "state": "0", 
+    "n_answers": 30, 
+    "priority_0": 0.0, 
+    "quorum": 0, 
+    "calibration": 0, 
+    "created": "2014-08-14T15:00:03.134937", 
+    "task_runs_nr": 0, 
+    "app_id": 117, 
+    "id": 164798
+  }, 
+  {
+    "info": {
+      "n_answers": 10, 
+      "apis": "[\"34013207190000\", \"34013207190000\", \"34013207250000\", \"34013207260000\", \"34013207270000\", \"34013207280000\"]", 
+      "county": "Belmont", 
+      "year": "2011", 
+      "size": 200, 
+      "imagery": [
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-11275828430006462017-4"
+          }, 
+          "title": "2013"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-04770958895915995837-4"
+          }, 
+          "title": "2010"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-08224624193234342065-4"
+          }, 
+          "active": true,
+          "title": "2011"
+        }
+      ], 
+      "question": "Please drag on the edges of the shape to make it fit the drill pad you see in the satellite image", 
+      "longitude": -81.19592248336234, 
+      "state": "OH", 
+      "siteID": "a7f955c1edd14c5d8ea07ce719ea3ef0", 
+      "latitude": 39.98479326667839
+    }, 
+    "state": "0", 
+    "n_answers": 30, 
+    "priority_0": 0.0, 
+    "quorum": 0, 
+    "calibration": 0, 
+    "created": "2014-08-14T15:00:04.636705", 
+    "task_runs_nr": 0, 
+    "app_id": 117, 
+    "id": 164802
+  }, 
+  {
+    "info": {
+      "n_answers": 10, 
+      "apis": "[\"34013206580100\", \"34013206580100\", \"34013206910000\", \"34013206900000\", \"34013206970000\"]", 
+      "county": "Belmont", 
+      "year": "2010", 
+      "size": 200, 
+      "imagery": [
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-11275828430006462017-4"
+          }, 
+          "title": "2013"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-04770958895915995837-4"
+          }, 
+          "active": true,
+          "title": "2010"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-08224624193234342065-4"
+          }, 
+          "title": "2011"
+        }
+      ], 
+      "question": "Please drag on the edges of the shape to make it fit the drill pad you see in the satellite image", 
+      "longitude": -81.14578476002512, 
+      "state": "OH", 
+      "siteID": "31b7ca2e5e254a89b0c466777a147cfe", 
+      "latitude": 40.032679600008166
+    }, 
+    "state": "0", 
+    "n_answers": 30, 
+    "priority_0": 0.0, 
+    "quorum": 0, 
+    "calibration": 0, 
+    "created": "2014-08-14T15:00:04.966409", 
+    "task_runs_nr": 0, 
+    "app_id": 117, 
+    "id": 164803
+  }, 
+  {
+    "info": {
+      "n_answers": 10, 
+      "apis": "[\"34013206740000\", \"34013206740000\", \"34013207040000\", \"34013207030000\", \"34013207020000\", \"34013207010000\"]", 
+      "county": "Belmont", 
+      "year": "2011", 
+      "size": 200, 
+      "imagery": [
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-11275828430006462017-4"
+          }, 
+          "title": "2013"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-04770958895915995837-4"
+          }, 
+          "title": "2010"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-08224624193234342065-4"
+          }, 
+          "active": true,
+          "title": "2011"
+        }
+      ], 
+      "question": "Please drag on the edges of the shape to make it fit the drill pad you see in the satellite image", 
+      "longitude": -81.20745879996453, 
+      "state": "OH", 
+      "siteID": "c2f74b0f400d48058ea58a8815578ef8", 
+      "latitude": 39.93844720001737
+    }, 
+    "state": "0", 
+    "n_answers": 30, 
+    "priority_0": 0.0, 
+    "quorum": 0, 
+    "calibration": 0, 
+    "created": "2014-08-14T15:00:03.547635", 
+    "task_runs_nr": 0, 
+    "app_id": 117, 
+    "id": 164799
+  }, 
+  {
+    "info": {
+      "n_answers": 10, 
+      "apis": "[\"34013206810000\", \"34013206810000\", \"34013206850000\", \"34013206870000\", \"34013206860000\"]", 
+      "county": "Belmont", 
+      "year": "2013", 
+      "size": 200, 
+      "imagery": [
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-11275828430006462017-4"
+          }, 
+          "active": true,
+          "title": "2013"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-04770958895915995837-4"
+          }, 
+          "title": "2010"
+        }, 
+        {
+          "url": "https://mapsengine.google.com/06136759344167181854-11845109403981099587-4/wms/", 
+          "type": "WMS", 
+          "options": {
+            "layers": "06136759344167181854-08224624193234342065-4"
+          }, 
+          "title": "2011"
+        }
+      ], 
+      "question": "Please drag on the edges of the shape to make it fit the drill pad you see in the satellite image", 
+      "longitude": -81.09698457999188, 
+      "state": "OH", 
+      "siteID": "0695a813b6214bd5bca72a6caeac2345", 
+      "latitude": 40.066576920016175
+    }, 
+    "state": "0", 
+    "n_answers": 30, 
+    "priority_0": 0.0, 
+    "quorum": 0, 
+    "calibration": 0, 
+    "created": "2014-08-14T15:00:03.883783", 
+    "task_runs_nr": 0, 
+    "app_id": 117, 
+    "id": 164800
   }
-}
+]
