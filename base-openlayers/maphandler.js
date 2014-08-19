@@ -448,7 +448,7 @@ App.prototype.loadGuide = function() {
   var guide = app.map.getLayer('guide');
   guide.removeAllFeatures();
 
-  app.loadGuideCrossHair();
+  app.loadGuideCircle();
 }
 
 App.prototype.updateMap = function(data) {
