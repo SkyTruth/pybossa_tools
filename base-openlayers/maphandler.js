@@ -287,7 +287,7 @@ App.prototype.loadImagery_image = function(info) {
 App.prototype.clearImagery = function () {
   var app = this;
   app.imageryLayers.map(function (layer) {
-    app.map.removeLayer(layers);
+    app.map.removeLayer(layer);
   });
   app.imageryLayers = [];
 }
