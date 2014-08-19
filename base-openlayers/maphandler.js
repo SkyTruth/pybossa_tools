@@ -330,7 +330,7 @@ App.prototype.getOneMeterForMapFromTask = function(lon, lat) {
 };
 
 App.prototype.guideStyle = {
-  strokeColor: "#ffffff",
+  strokeColor: "#de2d26",
   strokeWidth: 4,
   strokeOpacity: 0.75,
   fillOpacity: 0,
