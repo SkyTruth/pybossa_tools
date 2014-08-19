@@ -1,0 +1,23 @@
+#layers {
+  position: absolute;
+
+  z-index: 2;
+
+  bottom: 40pt;
+  right: 10pt;
+}
+
+#layers .layer {
+  display: block;
+  margin-bottom: 5pt;
+  background: white;
+  padding-left: 4pt;
+  padding-right: 4pt;
+  opacity: 0.6;
+  border: 1px solid black;
+}
+
+#layers .layer.active {
+  border: 2px solid black;
+  background: #ffff88;
+}

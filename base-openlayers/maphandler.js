@@ -146,9 +146,38 @@ App.prototype.loadMapAddControls = function() {
     new OpenLayers.Control.PanZoomBar(),
     new AppKeyboardDefaults()
   ]);
+    /*
   app.map.addControls([
     new OpenLayers.Control.LayerSwitcher()
   ]);
+*/
+
+  app.map.events.on({
+    addlayer: app.redrawLayers,
+    changelayer: app.redrawLayers,
+    removelayer: app.redrawLayers,
+    changebaselayer: app.redrawLayers,
+    scope: app
+  });
+}
+
+App.prototype.redrawLayers = function () {
+  var app = this;
+
+  $("#layers .layer").remove();
+  var baseLayers = app.map.layers.filter(function (layer) { return layer.isBaseLayer; })
+  baseLayers.map(function (layer) {
+    var node = $("<a class='layer' href='javascript:void(0);'>");
+    node.html(layer.name)
+    if (layer.visibility) node.addClass('active');
+    node.click(app.selectLayer.bind(app, layer));
+    $("#layers").append(node);
+  });
+}
+
+App.prototype.selectLayer = function (layer) {
+  var app = this;
+  app.map.setBaseLayer(layer);
 }
 
 App.prototype.clearData = function() {
