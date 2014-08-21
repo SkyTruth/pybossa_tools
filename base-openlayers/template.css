@@ -9,10 +9,14 @@
 
 #layers .layer {
   display: block;
+
+  font-size: 18pt;
+  padding: 4pt;
+  padding-left: 8pt;
+  padding-right: 8pt;
+
   margin-bottom: 5pt;
   background: white;
-  padding-left: 4pt;
-  padding-right: 4pt;
   opacity: 0.6;
   border: 1px solid black;
 }
