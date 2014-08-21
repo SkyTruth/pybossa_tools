@@ -132,6 +132,7 @@ Page.prototype.showStep = function(action) {
   var oldstep = page.step;
   async.series([
     function (cb) {
+    debugger;
       if (action == 'next') {
         page.validateStep(function (valid) {
           if (valid) cb();

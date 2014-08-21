@@ -1,9 +1,17 @@
 <div class="pybossa-badges"></div>
 <div class="mapcontainer">
+  <div id="task-info">
+    <div class="item info"><span id="site_county"></span> County, <span id="site_state"></span> <span id="site_year"></span></div>
+    <a class="latlonlink item" href="" target="_blank">See in google maps</a>
+  </div>
+
   {% block task-contents %}{% endblock %}
 
-  <div class="taskmanager expander-container">
-    <a class="expander-control" href="javascript: void(0);"><i class="icon-minus-sign"></i></a>
+  <div class="taskmanager">
+    <div class="latlon">
+      <div><b>Lat:</b> <span id="site_lat"></span></div>
+      <div><b>Long:</b> <span id="site_lon"></span></div>
+    </div>
 
     {% block pre-buttons %}
       <a href="/app/{{short_name}}/tutorial" target="_blank" class="btn btn-warning">Tutorial</a>
@@ -26,34 +34,5 @@
     {% endblock %}
 
     <img class="loading" src="/app/{{short_name}}/static/img/Ajax-loader.gif">
-
-    <span class="expander-body">
-      {% block expander %}
-        <div>
-          <div><strong><span id="site_county"></span> County, <span id="site_state"></span> <span id="site_year"></span></strong></div>
-          <div><b>Lat:</b> <span id="site_lat"></span>, <b>Long:</b> <span id="site_lon"></span></div>
-
-          <div><a class="latlonlink" href="" target="_blank">See this site in google maps</a></div>
-
-          <br />
-          <div class="row-fluid">
-            <div class="span5">
-              <div>About us:</div>
-              <a href="http://skytruth.org/issues/skytruthing/" target="_blank"><img src="/app/{{short_name}}/static/img/logo.skytruth.jpg"></a>
-            </div>
-            <div class="span7">
-              <div>Contact us:</div>
-              <a href="mailto:crowd@skytruth.org">crowd@skytruth.org</a>
-            </div>
-          </div>
-          <br />
-          <div class="row-fluid">
-            <div class="span7">
-              <a href="javascript: void(0);" class="btn btn-info done-for-now-btn">Done for now...</a>
-            </div>
-          </div>
-        </div>
-      {% endblock %}
-    </span>
   </div>
 </div>

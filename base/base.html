@@ -46,72 +46,7 @@
 <style>
   {% block styles %}
     {% block base_styles %}
-      @media (max-width: 979px) {
-        .navbar-fixed-top .navbar-inner, .navbar-fixed-bottom .navbar-inner {
-          padding: 0 !important;
-        }
-        .navbar .brand {
-          margin: 0 !important;
-        }
-        .navbar .container {
-          width: 100% !important;
-        }
-      }
-      .expander-control {
-        position: absolute;
-        font-weight: bold;
-        color: #3d5b7f;
-        right: 5pt;
-        font-size: 10pt;
-      }
-      #disqus_thread {
-        position: fixed;
-        top: 120px;
-        z-index: 3;
-        background: white;
-        left: 40px;
-        right: 40px;
-        bottom: 100px;
-        padding: 5pt;
-        -webkit-border-radius: 5px;
-        -moz-border-radius: 5px;
-        border-radius: 5px;
-      }
-      .progress {
-        width: 50px;
-        display: inline-block;
-        margin-bottom: 0;
-        vertical-align: middle;
-      }
-      .taskmanager {
-        z-index: 2;
-        bottom: 0;
-        right: 0;
-        background: white;
-        font-weight: bold;
-        padding-left: 5pt;
-        padding-top: 5pt;
-        padding-right: 20pt;
-        padding-bottom: 5pt;
-        -webkit-border-top-left-radius: 5px;
-        -moz-border-radius-topleft: 5px;
-        border-top-left-radius: 5px;
-      }
-      .olControlScaleLine {
-        padding: 10px;
-        bottom: 0;
-        left: 0;
-        background: rgba(255, 255, 255, 0.6);
-        -webkit-border-top-right-radius: 5px;
-        -moz-border-radius-topright: 5px;
-        border-top-right-radius: 5px;
-      }
-      .progress {
-        text-align: center;
-      }
-      .js-templates {
-        display: none;
-      }
+      {% include "base/base.css" %}
     {% endblock %}
     {% block page_styles %}
 
