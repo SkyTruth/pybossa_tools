@@ -1,5 +1,9 @@
 {% extends "digitizer/tutorial.html" %}
 
+{% block row %}
+  {% include "digitizer/row.html" %}
+{% endblock %}
+
 {% block page_libraries %}
   {{block.super}}
   <script>
