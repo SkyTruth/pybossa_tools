@@ -7,32 +7,36 @@
 
   {% block task-contents %}{% endblock %}
 
-  <div class="taskmanager">
-    <div class="latlon">
-      <div><b>Lat:</b> <span id="site_lat"></span></div>
-      <div><b>Long:</b> <span id="site_lon"></span></div>
-    </div>
+  <div class="bottom-right">
+    {% block bottom-right %}
+      <div class="taskmanager">
+        <div class="latlon">
+          <div><b>Lat:</b> <span id="site_lat"></span></div>
+          <div><b>Long:</b> <span id="site_lon"></span></div>
+        </div>
 
-    {% block pre-buttons %}
-      <a href="/app/{{short_name}}/tutorial" target="_blank" class="btn btn-warning">Tutorial</a>
+        {% block pre-buttons %}
+          <a href="/app/{{short_name}}/tutorial" target="_blank" class="btn btn-warning">Tutorial</a>
+        {% endblock %}
+
+        {% block taskinfo %}
+        <!-- Task <span id="task-id" class="label">#</span> -->
+        Progress: 
+        <div id="progress" class="progress progress-striped">
+          <div rel="tooltip" title="#" class="bar" style="width: 0%;"></div><span class="progress-label"></span>
+        </div>
+        <span id="done" class="label"></span> of <span id="total" class="label"></span>
+        {% endblock %}
+
+        {% block buttons %}
+          <!-- span id="disqus_show_btn">
+            <button class="btn btn-disqus" onclick="loadDisqus()"><i class="icon-comments"></i> Show comments</button>
+            <button class="btn btn-disqus" onclick="loadDisqus()" style="display:none"><i class="icon-comments"></i> Hide comments</button>
+          </span -->
+        {% endblock %}
+
+        <img class="loading" src="/app/{{short_name}}/static/img/Ajax-loader.gif">
+      </div>
     {% endblock %}
-
-    {% block taskinfo %}
-    <!-- Task <span id="task-id" class="label">#</span> -->
-    Progress: 
-    <div id="progress" class="progress progress-striped">
-      <div rel="tooltip" title="#" class="bar" style="width: 0%;"></div><span class="progress-label"></span>
-    </div>
-    <span id="done" class="label"></span> of <span id="total" class="label"></span>
-    {% endblock %}
-
-    {% block buttons %}
-      <!-- span id="disqus_show_btn">
-        <button class="btn btn-disqus" onclick="loadDisqus()"><i class="icon-comments"></i> Show comments</button>
-        <button class="btn btn-disqus" onclick="loadDisqus()" style="display:none"><i class="icon-comments"></i> Hide comments</button>
-      </span -->
-    {% endblock %}
-
-    <img class="loading" src="/app/{{short_name}}/static/img/Ajax-loader.gif">
   </div>
 </div>

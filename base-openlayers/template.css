@@ -1,10 +1,9 @@
 #layers {
-  position: absolute;
-
+  display: inline-block;
   z-index: 2;
 
-  bottom: 70px;
-  right: 10pt;
+  margin-bottom: 10pt;
+  margin-right: 10pt;
 }
 
 #layers .layer {

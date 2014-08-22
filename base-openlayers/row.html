@@ -1,6 +1,10 @@
 {% extends "base/row.html" %}
 
+{% block bottom-right %}
+  <div id="layers"></div>
+  {{block.super}}
+{% endblock %}
+
 {% block task-contents %}
   <div id="map"></div>
-  <div id="layers"></div>
 {% endblock %}

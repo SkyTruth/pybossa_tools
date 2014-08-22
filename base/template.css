@@ -66,9 +66,6 @@ footer {
   margin-left: 0pt;
   margin-right: 0pt;
 }
-.taskmanager {
-  position: fixed;
-}
 #map, .all-done, .done-for-now {
   width: 100%;
   position: fixed;
@@ -76,6 +73,7 @@ footer {
   top: 81px;
 }
 .pybossa-badges {
+  display: none;
   position: fixed;
   top: 81px;
   right: 0;
