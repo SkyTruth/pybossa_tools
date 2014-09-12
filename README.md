@@ -4,7 +4,7 @@ A generic framework for PyBossa client applications, and a set of client applica
 
     virtualenv deps
     source deps/bin/activate
-    pip install -r pybossa_tools/requirements.txt
+    pip install -r requirements.txt
     
 
 # Usage
