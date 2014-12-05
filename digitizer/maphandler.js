@@ -3,8 +3,13 @@ CricketFrogApp = App = function() {
 };
 App.prototype = new BaseOpenlayersApp();
 App.prototype.init = function (cb) {
+  var app = this;
+
   BaseOpenlayersApp.prototype.init.call(this, function (err, app) {
     if (cb) cb(err, app);
+  });
+  $('.btn-undo').on('click', function(evt) {
+    app.layers.drillpads.mod.undo();
   });
 }
 

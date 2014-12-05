@@ -100,3 +100,7 @@
 .js-templates {
   display: none;
 }
+
+.btn-group {
+  display: inline-block;
+}
