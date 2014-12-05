@@ -82,7 +82,7 @@ App.prototype.getAnswer = function(cb, isDone) {
     });
     drillpads.mod.activate();
   }
-  cb(app.answer);
+  BaseOpenlayersApp.prototype.getAnswer.call(this, cb);
 }
 
 App.prototype.updateMap = function(info) {

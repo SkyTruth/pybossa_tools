@@ -19,8 +19,7 @@ App.prototype.init = function (cb) {
   app.cookieToExpander();
   $('.btn-answer').on('click', function(evt) {
     app.answer = {"selection": evt.target.value};
-    $(".btn-answer").attr({disabled: true});
-    $(".loading").show();
+    app.loadingStarted();
     app.page.reportAnswer();
   });
   $('.btn-cancel').on('click', function(evt) {
@@ -32,7 +31,14 @@ App.prototype.init = function (cb) {
 
   if (cb) cb(null, app);
 }
-
+App.prototype.loadingStarted = function() {
+ $(".btn-answer").attr({disabled: true});
+  $(".loading").show();
+}
+App.prototype.loadingEnded = function() {
+  $(".btn-answer").attr({disabled: false})
+  $(".loading").hide();
+}
 App.prototype.loadMap = function() {
   var app = this;
   if (app.mapIsLoaded) return;
@@ -79,8 +85,7 @@ App.prototype.updateMap = function(data) {
   $(".latlonlink").attr("href", siteurl);
   $(".siteid").html(app.task.data.info.SiteID);
 
-  $(".btn-answer").attr({disabled: false})
-  $(".loading").hide();
+  app.loadingEnded();
 }
 
 App.prototype.cookieToExpander = function() {
@@ -98,7 +103,9 @@ App.prototype.cookieToExpander = function() {
 }
 
 App.prototype.getAnswer = function(cb) {
-  cb(this.answer);
+  var app = this;
+
+  cb(app.answer);
 }
 
 App.prototype.addBadge = function(badge, popup) {

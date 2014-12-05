@@ -467,3 +467,30 @@ App.prototype.updateMap = function(data) {
   app.loadGuide();
   app.clearData();
 }
+
+App.prototype.getAnswer = function(cb) {
+  var app = this;
+  var activeIsVisible = page.app.map.layers.filter(function (l) {
+    return l.isBaseLayer && l.visibility && l.src.active;
+  }).length;
+
+  if (activeIsVisible) {
+    cb(app.answer);
+  } else {
+    var visible = page.app.map.layers.filter(function (l) {
+      return l.isBaseLayer && l.visibility;
+    })[0].src.title;
+    var active = page.app.map.layers.filter(function (l) {
+      return l.isBaseLayer && l.src.active;
+    })[0].src.title;
+
+    var dialog = $('<div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="errorLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-danger text-danger"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="errorLabel">Loading failed</h4></div><div class="modal-body alert"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>');
+    dialog.find(".modal-body").html("Are you sure? You're looking at " + visible + ", we need you to map what happened in " + active + ".");
+    $('body').append(dialog);
+    dialog.modal();
+    dialog.on('hidden.bs.modal', function (e) {
+      dialog.detach();
+      app.loadingEnded();
+    });
+  }
+}

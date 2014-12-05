@@ -190,19 +190,19 @@ Page.prototype.loadUserProgress = function() {
 Page.prototype.reportAnswer = function () {
   var page = this;
 
-  if (typeof _gaq != 'undefined') {
-    _gaq.push(['_trackEvent', 'PyBossa', 'TutorialTask', page.app.pybossa.id + ':' + page.task.id]);
-  }
-
-  var data = page.getCookieData();
-  var now = (new Date).getTime();
-  for (key in data.times) {
-    data.timings[key] = now - data.times[key];
-  }
-  data.times.reportAnswer = now;
-  page.setCookieData(data);
-
   page.app.getAnswer(function (answer) {
+    if (typeof _gaq != 'undefined') {
+      _gaq.push(['_trackEvent', 'PyBossa', 'TutorialTask', page.app.pybossa.id + ':' + page.task.id]);
+    }
+
+    var data = page.getCookieData();
+    var now = (new Date).getTime();
+    for (key in data.times) {
+      data.timings[key] = now - data.times[key];
+    }
+    data.times.reportAnswer = now;
+    page.setCookieData(data);
+
     answer.timings = data.timings;
     if (answer.done == undefined) answer.done = {};
     if (answer.done.tasks == undefined) answer.done.tasks = 1;

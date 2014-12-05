@@ -113,12 +113,15 @@ App.prototype.loadGuide = function() {
 
 App.prototype.getAnswer = function(cb) {
   var app = this;
-  cb({
+
+  app.answer = {
     "positions": app.map.getLayer('drillpads').markers.map(function (marker) {
       return marker.lonlat;
     }),
     "done": {
       "positions": app.map.getLayer('drillpads').markers.length
     }
-  });
+  };
+
+  BaseOpenlayersApp.prototype.getAnswer.call(this, cb);
 }
