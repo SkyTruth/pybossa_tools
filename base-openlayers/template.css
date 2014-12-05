@@ -4,12 +4,16 @@
 
   margin-bottom: 10pt;
   margin-right: 10pt;
+  pointer-events: all;
 }
 
 #layers .layer {
   display: block;
-
   font-size: 18pt;
+}
+
+#layers .layer .title {
+  display: inline-block;
   padding: 4pt;
   padding-left: 8pt;
   padding-right: 8pt;
@@ -20,7 +24,12 @@
   border: 1px solid black;
 }
 
-#layers .layer.active {
+#layers .layer.active .title {
   border: 2px solid black;
   background: #ffff88;
 }
+
+#layers .layer .target {
+  color: #ffffff;
+}
+

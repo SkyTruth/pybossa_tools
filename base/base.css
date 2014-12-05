@@ -41,6 +41,7 @@
   bottom: 0;
   right: 0;
   text-align: right;
+  pointer-events: none;
 }
 .taskmanager {
   text-align: left;
@@ -54,6 +55,7 @@
   -webkit-border-top-left-radius: 5px;
   -moz-border-radius-topleft: 5px;
   border-top-left-radius: 5px;
+  pointer-events: all;
 }
 .taskmanager .latlon {
   display: inline-block;

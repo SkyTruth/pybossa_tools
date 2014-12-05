@@ -167,8 +167,11 @@ App.prototype.redrawLayers = function () {
   $("#layers .layer").remove();
   var baseLayers = app.map.layers.filter(function (layer) { return layer.isBaseLayer; })
   baseLayers.map(function (layer) {
-    var node = $("<a class='layer' href='javascript:void(0);'>");
-    node.html(layer.name)
+    var node = $("<a class='layer' href='javascript:void(0);'><div class='title'>");
+    node.find('.title').html(layer.name)
+    if (layer.src && layer.src.active) {
+      node.prepend("<span class='target'>&gt;</span> ")
+    }
     if (layer.visibility) node.addClass('active');
     node.click(app.selectLayer.bind(app, layer));
     $("#layers").append(node);
@@ -243,6 +246,7 @@ App.prototype.loadImagery_KML = function(info) {
   if (info.id) imagery.id = info.id;
   app.map.addLayer(imagery);
   app.map.setLayerIndex(imagery, 0);
+  imagery.src = info;
   if (info.active) app.map.setBaseLayer(imagery);
   app.imageryLayers.push(imagery);
 }
@@ -257,6 +261,7 @@ App.prototype.loadImagery_WMS = function(info) {
     info.url,
     info.options || {});
   if (info.id) imagery.id = info.id;
+  imagery.src = info;
   app.map.addLayer(imagery);
   if (info.active) app.map.setBaseLayer(imagery);
   app.imageryLayers.push(imagery);
