@@ -46,7 +46,7 @@ App.prototype = new BaseApp();
 
 App.prototype.taskProjection = new OpenLayers.Projection("EPSG:4326");
 App.prototype.taskZoom = 1.2;
-App.prototype.taskMaxZoom = 10;
+// App.prototype.taskMaxZoom = 10;
 App.prototype.defaultTaskSize = 200;
 
 App.prototype.init = function (cb) {
@@ -85,7 +85,7 @@ App.prototype.mapMoveEnd = function (evt) {
     if (app.zoomRecurse) return;
     app.zoomRecurse = true;
     var bbox = app.getTaskBounds().transform(
-      App.prototype.taskProjection, app.map.getProjectionObject()
+      app.getTaskProjection(), app.map.getProjectionObject()
     ).scale(app.taskMaxZoom);
 
     if (!bbox.containsBounds(app.map.getExtent())) {
@@ -186,9 +186,18 @@ App.prototype.selectLayer = function (layer) {
 App.prototype.clearData = function() {
   var app = this;
   var bbox = app.getTaskBounds().transform(
-    App.prototype.taskProjection, app.map.getProjectionObject()
+    app.getTaskProjection(), app.map.getProjectionObject()
   );
   app.map.zoomToExtent(bbox.scale(app.taskZoom));
+}
+
+App.prototype.getTaskProjection = function() {
+  var app = this;
+  if (app.task.data.info.projection) {
+    return new OpenLayers.Projection(app.task.data.info.projection);
+  } else {
+    return App.prototype.taskProjection;
+  }
 }
 
 App.prototype.getTaskBounds = function() {
@@ -217,14 +226,12 @@ App.prototype.loadImagery_underlay = function(info) {
   var app = this;
 
   app.layers.osm = new OpenLayers.Layer.OSM();
-  app.layers.gmap = new OpenLayers.Layer.Google("Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22});
-
   app.map.addLayer(app.layers.osm);
-  app.map.addLayer(app.layers.gmap);
-
   app.imageryLayers.push(app.layers.osm);
-  app.imageryLayers.push(app.layers.gmap);
 
+  app.layers.gmap = new OpenLayers.Layer.Google("Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22});
+  app.map.addLayer(app.layers.gmap);
+  app.imageryLayers.push(app.layers.gmap);
 }
 
 App.prototype.loadImagery_KML = function(info) {
@@ -269,7 +276,7 @@ App.prototype.loadImagery_WMS = function(info) {
 
 App.prototype.loadImagery_image = function(info) {
   // Note: This function only works if
-  // app.map.getProjectionObject() == app.taskProjection
+  // app.map.getProjectionObject() == app.getTaskProjection()
   var app = this;
   var imagery = new OpenLayers.Layer.Image(
     info.title || 'Imagery',
@@ -330,10 +337,10 @@ App.prototype.getOneMeter = function (projection, lonlat) {
 
 App.prototype.getOneMeterForMapFromTask = function(lon, lat) {
   var app = this;
-  return app.getOneMeter(app.taskProjection, 
+  return app.getOneMeter(app.getTaskProjection(), 
     new OpenLayers.LonLat(lon, lat).transform(
-      app.taskProjection,
-      app.taskProjection));
+      app.getTaskProjection(),
+      app.getTaskProjection()));
 };
 
 App.prototype.guideStyle = {
@@ -405,7 +412,7 @@ App.prototype.loadGuideCrossHair = function() {
       new OpenLayers.Geometry.LineString(
         positions.map(function (coords) {
           return new OpenLayers.Geometry.Point(coords[0], coords[1]).transform(
-            App.prototype.taskProjection, app.map.getProjectionObject())
+            app.getTaskProjection(), app.map.getProjectionObject())
         })),
         null, $.extend({}, app.guideStyle)
     );
