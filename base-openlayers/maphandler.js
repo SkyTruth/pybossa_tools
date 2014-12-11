@@ -46,7 +46,7 @@ App.prototype = new BaseApp();
 
 App.prototype.taskProjection = new OpenLayers.Projection("EPSG:4326");
 App.prototype.taskZoom = 1.2;
-// App.prototype.taskMaxZoom = 10;
+App.prototype.taskMaxZoom = 10;
 App.prototype.defaultTaskSize = 200;
 
 App.prototype.init = function (cb) {
@@ -84,7 +84,7 @@ App.prototype.mapMoveEnd = function (evt) {
   if (app.taskMaxZoom) {
     if (app.zoomRecurse) return;
     app.zoomRecurse = true;
-    var bbox = app.getTaskBounds().transform(
+    var bbox = app.getTaskBounds().clone().transform(
       app.getTaskProjection(), app.map.getProjectionObject()
     ).scale(app.taskMaxZoom);
 
@@ -185,10 +185,12 @@ App.prototype.selectLayer = function (layer) {
 
 App.prototype.clearData = function() {
   var app = this;
-  var bbox = app.getTaskBounds().transform(
+  var bbox = app.getTaskBounds().clone().transform(
     app.getTaskProjection(), app.map.getProjectionObject()
   );
+  app.zoomRecurse = true;
   app.map.zoomToExtent(bbox.scale(app.taskZoom));
+  app.zoomRecurse = false;
 }
 
 App.prototype.getTaskProjection = function() {
@@ -327,7 +329,7 @@ App.prototype.loadImagery = function () {
 App.prototype.getOneMeter = function (projection, lonlat) {
   var wgs84 = new OpenLayers.Projection("EPSG:4326");
 
-  var p1 = lonlat.transform(projection, wgs84);
+  var p1 = lonlat.clone().transform(projection, wgs84);
   var p2 = p1.add(0, 1.0 / 1852 / 60);
   p1 = p1.transform(wgs84, projection);
   p2 = p2.transform(wgs84, projection);

@@ -83,7 +83,9 @@ App.prototype.getAnswer = function(cb, isDone) {
     var geojson = new OpenLayers.Format.GeoJSON();
     drillpads.mod.deactivate();
     app.answer.shapes = drillpads.features.map(function(feature) {
-      return JSON.parse(geojson.write(feature.geometry));
+      return JSON.parse(geojson.write(feature.geometry.clone().transform(
+        app.map.getProjectionObject(), app.getTaskProjection()
+      )));
     });
     drillpads.mod.activate();
   }

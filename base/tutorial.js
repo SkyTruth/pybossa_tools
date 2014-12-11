@@ -84,14 +84,15 @@ Page.prototype.validateMapStep = function(cb) {
       page.errs.push("You selected " + answer.selection + " while the correct answer was " + info.answer);
     }
 
-    if (page.errs.length == 0 && page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
+    if (page.errs.length != 0) {
+      page.stayOnStep = true;
+    } else if (page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
       page.initializedSteps[page.step].task++;
       page.setMapTask(page.step);
       page.stayOnStep = true;
-    } else {
-      $(".btn-answer").attr({disabled: false})
-      $(".loading").hide();
     }
+    $(".btn-answer").attr({disabled: false})
+    $(".loading").hide();
     cb();
   });
 };
@@ -109,7 +110,6 @@ Page.prototype.validateStep = function(cb) {
       }
     },
     function (cb) {
-      if (page.stayOnStep) return cb(null, false);
       $(".maperrors .popover-content").html("");
       console.log(page.errs);
       page.errs.map(function (item) {
@@ -120,11 +120,11 @@ Page.prototype.validateStep = function(cb) {
       } else {
         $(".maperrors").hide();
       }
-      cb(null, page.errs.length == 0);
+      cb();
     }
   ],
-  function (err, res) {
-    cb(res);
+  function () {
+    cb(!page.stayOnStep && page.errs.length == 0);
   });
 }
 Page.prototype.showStep = function(action) {

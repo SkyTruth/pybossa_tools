@@ -32,10 +32,10 @@ Page.prototype.validateMapStep = function(cb) {
 
   page.app.getAnswer(function (data) {
     var geojson = new OpenLayers.Format.GeoJSON();
-    if (data.shape) {
-      var shape = geojson.read(data.shape, "Geometry");
-      var inner = geojson.read(page.app.info.inner, "Geometry");
-      var outer = geojson.read(page.app.info.outer, "Geometry");
+    if (data.shapes && data.shapes.length == 1) {
+      var shape = geojson.read(data.shapes[0], "Geometry");
+      var inner = geojson.read(page.app.task.data.info.inner, "Geometry");
+      var outer = geojson.read(page.app.task.data.info.outer, "Geometry");
 
       if (outer.contains(shape)) {
         if (!shape.contains(inner)) {
@@ -49,16 +49,19 @@ Page.prototype.validateMapStep = function(cb) {
         }
       }
     } else {
-      page.errs.push("<div>Please mark the shape by clicking on the map.</div>")
+      page.errs.push("<div>Please mark one shape by clicking on the map.</div>")
     }
 
-    if (page.errs.length == 0 && page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
+    if (page.errs.length != 0) {
+      page.stayOnStep = true;
+      page.app.clearData();
+    } else if (page.initializedSteps[page.step].task < page.initializedSteps[page.step].tasks.length - 1) {
       page.initializedSteps[page.step].task++;
       page.setMapTask();
       page.stayOnStep = true;
-    } else {
-      page.app.clearData();
     }
+    $(".btn-answer").attr({disabled: false})
+    $(".loading").hide();
     cb();
   });
 };
