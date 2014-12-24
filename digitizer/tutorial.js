@@ -31,27 +31,39 @@ Page.prototype.validateMapStep = function(cb) {
   var page = this;
 
   page.app.getAnswer(function (data) {
-    var geojson = new OpenLayers.Format.GeoJSON();
-    if (data.shapes && data.shapes.length == 1) {
-      var shape = geojson.read(data.shapes[0], "Geometry");
-      var inner = geojson.read(page.app.task.data.info.inner, "Geometry");
-      var outer = geojson.read(page.app.task.data.info.outer, "Geometry");
+    var info = page.app.task.data.info;
+    if (info.inner && info.outer) {
+      var geojson = new OpenLayers.Format.GeoJSON();
+      if (data.shapes && data.shapes.length == 1) {
+        var shape = geojson.read(data.shapes[0], "Geometry");
+        var inner = geojson.read(info.inner, "Geometry");
+        var outer = geojson.read(info.outer, "Geometry");
 
-      if (outer.contains(shape)) {
-        if (!shape.contains(inner)) {
-          page.errs.push("<div>Your shape is too small</div>")
+        if (outer.contains(shape)) {
+          if (!shape.contains(inner)) {
+            page.errs.push("<div>Your shape is too small</div>")
+          }
+        } else {
+          if (!shape.contains(inner)) {
+            page.errs.push("<div>Your shape is not in the right location</div>")
+          } else {
+            page.errs.push("<div>Your shape is too big</div>")
+          }
         }
       } else {
-        if (!shape.contains(inner)) {
-          page.errs.push("<div>Your shape is not in the right location</div>")
-        } else {
-          page.errs.push("<div>Your shape is too big</div>")
-        }
+        page.errs.push("<div>Please mark one shape by clicking on the map.</div>")
       }
     } else {
-      page.errs.push("<div>Please mark one shape by clicking on the map.</div>")
+      if (data == undefined || data.selection == undefined) {
+        page.errs.push("Please use one of the buttons at the bottom of the image to indicate the type of well pad you see.");
+      } else if (data.selection == info.answer) {
+        //do nothing here
+      } else if (data.selection == "unknown"){
+        page.errs.push("The correct answer is " + info.answer);
+      } else{
+        page.errs.push("You selected " + data.selection + " while the correct answer was " + info.answer);
+      }
     }
-
     if (page.errs.length != 0) {
       page.stayOnStep = true;
       page.app.clearData();
