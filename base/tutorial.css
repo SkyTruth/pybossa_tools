@@ -34,9 +34,6 @@
 .mapcontainer {
   position: relative;
 }
-.taskmanager {
-  position: absolute;
-}
 #map {
   position: relative;
   width: 100%;
@@ -54,4 +51,7 @@
 .loading {
   margin-left: 4pt;
   display: none;
+}
+#task-info {
+  top: 10pt;
 }

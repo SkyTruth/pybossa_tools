@@ -1,5 +1,10 @@
 {% extends "base/tutorial.html" %}
 
+{% block page_styles %}
+  {{ block.super }}
+  {% include "base-openlayers/base.css" %}
+{% endblock %}
+
 {% block base_libraries %}
   {{ block.super }}
   <script src="http://openlayers.org/api/OpenLayers.js"></script>
