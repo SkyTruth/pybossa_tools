@@ -20,9 +20,21 @@
   left: 934px;
   top: 306px;
 }
-.mapbubble.bottom {
+.mapbubble-tutorial {
   top: 396px;
-  left: 300px;
+  left: 160px;
+}
+.mapbubble-undo {
+  top: 396px;
+  left: 445px;
+}
+.mapbubble-notapadd {
+  top: 396px;
+  left: 642px;
+}
+.mapbubble-submit {
+  top: 396px;
+  left: 810px;
 }
 .mapbubble .popover {
   display: block;
