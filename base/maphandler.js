@@ -18,7 +18,7 @@ App.prototype.init = function (cb) {
   });
   app.cookieToExpander();
   $('.btn-answer').on('click', function(evt) {
-    app.answer = {"selection": evt.target.value};
+    app.answer = {"selection": $(evt.target).closest('.btn-answer').val()};
     app.loadingStarted();
     app.page.reportAnswer();
   });
