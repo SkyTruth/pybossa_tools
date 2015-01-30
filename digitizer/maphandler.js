@@ -77,19 +77,35 @@ App.prototype.loadGuide = function() {
 
 App.prototype.getAnswer = function(cb, isDone) {
   var app = this;
+  var errs = [];
   var drillpads = app.map.getLayer('drillpads');
   if (!app.answer) app.answer = {};
-  if ((isDone || app.answer.selection == "done") && drillpads.features.length > 0) {
-    var geojson = new OpenLayers.Format.GeoJSON();
-    drillpads.mod.deactivate();
-    app.answer.shapes = drillpads.features.map(function(feature) {
-      return JSON.parse(geojson.write(feature.geometry.clone().transform(
-        app.map.getProjectionObject(), app.getTaskProjection()
-      )));
-    });
-    drillpads.mod.activate();
+  if (isDone || app.answer.selection == "done") {
+    if (drillpads.features.length > 0) {
+      var geojson = new OpenLayers.Format.GeoJSON();
+      drillpads.mod.deactivate();
+      app.answer.shapes = drillpads.features.map(function(feature) {
+        return JSON.parse(geojson.write(feature.geometry.clone().transform(
+          app.map.getProjectionObject(), app.getTaskProjection()
+        )));
+      });
+      drillpads.mod.activate();
+    } else {
+      errs.push("You have to finish marking at least one area to continue. Doubble click on the imagery to finish.");
+    }
   }
-  BaseOpenlayersApp.prototype.getAnswer.call(this, cb);
+  if (errs.length == 0 || isDone) {
+    BaseOpenlayersApp.prototype.getAnswer.call(this, cb);
+  } else {
+    var dialog = $('<div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="errorLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-danger text-danger"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="errorLabel">Unable to submit</h4></div><div class="modal-body alert"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>');
+    dialog.find(".modal-body").html(errs.join('<br>'));
+    $('body').append(dialog);
+    dialog.modal();
+    dialog.on('hidden.bs.modal', function (e) {
+      dialog.detach();
+      app.loadingEnded();
+    });
+  }
 }
 
 App.prototype.updateMap = function(info) {
